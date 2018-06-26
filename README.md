@@ -5,8 +5,10 @@
 will connect list of your modals to the redux store and invoke sagas when action showModal is dispatched.
 
 
-## Usage
-#Root-container
+## Setup
+
+```javascript
+//in the root-container
 import { Modals } from 'redux-saga-modal';
 import { SimpleModal, ConfirmModal } from 'components/Modals';
 
@@ -35,7 +37,7 @@ export default class App extends Component {
   }
 }
 
-#Root-reducer
+//in the root-reducer
 import cabinetReducer from './domains/cabinet';
 import { modalReducer } from 'redux-saga-modal';
 
@@ -44,20 +46,19 @@ const appReducer = combineReducers({
   modal: modalReducer,
 });
 
-#Root-saga
+//in the root-saga
 import { fork, all } from 'redux-saga/effects';
 import { sagas as appSagas } from 'domains/app';
 import { modalSagas } from 'redux-saga-modal';
 
 export default function* () {
-  
   yield all([
     fork(appSagas),
     fork(modalSagas),
   ]);
 }
 
-#After that you can manage modals with you sagas
+//After that you can manage modals with you sagas. They will be automatically invoken after dispatching action showModal
 import { modalUtils, modalsTypes, modalActions } from 'redux-saga-modal';
 import types from 'domains/modal/types';
 
@@ -67,7 +68,7 @@ export function* confirmModalSaga(action) {
     yield call(....)
   }
 }
-
+```
 ## License
 
 MIT
