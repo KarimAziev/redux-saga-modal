@@ -1,51 +1,85 @@
-import Immutable from 'seamless-immutable';
 import types from './types';
 
-const initialState = Immutable({
-});
+const initialState = {};
 
-export default function modalReducer(state = initialState, action = {}) {
+export default function reducer(state = initialState, action = {}) {
   
   switch (action.type) {
 
   case types.SHOW_MODAL: {
     const { key, props, clicked } = action.payload;
-   
-    return state
-      .set(key, { props, clicked, isOpen: true });
+    return {
+      ...state,
+      [key]: {
+        isOpen: true,
+        props: props,
+        clicked: clicked,
+      },
+    };
   }
   
   case types.INITIALIZE_MODAL: {
     const { key, props, clicked } = action.payload;
-    return state
-      .set(key, { props, clicked, isOpen: false });
+    return {
+      ...state,
+      [key]: {
+        isOpen: false,
+        props: props,
+        clicked: clicked,
+      },
+    };
   }
 
   case types.HIDE_MODAL: {
     const { key } = action.payload;
-
-    return state
-      .updateIn([key, 'isOpen'], val => false);
+    return {
+      ...state,
+      [key]: {
+        ...state[key],
+        isOpen: false,
+      },
+    };
   }
     
   case types.MODAL_ITEM_CLICK: {
     const { key, value } = action.payload;
-    return state.setIn([key, 'clicked'], value);
+    return {
+      ...state,
+      [key]: {
+        ...state[key],
+        clicked: value,
+      },
+    };
   }
     
   case types.ADD_TO_MODAL: {
     const { key, props } = action.payload;
-    return state.updateIn([key, 'props'], data => ({ ...data, props }));
+    return {
+      ...state,
+      [key]: {
+        ...state[key],
+        props: {
+          ...state[key].props,
+          ...props,
+        },
+      },
+    };
   }
     
   case types.RESET_MODAL: {
     const { key } = action.payload;
-    
-    return state
-      .set(key, { isOpen: false });
+    return {
+      ...state,
+      [key]: {
+        isOpen: false,
+        props: {},
+        clicked: null,
+      },
+    };
   }
 
-  default: return Immutable.merge(state, {});
+  default: 
+    return state;
   }
 }
 
