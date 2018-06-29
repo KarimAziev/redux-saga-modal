@@ -2,7 +2,7 @@
   "name": "redux-saga-modal",
   "version": "0.0.1",
   "private": false,
-  "description": "An example of how to author libraries using webpack",
+  "description": "saga modals",
   "main": "lib/index.js",
   "scripts": {
     "build": "webpack",
@@ -27,14 +27,18 @@
     "eslint": "^3.9.1",
     "eslint-loader": "^1.6.1",
     "hoist-non-react-statics": "^2.5.5",
+    "react": "^15.0.0",
     "react-dom": "^15.6.1",
     "react-modal": "^3.4.5",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
     "reselect": "^3.0.1",
-    "seamless-immutable": "^7.1.2",
     "webpack": "^4.4.1",
     "webpack-cli": "^2.0.12"
+  },
+  "repository": "git@github.com:KarimAziev/redux-saga-modal",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0"
   }
 }

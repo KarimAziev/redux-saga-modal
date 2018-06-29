@@ -19,12 +19,7 @@ export default () => (
                 commonjs: 'react',
                 amd: 'react'
             },
-            'react-router': {
-                root: 'ReactRouter',
-                commonjs2: 'react-router',
-                commonjs: 'react-router',
-                amd: 'react-router'
-            }
+
         },
         module: {
             rules: [
