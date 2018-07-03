@@ -19,7 +19,7 @@ export function hideModal(key) {
 
 export function clickModalItem(key, value) {
   return {
-    type: types.MODAL_ITEM_CLICK,
+    type: types.MODAL_CLICK,
     payload: {
       key: key,
       value: value,
@@ -48,13 +48,6 @@ export function resetModal(key) {
 export function resetAllModals() {
   return {
     type: types.RESET_ALL_MODALS,
-  };
-}
-
-export function invokeSagas(sagas = {}) {
-  return {
-    type: types.MODALS_SAGA_INVOKE,
-    payload: sagas,
   };
 }
 

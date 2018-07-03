@@ -8,7 +8,7 @@ module.exports = {
 
   plugins: [
     'react',
-  ],
+  ], 
 
   // We're stricter than the default config, mostly. We'll override a few rules
   // and then enable some React specific ones.
