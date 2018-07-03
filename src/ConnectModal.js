@@ -2,105 +2,88 @@ import React, { Component } from 'react';
 import ModalWrapper from 'react-modal';
 import defaultStyles from './styles';
 import * as actions from './actions';
-import { 
-  showModal,
-  inizializeModal,
- } from './actions';
-import ReactDOM from 'react-dom';
 
 class ModalsInvoker extends Component {
   constructor(props) {
     super(props);
     this.renderChildren = this.renderChildren.bind(this);
-
-    this.state = {
-      isInitted: false,
-      isOpen: false,
-    }
   }
   
   componentDidMount() {
-    const { dispatch, children } = this.props;
-    const { isInitted } = this.state;
+    const { 
+      dispatch, 
+      children, 
+      reducer,
+    } = this.props;
     
     React.Children.forEach(children, ({ key, props }) => {
       const saga = props.saga;
-      if (saga && !this[key] && !isInitted) {
-        dispatch(inizializeModal(key, saga));
-        this[key] = ({ ...props, key });
-        
+      
+      if (saga && !reducer[key]) {
+        dispatch(actions.inizializeModal(key, saga));
       }
     });
-
-    this.setState({ 
-      isInitted: true, 
-    })
-    
   }
   
-  renderChildren() {
+  renderChildren(children) {
     const { 
-      children, 
       reducer,
       dispatch,
-     } = this.props;
-    const modalSelector = key => reducer && reducer[key] || {};
+      wrapperStyle,
+    } = this.props;
+     
+    const modalReducerSelector = key => reducer[key] || {};
+    
     return React.Children.map(children, child => {
       const { key } = child;
-      const reducerData = modalSelector(key);
+      
+      const modalProps = modalReducerSelector(key);
 
       if (!React.isValidElement(child) ) {
         return null;
       }  
-      const newProps = reducerData && reducerData.props ? reducerData.props : {};
       
-      const data = {
+      const updatedProps = {
         ...child.props, 
-        ...newProps,
-        ...showModal,
-        isOpen: reducerData.isOpen, 
+        ...modalProps, 
+        showModal: (newKey, payload) => dispatch(actions.showModal(newKey, payload)),
       };
       
       const bindModalKey = actionKey => {
         const action = actions[actionKey];
-        data[actionKey] = (payload) => dispatch(action(key, payload));
+        updatedProps[actionKey] = (payload) => dispatch(action(key, payload));
       };
       
       Object.keys(actions)
-        .filter(actionKey => !data[actionKey])
+        .filter(actionKey => !updatedProps[actionKey])
         .forEach(bindModalKey);
-        
-      const element = React.cloneElement(child, { ...data, key });
+      
+      const Modal = React.cloneElement(child, 
+        { ...updatedProps, key })
 
-      return !element.props.wrapper 
-        ? <ModalWrapper
-            contentLabel={element.props.key}
-            style={defaultStyles}
-            ariaHideApp={false}
-            isOpen={data.isOpen} >
-            {element}
-          </ModalWrapper>
-        : element
+      return (
+        <ModalWrapper
+          contentLabel={Modal.props.key}
+          style={wrapperStyle || defaultStyles}
+          ariaHideApp={false}
+          isOpen={Modal.props.isOpen} >
+          { Modal }
+        </ModalWrapper>
+      )
     });
   }
   
 
   render() {
-    const {
- 
-    } = this.props;
-    console.log('this.props', this.props);
-    const { isInitted } = this.state;
-    const children = isInitted ? this.renderChildren() : null;
+    const { children } = this.props;
 
     return (
       <span>
-      { children }
+        {this.renderChildren(children)}
       </span>
     );
   }
 }
-
 
 export default ModalsInvoker;
 

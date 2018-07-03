@@ -3,8 +3,19 @@ import types from './types';
 const initialState = {};
 
 export default function reducer(state = initialState, action = {}) {
-  
   switch (action.type) {
+    
+  case types.INITIALIZE_MODAL: {
+    const { key, props, clicked } = action.payload;
+    return {
+      ...state,
+      [key]: {
+        isOpen: false,
+        props: props,
+        clicked: clicked,
+      },
+    };
+  }
 
   case types.SHOW_MODAL: {
     const { key, props, clicked } = action.payload;
@@ -18,18 +29,6 @@ export default function reducer(state = initialState, action = {}) {
     };
   }
   
-  case types.INITIALIZE_MODAL: {
-    const { key, props, clicked } = action.payload;
-    return {
-      ...state,
-      [key]: {
-        isOpen: false,
-        props: props,
-        clicked: clicked,
-      },
-    };
-  }
-
   case types.HIDE_MODAL: {
     const { key } = action.payload;
     return {
@@ -41,7 +40,19 @@ export default function reducer(state = initialState, action = {}) {
     };
   }
     
-  case types.MODAL_ITEM_CLICK: {
+  case types.RESET_MODAL: {
+    const { key } = action.payload;
+    return {
+      ...state,
+      [key]: {
+        isOpen: false,
+        props: {},
+        clicked: null,
+      },
+    };
+  }
+    
+  case types.MODAL_CLICK: {
     const { key, value } = action.payload;
     return {
       ...state,
@@ -62,18 +73,6 @@ export default function reducer(state = initialState, action = {}) {
           ...state[key].props,
           ...props,
         },
-      },
-    };
-  }
-    
-  case types.RESET_MODAL: {
-    const { key } = action.payload;
-    return {
-      ...state,
-      [key]: {
-        isOpen: false,
-        props: {},
-        clicked: null,
       },
     };
   }

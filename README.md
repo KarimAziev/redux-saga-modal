@@ -9,7 +9,7 @@ will connect list of your modals to the redux store and invoke sagas when action
 
 ```javascript
 //in the root-container
-import { Modals } from 'redux-saga-modal';
+import { ConnectModal } from 'redux-saga-modal';
 import { SimpleModal, ConfirmModal } from 'components/Modals';
 
 export default class App extends Component {
@@ -22,7 +22,10 @@ export default class App extends Component {
     return (
     <div>
       {this.props.children}
-      <Modals>
+     <ConnectModal 
+        {...props}
+        dispatch={props.dispatch}
+        reducer={modal}>
         <ConfirmModal 
           { ...initialProps.confirm }
           saga={confirmModalSaga}
@@ -31,7 +34,7 @@ export default class App extends Component {
           {...initialProps.greeting}
           saga={greetingModalSaga}
           key={'greeting'} />
-      </Modals>
+      </ConnectModal>
     </div>
     );
   }
@@ -39,7 +42,7 @@ export default class App extends Component {
 
 //in the root-reducer
 import cabinetReducer from './domains/cabinet';
-import { modalReducer } from 'redux-saga-modal';
+import { reducer as modalReducer } from 'redux-saga-modal'; 
 
 const appReducer = combineReducers({
   cabinet: cabinetReducer,
@@ -49,7 +52,7 @@ const appReducer = combineReducers({
 //in the root-saga
 import { fork, all } from 'redux-saga/effects';
 import { sagas as appSagas } from 'domains/app';
-import { modalSagas } from 'redux-saga-modal';
+import { sagas as modalSagas } from 'redux-saga-modal'; 
 
 export default function* () {
   yield all([
@@ -59,13 +62,28 @@ export default function* () {
 }
 
 //After that you can manage modals with you sagas. They will be automatically invoken after dispatching action showModal
-import { modalUtils, modalsTypes, modalActions } from 'redux-saga-modal';
+import { showModal } from 'redux-saga-modal';
 import types from 'domains/modal/types';
 
 export function* confirmModalSaga(action) {
   while (true) {
-    const resetModal = yield take(modalsTypes.RESET_MODAL);
-    yield call(....)
+    const modalKey = yield getContext('key');
+    const { 
+      takeModalClick, 
+      takeModalHide, 
+      showModal,
+     } = yield getContext('utils');
+     
+    const click = yield race(
+      ok: takeModalClick('OK'),
+      cancel: takeModalClick('CANCEL'),
+      hide: takeModalHide(modalKey)
+    );
+    
+    if (hide) {
+      yield put(showModal(modalKey, { text: 'Are you sure? '}));
+      ...
+    }
   }
 }
 ```
