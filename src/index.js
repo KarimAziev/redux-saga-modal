@@ -1,6 +1,6 @@
-
 import 'core-js/shim';
 import 'regenerator-runtime/runtime';
+
 import reducer from './reducer';
 import types from './types';
 import * as actions from './actions';
@@ -16,3 +16,10 @@ export default {
 };
 
 
+/* if (!global._babelPolyfill) {
+  console.log('global._babelPolyfill', global._babelPolyfill);
+  require('core-js/shim');
+  require('regenerator-runtime/runtime');
+} 
+
+global._babelPolyfill = true; */
