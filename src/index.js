@@ -1,6 +1,6 @@
-
 import 'core-js/shim';
 import 'regenerator-runtime/runtime';
+
 import reducer from './reducer';
 import types from './types';
 import * as actions from './actions';
