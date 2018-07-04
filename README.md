@@ -6,7 +6,8 @@ will connect list of your modals to the redux store and invoke sagas when action
 ```bash
 git clone git@github.com:KarimAziev/redux-saga-modal.git && 
 cd redux-saga-modal &&
-yarn && yarn link && yarn build:dev
+yarn && yarn build && yarn link
+
 //finally in your app-folder: 
 yarn link redux-saga-modal && yarn
 ```

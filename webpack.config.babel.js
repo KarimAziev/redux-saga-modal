@@ -17,7 +17,7 @@ const uglifyOptions = {
 
 
 
-const createConfig = () => (env, args) => {
+const createConfig = (env, args) => {
   const config = {
     entry: './src/index.js',
     stats: {
@@ -58,14 +58,12 @@ const createConfig = () => (env, args) => {
       ],
     },
     devtool: 'source-map',
-    watch: true,
+    watch: false,
     watchOptions: {
       ignored: [/node_modules/, 'scripts/**/*.js'],
     },
     optimization: {
       namedChunks: true,
-
-      
       minimizer: [
         new UglifyJsPlugin({
           sourceMap: true,
@@ -80,10 +78,8 @@ const createConfig = () => (env, args) => {
       overlay: true,
     },
   }
-  
-  console.log('config env: ', env, config);
 
   return config;
 }
 
-export default createConfig();
+export default createConfig;
