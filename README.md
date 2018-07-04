@@ -5,9 +5,8 @@ will connect list of your modals to the redux store and invoke sagas when action
 ## Install (currently only local)
 
 git clone git@github.com:KarimAziev/redux-saga-modal.git && 
-cd redux-saga-modal && 
-yarn && 
-yarn link
+cd redux-saga-modal 
+yarn && yarn link && yarn build:dev
 
 #In your app-directory 
 yarn link redux-saga-modal && yarn
@@ -85,7 +84,6 @@ export function* confirmModalSaga(action) {
       cancel: takeModalClick('CANCEL'),
       hide: takeModalHide(modalKey)
     );
-
     if (hide) {
       yield put(showModal(modalKey, { text: 'Are you sure? '}));
       ...

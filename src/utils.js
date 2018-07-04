@@ -1,6 +1,9 @@
 import types from './types';
 import { take } from 'redux-saga/effects';
 
+const isEqual = (a, b) => a === b;
+const pick = (a, b) => isObjLiteral(a) ? a[b] : isObjLiteral(b) && b[a];
+
 export const toArrayMaybe = item => Array.isArray(item) ? item : [item];
 export function isObject(val) {
   return val === Object(val);
@@ -37,14 +40,11 @@ export const isModalHide = keys => ({ type, payload = {} }) =>
   
 export const clickFilter = values => ({ type, payload = {} }) => isClickType(type) && toArrayMaybe(values).includes(payload.value)
 
-
 export const takeModalHide = keys => take(isModalHide(keys));
 export const takeModalMaybe = keys => take.maybe(isModalShow(keys));
 export const takeModalClick = items => take(clickFilter(items));
 
-const isEqual = (a, b) => a === b;
-const pick = (a, b) => isObjLiteral(a) && a[b] || isObjLiteral(b) && b[a];
-const action = (modalKey, type) => pattern => 
+const checkAction = (modalKey, type) => pattern => 
   isObjLiteral(pattern) && isEqual(pick('type', pattern), type) && pattern && pattern.payload.key === modalKey; 
 
-export const takeModal = (key, type) => take(action(key, type))
+export const takeModal = (key, type) => take(checkAction(key, type))
