@@ -3,13 +3,15 @@
 `redux-saga-modal` (currently under development)
 will connect list of your modals to the redux store and invoke sagas when action showModal is dispatched.
 ## Install (currently only local)
-
+```bash
 git clone git@github.com:KarimAziev/redux-saga-modal.git && 
-cd redux-saga-modal 
+cd redux-saga-modal &&
 yarn && yarn link && yarn build:dev
-
-#In your app-directory 
+//finally in your app-folder: 
 yarn link redux-saga-modal && yarn
+```
+
+
 
 ## Setup
 
