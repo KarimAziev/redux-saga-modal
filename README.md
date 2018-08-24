@@ -13,14 +13,13 @@ yarn link redux-saga-modal && yarn
 ```
 
 
-
 ## Setup
 
 ```javascript
 //in your root container 
 import { ConnectModal } from 'redux-saga-modal';
-import { showModal as showModalSaga} from 'redux-saga-modal';
 import { exampleModalSaga } from '../sagas/modals';
+import { anotherModalSaga } from '../sagas/modals';
 
 class App extends Component {
   render() {
@@ -30,7 +29,8 @@ class App extends Component {
         <ConnectModal
           dispatch={this.props.dispatch.bind(this)}
           reducer={modals}>
-            <BootstrapModal name='bootstrap' saga={exampleModalSaga} />
+            <ExampleModal name='bootstrap' saga={exampleModalSaga} />
+            <ExampleModal name='anotherExample' saga={anotherModalSaga} />
         </ConnectModal>
         {children}
       </div>
@@ -42,7 +42,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators(
-  {dispatch, showModal: showModalSaga}, dispatch
+  { dispatch }, dispatch
 );
 
 export default connect(
@@ -69,6 +69,35 @@ export default function* rootSaga() {
   ]);
 }
 
+//modal component
+class ExampleModal extends Component {
+  render() {
+    const { 
+      isOpen, 
+      text, 
+      title,
+      clickModal,
+    } = this.props
+
+    return (
+      <Modal show={isOpen}>
+        <Modal.Header>
+          <Modal.Title>{ title }</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          { text }
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button onClick={() => clickModal('CANCEL')}>Close</Button>
+          <Button bsStyle='primary' onClick={() => clickModal('OK')}>Save changes</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  }
+}
+
 //After that you can manage modals with you sagas. They will be automatically invoken after dispatching action showModal
 import { showModal, hideModal, takeModalClick } from 'redux-saga-modal';
 import { race, put, call } from 'redux-saga/effects';
@@ -82,8 +111,8 @@ export function* exampleModalSaga() {
     }));
     
     const click = yield race({
-      ok: takeModalClick('ok'),
-      cancel: takeModalClick('cancel'),
+      ok: takeModalClick('OK'),
+      cancel: takeModalClick('CANCEL'),
     })
 
     if (click.ok) {
