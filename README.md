@@ -17,22 +17,26 @@ yarn link redux-saga-modal && yarn
 
 ```javascript
 //in your root container 
-import { ConnectModal } from 'redux-saga-modal';
+import { Modals } from 'redux-saga-modal';
 import { exampleModalSaga } from '../sagas/modals';
 import { anotherModalSaga } from '../sagas/modals';
 
 class App extends Component {
   render() {
     const { modals, children } = this.props;
+    
     return (
       <div>
-        <ConnectModal
+
+        {children}
+
+        <Modals
           dispatch={this.props.dispatch.bind(this)}
           reducer={modals}>
-            <ExampleModal name='bootstrap' saga={exampleModalSaga} />
-            <ExampleModal name='anotherExample' saga={anotherModalSaga} />
-        </ConnectModal>
-        {children}
+          <ExampleModal name='bootstrap' saga={exampleModalSaga} />
+          <ExampleModal name='anotherExample' saga={anotherModalSaga} />
+        </Modals>
+
       </div>
     )
   }
