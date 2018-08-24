@@ -6,10 +6,10 @@ export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     
   case types.INITIALIZE_MODAL: {
-    const { key, props, clicked } = action.payload;
+    const { name, props, clicked } = action.payload;
     return {
       ...state,
-      [key]: {
+      [name]: {
         isOpen: false,
         props: props,
         clicked: clicked,
@@ -18,10 +18,10 @@ export default function reducer(state = initialState, action = {}) {
   }
 
   case types.SHOW_MODAL: {
-    const { key, props, clicked } = action.payload;
+    const { name, props, clicked } = action.payload;
     return {
       ...state,
-      [key]: {
+      [name]: {
         isOpen: true,
         props: props,
         clicked: clicked,
@@ -30,21 +30,21 @@ export default function reducer(state = initialState, action = {}) {
   }
   
   case types.HIDE_MODAL: {
-    const { key } = action.payload;
+    const { name } = action.payload;
     return {
       ...state,
-      [key]: {
-        ...state[key],
+      [name]: {
+        ...state[name],
         isOpen: false,
       },
     };
   }
     
   case types.RESET_MODAL: {
-    const { key } = action.payload;
+    const { name } = action.payload;
     return {
       ...state,
-      [key]: {
+      [name]: {
         isOpen: false,
         props: {},
         clicked: null,
@@ -53,24 +53,24 @@ export default function reducer(state = initialState, action = {}) {
   }
     
   case types.MODAL_CLICK: {
-    const { key, value } = action.payload;
+    const { name, value } = action.payload;
     return {
       ...state,
-      [key]: {
-        ...state[key],
+      [name]: {
+        ...state[name],
         clicked: value,
       },
     };
   }
     
   case types.ADD_TO_MODAL: {
-    const { key, props } = action.payload;
+    const { name, props } = action.payload;
     return {
       ...state,
-      [key]: {
-        ...state[key],
+      [name]: {
+        ...state[name],
         props: {
-          ...state[key].props,
+          ...state[name].props,
           ...props,
         },
       },

@@ -17,80 +17,80 @@ yarn link redux-saga-modal && yarn
 ## Setup
 
 ```javascript
-//in the root-container (already connected to store)
+//in your root container 
 import { ConnectModal } from 'redux-saga-modal';
-import { SimpleModal, ConfirmModal } from 'components/Modals';
+import { showModal as showModalSaga} from 'redux-saga-modal';
+import { exampleModalSaga } from '../sagas/modals';
 
-export default class App extends Component {
+class App extends Component {
   render() {
-    const {
-      children,
-      modals,
-    } = this.props;
-
+    const { modals, children } = this.props;
     return (
       <div>
-        {children}
         <ConnectModal
-          {...this.props}
-          dispatch={props.dispatch}
+          dispatch={this.props.dispatch.bind(this)}
           reducer={modals}>
-          <ConfirmModal
-            { ...initialProps.confirm }
-            saga={confirmModalSaga}
-            key={'confirm'} />
-          <SimpleModal
-            {...initialProps.greeting}
-            saga={greetingModalSaga}
-            key={'greeting'} />
+            <BootstrapModal name='bootstrap' saga={exampleModalSaga} />
         </ConnectModal>
+        {children}
       </div>
-    );
+    )
   }
 }
+const mapStateToProps = state => ({
+  modals: state.modals,
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {dispatch, showModal: showModalSaga}, dispatch
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(App)
 
 //in the root-reducer
-import cabinetReducer from './domains/cabinet';
 import { reducer as modalReducer } from 'redux-saga-modal';
 
 const appReducer = combineReducers({
-  cabinetReducer: cabinetReducer,
-  modalReducer: modalReducer,
+  modals: modalReducer,
+  //...another app reducers
 });
 
 //in the root-saga
 import { fork, all } from 'redux-saga/effects';
-import { sagas as appSagas } from 'domains/app';
 import { sagas as modalSagas } from 'redux-saga-modal';
 
 export default function* rootSaga() {
   yield all([
-    fork(appSagas),
     fork(modalSagas),
+    //...another app sagas
   ]);
 }
 
 //After that you can manage modals with you sagas. They will be automatically invoken after dispatching action showModal
-import { showModal } from 'redux-saga-modal';
+import { showModal, hideModal, takeModalClick } from 'redux-saga-modal';
+import { race, put, call } from 'redux-saga/effects';
+import api from '../api';
 
-export function* confirmModalSaga(action) {
+export function* exampleModalSaga() {
   while (true) {
-    const modalKey = yield getContext('key');
-    const {
-      takeModalClick,
-      takeModalHide,
-      showModal,
-     } = yield getContext('utils');
+     yield put(showModal('bootstrap', { 
+      text: 'You are leaving without saving', 
+      title: 'Save changes?',
+    }));
+    
+    const click = yield race({
+      ok: takeModalClick('ok'),
+      cancel: takeModalClick('cancel'),
+    })
 
-    const click = yield race(
-      ok: takeModalClick('OK'),
-      cancel: takeModalClick('CANCEL'),
-      hide: takeModalHide(modalKey)
-    );
-    if (hide) {
-      yield put(showModal(modalKey, { text: 'Are you sure? '}));
-      ...
+    if (click.ok) {
+      yield call(api.save);
     }
+
+    return yield put(hideModal('bootstrap'));
   }
 }
 ```

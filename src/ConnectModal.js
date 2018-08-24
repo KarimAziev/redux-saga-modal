@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import ModalWrapper from 'react-modal';
-import defaultStyles from './styles';
 import * as actions from './actions';
 
 class ModalsInvoker extends Component {
@@ -16,11 +14,11 @@ class ModalsInvoker extends Component {
       reducer,
     } = this.props;
     
-    React.Children.forEach(children, ({ key, props }) => {
-      const saga = props.saga;
-      
-      if (saga && !reducer[key]) {
-        dispatch(actions.inizializeModal(key, saga));
+    React.Children.forEach(children, ({ props }) => {
+      const { saga, name } = props;
+
+      if (saga && !reducer[name]) {
+        dispatch(actions.inizializeModal(name, saga, props));
       }
     });
   }
@@ -29,15 +27,14 @@ class ModalsInvoker extends Component {
     const { 
       reducer,
       dispatch,
-      wrapperStyle,
     } = this.props;
      
-    const modalReducerSelector = key => reducer[key] || {};
+    const modalReducerSelector = name => reducer[name] || {};
     
     return React.Children.map(children, child => {
-      const { key } = child;
+      const { name } = child.props;
       
-      const modalProps = modalReducerSelector(key);
+      const modalProps = modalReducerSelector(name);
 
       if (!React.isValidElement(child) ) {
         return null;
@@ -45,43 +42,31 @@ class ModalsInvoker extends Component {
       
       const updatedProps = {
         ...child.props, 
-        ...modalProps, 
+        ...modalProps.props, 
+        isOpen: modalProps.isOpen,
         showModal: (newKey, payload) => dispatch(actions.showModal(newKey, payload)),
+        clickModal: (value) => dispatch(actions.clickModal(name, value)),
       };
       
-      const bindModalKey = actionKey => {
-        const action = actions[actionKey];
-        updatedProps[actionKey] = (payload) => dispatch(action(key, payload));
+      const bindModalKey = actionName => {
+        const action = actions[actionName];
+        updatedProps[actionName] = (payload) => dispatch(action(name, payload));
       };
-      
+
       Object.keys(actions)
-        .filter(actionKey => !updatedProps[actionKey])
+        .filter(actionName => !updatedProps[actionName])
         .forEach(bindModalKey);
       
-      const Modal = React.cloneElement(child, 
-        { ...updatedProps, key })
-
-      return (
-        <ModalWrapper
-          contentLabel={Modal.props.key}
-          style={wrapperStyle || defaultStyles}
-          ariaHideApp={false}
-          isOpen={Modal.props.isOpen} >
-          { Modal }
-        </ModalWrapper>
-      )
+      const modal = React.cloneElement(child, updatedProps)
+      
+      return modal;
     });
   }
   
 
   render() {
-    const { children } = this.props;
-
-    return (
-      <span>
-        {this.renderChildren(children)}
-      </span>
-    );
+    const children = this.renderChildren(this.props.children);
+    return children;
   }
 }
 

@@ -9,7 +9,7 @@ const createSelectorN = curriedFn => (...selectors) => (
   createSelector(...selectors, uncurry(curriedFn))
 );
 
-const propOr = (data, defProp) => key => data[key] || defProp;
+const propOr = (data, defProp) => name => data[name] || defProp;
 
 export const modalsReducerSelector = state => state.modal;
 
@@ -30,4 +30,4 @@ export const isModalsInittedSelector = createSelector(
   }
 );
 
-export const modalDataSelector = createSelectorN(propOr)(modalsReducerSelector);
+export const modalSelector = createSelectorN(propOr)(state => state.modal);

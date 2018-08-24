@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-modal",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": false,
   "description": "saga modals",
   "main": "lib/index.js",
@@ -33,8 +33,8 @@
     "eslint-plugin-react": "^7.3.0",
     "eslint-plugin-react-app": "^3.0.0",
     "hoist-non-react-statics": "^2.5.5",
-    "react": "^15.0.0",
-    "react-dom": "^15.6.1",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "react-modal": "^3.4.5",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",

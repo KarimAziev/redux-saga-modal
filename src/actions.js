@@ -1,47 +1,47 @@
 import types from './types';
 
-export function showModal(key, payload = {}) {
+export function showModal(name, payload = {}) {
   return {
     type: types.SHOW_MODAL,
     payload: {
-      key,
+      name,
       props: payload,
     },
   };
 }
 
-export function hideModal(key) {
+export function hideModal(name) {
   return {
     type: types.HIDE_MODAL,
-    payload: { key },
+    payload: { name },
   };
 }
 
-export function clickModalItem(key, value) {
+export function clickModal(name, value) {
   return {
     type: types.MODAL_CLICK,
     payload: {
-      key: key,
+      name: name,
       value: value,
     },
   };
 }
 
-export function addToModalProps(key, props = {}) {
+export function addToModalProps(name, props = {}) {
   return {
     type: types.ADD_TO_MODAL,
     payload: {
-      key,
+      name,
       props,
     },
   };
 }
 
 
-export function resetModal(key) {
+export function resetModal(name) {
   return {
     type: types.RESET_MODAL,
-    payload: { key },
+    payload: { name },
   };
 }
 
@@ -51,9 +51,9 @@ export function resetAllModals() {
   };
 }
 
-export function inizializeModal(key, saga) {
+export function inizializeModal(name, saga) {
   return {
     type: types.INITIALIZE_MODAL,
-    payload: { key, saga, props: {} },
+    payload: { name, saga, props: {} },
   };
 }
