@@ -31,3 +31,4 @@ export const isModalsInittedSelector = createSelector(
 );
 
 export const modalSelector = createSelectorN(propOr)(state => state.modal);
+export const modalsStateSelector = state => state.modals;

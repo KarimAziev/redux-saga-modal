@@ -1,22 +1,19 @@
 import 'core-js/shim';
 import 'regenerator-runtime/runtime';
-
 import reducer from './reducer';
-import types from './types';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import Modals from './Modals';
+import connectSagaModal from './SagaModal';
 import sagas from './sagas';
-import * as utils from './utils';
+import * as lib from './lib';
 
 export default {
-  Modals,
+  connectSagaModal,
   reducer,
-  types,
   sagas,
   ...actions,
   ...selectors,
-  ...utils,
+  ...lib,
 };
 
 

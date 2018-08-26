@@ -17,26 +17,26 @@ yarn link redux-saga-modal && yarn
 
 ```javascript
 //in your root container 
-import { Modals } from 'redux-saga-modal';
+import { SagaModal } from 'redux-saga-modal';
 import { exampleModalSaga } from '../sagas/modals';
-import { anotherModalSaga } from '../sagas/modals';
+import ExampleModal from './ExampleModal'
+
+const Modal = SagaModal({ 
+  name: 'bootstrap', 
+  saga: exampleModalSaga,
+  initProps: { title: 'Hello', },
+ })(BootstrapModal);
 
 class App extends Component {
+
   render() {
-    const { modals, children } = this.props;
-    
+    const { children, showModal, show } = this.props;
+
     return (
       <div>
-
+        <Button  bsStyle='primary' onClick={() => show('bootstrap')}>Show modal</Button>
+         <SagaModal />
         {children}
-
-        <Modals
-          dispatch={this.props.dispatch.bind(this)}
-          reducer={modals}>
-          <ExampleModal name='bootstrap' saga={exampleModalSaga} />
-          <ExampleModal name='anotherExample' saga={anotherModalSaga} />
-        </Modals>
-
       </div>
     )
   }
@@ -103,29 +103,32 @@ class ExampleModal extends Component {
 }
 
 //After that you can manage modals with you sagas. They will be automatically invoken after dispatching action showModal
-import { showModal, hideModal, takeModalClick } from 'redux-saga-modal';
-import { race, put, call } from 'redux-saga/effects';
+import { takeModalClick } from 'redux-saga-modal';
+import { race, call } from 'redux-saga/effects';
 import api from '../api';
 
-export function* exampleModalSaga() {
+export function* exampleModalSaga(modal) {
+  modal.show({ 
+    text: 'You are leaving without saving', 
+    title: 'Save changes?',
+  })
+  
   while (true) {
-     yield put(showModal('bootstrap', { 
-      text: 'You are leaving without saving', 
-      title: 'Save changes?',
-    }));
-    
     const click = yield race({
-      ok: takeModalClick('OK'),
-      cancel: takeModalClick('CANCEL'),
+      ok: takeModalClick('ok'),
+      cancel: takeModalClick('cancel'),
     })
 
     if (click.ok) {
+      modal.update({ title: 'Saving', isLoading: true });
       yield call(api.save);
+      modal.update({ title: 'Changes saved', isLoading: true });
     }
-
-    return yield put(hideModal('bootstrap'));
+    
+    modal.hide();
   }
 }
+
 ```
 
 ## License
