@@ -1,25 +1,10 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-
-const uglifyOptions = {
-  ecma: 8,
-  warnings: false,
-  output: {
-    comments: true,
-    beautify: true,
-  },
-  toplevel: true,
-  nameCache: null,
-  ie8: false,
-  keep_classnames: true,
-  keep_fnames: true,
-}
 
 
 
 const createConfig = (env, args) => {
   const config = {
-    entry: './src/index.js',
+    entry: './src',
     stats: {
       colors: true,
       hash: true,
@@ -38,16 +23,6 @@ const createConfig = (env, args) => {
       globalObject: 'this',
       library: 'Modals',
     },
-    externals: {
-      'react': {
-        root: 'React',
-        commonjs2: 'react',
-        commonjs: 'react',
-        amd: 'react',
-      },
-    
-    },
-        
     module: {
       rules: [
         {
@@ -62,15 +37,7 @@ const createConfig = (env, args) => {
     watchOptions: {
       ignored: [/node_modules/, 'scripts/**/*.js'],
     },
-    optimization: {
-      namedChunks: true,
-      minimizer: [
-        new UglifyJsPlugin({
-          sourceMap: true,
-          uglifyOptions: uglifyOptions,
-        }),
-      ],
-    },
+
     devServer: {
       contentBase: path.join(__dirname, 'lib'),
       filename: 'index.js',
