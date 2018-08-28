@@ -4,7 +4,7 @@
 
 ## Installation
 ```bash
-npm i --save redux-modal
+npm i redux-saga-modal
 ```
 ## Usage
 Pass the `modalReducer` to your store. It serves for all of your modals.
