@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-modal",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": false,
   "description": "redux saga modal",
   "main": "lib/index.js",
@@ -11,7 +11,6 @@
     "build:dev": "webpack --watch --mode development --config webpack.config.babel.js --info-verbosity verbose"
   },
   "keywords": [
-    "redux-saga-modal",
     "redux-saga",
     "modal",
     "redux"
@@ -42,7 +41,7 @@
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^3.1.4"
   },
-  "repository": "git@github.com:KarimAziev/redux-saga-modal",
+  "repository": "git+github.com/KarimAziev/redux-saga-modal",
   "dependencies": {
     "hoist-non-react-statics": "^2.0.0"
   },
