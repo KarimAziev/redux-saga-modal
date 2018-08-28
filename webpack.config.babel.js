@@ -1,7 +1,5 @@
 const path = require('path');
 
-
-
 const createConfig = (env, args) => {
   const config = {
     entry: './src',
