@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-modal",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "saga modals",
   "main": "lib/index.js",
@@ -22,6 +22,7 @@
     "babel-core": "^6.26.0",
     "babel-eslint": "8.2.5",
     "babel-loader": "^7.1.4",
+    "babel-polyfill": "^6.26.0",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
@@ -32,20 +33,22 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.3.0",
     "eslint-plugin-react-app": "^3.0.0",
-    "hoist-non-react-statics": "^2.5.5",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "react-modal": "^3.4.5",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
-    "reselect": "^3.0.1",
     "webpack": "^4.4.1",
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^3.1.4"
   },
   "repository": "git@github.com:KarimAziev/redux-saga-modal",
   "dependencies": {
-    "babel-polyfill": "^6.26.0"
+    "hoist-non-react-statics": "^2.0.0"
+  },
+  "peerDependencies": {
+    "react": "^0.14.0 || >=15.0.0",
+    "react-redux": "^4.0.0 || ^5.0.0",
+    "redux": "^3.0.0 || ^4.0.0"
   }
 }

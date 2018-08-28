@@ -1,5 +1,12 @@
 import types from './types';
-
+export function forkModal({ name, saga, isOpen, props, context }) {
+  return {
+    type: types.FORK_MODAL,
+    payload: { name, isOpen, props },
+    saga,
+    context,
+  };
+}
 export function showModal(name, payload = {}) {
   return {
     type: types.SHOW_MODAL,
@@ -19,7 +26,7 @@ export function hideModal(name) {
 
 export function clickModal(name, value) {
   return {
-    type: types.MODAL_CLICK,
+    type: types.CLICK_MODAL,
     payload: {
       name: name,
       value: value,
@@ -27,33 +34,12 @@ export function clickModal(name, value) {
   };
 }
 
-export function addToModalProps(name, props = {}) {
+export function updateModal(name, props = {}) {
   return {
-    type: types.ADD_TO_MODAL,
+    type: types.UPDATE_MODAL,
     payload: {
       name,
       props,
     },
-  };
-}
-
-
-export function resetModal(name) {
-  return {
-    type: types.RESET_MODAL,
-    payload: { name },
-  };
-}
-
-export function resetAllModals() {
-  return {
-    type: types.RESET_ALL_MODALS,
-  };
-}
-
-export function inizializeModal(name, saga) {
-  return {
-    type: types.INITIALIZE_MODAL,
-    payload: { name, saga, props: {} },
   };
 }

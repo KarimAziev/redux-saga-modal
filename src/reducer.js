@@ -1,18 +1,20 @@
 import types from './types';
+import { omitFunctions } from './utils';
 
 const initialState = {};
 
 export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     
-  case types.INITIALIZE_MODAL: {
-    const { name, props, clicked } = action.payload;
+  case types.FORK_MODAL: {
+    const { name, isOpen, props } = action.payload;
+
     return {
       ...state,
       [name]: {
-        isOpen: false,
-        props: props,
-        clicked: clicked,
+        isOpen: isOpen,
+        props: omitFunctions(props),
+        clicked: null,
       },
     };
   }
@@ -34,25 +36,14 @@ export default function reducer(state = initialState, action = {}) {
     return {
       ...state,
       [name]: {
-        ...state[name],
-        isOpen: false,
-      },
-    };
-  }
-    
-  case types.RESET_MODAL: {
-    const { name } = action.payload;
-    return {
-      ...state,
-      [name]: {
-        isOpen: false,
         props: {},
+        isOpen: false,
         clicked: null,
       },
     };
   }
-    
-  case types.MODAL_CLICK: {
+
+  case types.CLICK_MODAL: {
     const { name, value } = action.payload;
     return {
       ...state,
@@ -63,7 +54,7 @@ export default function reducer(state = initialState, action = {}) {
     };
   }
     
-  case types.ADD_TO_MODAL: {
+  case types.UPDATE_MODAL: {
     const { name, props } = action.payload;
     return {
       ...state,

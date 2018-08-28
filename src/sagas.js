@@ -1,14 +1,14 @@
 
-import { takeEvery, setContext, fork } from 'redux-saga/effects';
-import * as utils from './utils';
-import { inizializeModal } from './actions';
-
-
-export default function* sagasInvoker() {
-  yield takeEvery(inizializeModal().type, invoker);
+import { takeEvery, fork } from 'redux-saga/effects';
+import types from './types';
+export default function* sagasForker() {
+  yield takeEvery(types.FORK_MODAL, forker);
 }
 
-function* invoker({ payload: { name, saga } }) {
-  yield setContext({ name, utils })
-  yield fork(saga);
+function* forker(action) {
+  const { saga, payload, context } = action;
+  
+  if (saga) {
+    yield fork([context, saga], payload);
+  }
 }
