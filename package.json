@@ -1,12 +1,13 @@
 {
   "name": "redux-saga-modal",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "private": false,
   "description": "redux saga modal",
   "main": "lib/index.js",
   "scripts": {
     "start:dev": "webpack-dev-server",
     "build": "webpack --mode production",
+    "prepublish": "npm run build",
     "prepublishOnly": "npm run build",
     "build:dev": "webpack --watch --mode development --config webpack.config.babel.js --info-verbosity verbose"
   },
