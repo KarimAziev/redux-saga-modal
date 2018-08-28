@@ -23,7 +23,7 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer)
 ```
 Add `modalsSaga` from `redux-saga-modal` to your root saga. 
-NOTE: You don't need to fork your modals sagas here, instead pass them as a prop to the `sagaModal` wrapper. 
+**NOTE**: You don't need to fork your modals sagas here, instead pass them as a prop to the `sagaModal` wrapper. 
 
 ```javascript
 import { fork, all } from 'redux-saga/effects'
