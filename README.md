@@ -1,108 +1,58 @@
-# Redux Saga Modal (currently under development)
+# Redux Saga Modal
 
-`redux-saga-modal` (currently under development)
-will connect list of your modals to the redux store and invoke sagas when action showModal is dispatched.
-## Install (currently only local)
+`redux-saga-modal` allows to manage your modals within redux-saga and keep its state in the redux store.
+
+## Installation
 ```bash
-git clone git@github.com:KarimAziev/redux-saga-modal.git && 
-cd redux-saga-modal &&
-yarn && yarn build && yarn link
-
-//finally in your app-folder: 
-yarn link redux-saga-modal && yarn
+npm i --save redux-modal
 ```
-
-
-## Setup
+## Usage
+Pass the `modalReducer` to your store. It serves for all of your modals.
 
 ```javascript
-//in your root container 
-import { SagaModal } from 'redux-saga-modal';
-import { exampleModalSaga } from '../sagas/modals';
-import ExampleModal from './ExampleModal'
+import { createStore, combineReducers } from 'redux'
+import { reducer as modalReducer } from 'redux-saga-modal'
 
-const Modal = SagaModal({ 
-  name: 'bootstrap', 
-  saga: exampleModalSaga,
-  initProps: { title: 'Hello', },
- })(BootstrapModal);
+const rootReducer = combineReducers({
+  // ...your other reducers
+  // you have to pass formReducer under 'modal' key,
+  // for custom keys use 'getModalState'
+  modals: formReducer
+})
 
-class App extends Component {
+const store = createStore(rootReducer)
+```
+Add `modalsSaga` from `redux-saga-modal` to your root saga. 
+NOTE: You don't need to fork your modals sagas here, instead pass them as a prop to the `sagaModal` wrapper. 
 
-  render() {
-    const { children, showModal, show } = this.props;
-
-    return (
-      <div>
-        <Button  bsStyle='primary' onClick={() => show('bootstrap')}>Show modal</Button>
-         <SagaModal />
-        {children}
-      </div>
-    )
-  }
-}
-const mapStateToProps = state => ({
-  modals: state.modals,
-});
-
-const mapDispatchToProps = dispatch => bindActionCreators(
-  { dispatch }, dispatch
-);
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(App)
-
-//in the root-reducer
-import { reducer as modalReducer } from 'redux-saga-modal';
-
-const appReducer = combineReducers({
-  modals: modalReducer,
-  //...another app reducers
-});
-
-//in the root-saga
-import { fork, all } from 'redux-saga/effects';
-import { sagas as modalSagas } from 'redux-saga-modal';
+```javascript
+import { fork, all } from 'redux-saga/effects'
+import { sagas as modalsSaga } from 'redux-saga-modal'
 
 export default function* rootSaga() {
   yield all([
-    fork(modalSagas),
-    //...another app sagas
+    //...another app sagas, don't fork here modals sagas, pass them to the sagaModal wrapper
+    fork(modalsSaga),
   ]);
 }
+```
+Wrap your modal component with `sagaModal`.  
+```javascript
+import { sagaModal } from 'redux-saga-modal'
+import { exampleModalSaga } from '../sagas/modals'
+import CustomModal from './ExampleModal'
 
-//modal component
-class ExampleModal extends Component {
-  render() {
-    const { 
-      isOpen, 
-      text, 
-      title,
-      clickModal,
-    } = this.props
-
-    return (
-      <Modal show={isOpen}>
-        <Modal.Header>
-          <Modal.Title>{ title }</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          { text }
-        </Modal.Body>
-
-        <Modal.Footer>
-          <Button onClick={() => clickModal('CANCEL')}>Close</Button>
-          <Button bsStyle='primary' onClick={() => clickModal('OK')}>Save changes</Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
-}
-
-//After that you can manage modals with you sagas. They will be automatically invoken after dispatching action showModal
+const ConnectedModal = sagaModal({
+  // a unique name for the modal 
+  name: 'bootstrap', 
+  // saga to forked
+  saga: exampleModalSaga,
+  // modals own init props
+  initProps: { title: 'Hello' }
+ })(CustomModal);
+```
+From now you can manage modals within you sagas. 
+```javascript
 import { takeModalClick } from 'redux-saga-modal';
 import { race, call } from 'redux-saga/effects';
 import api from '../api';
@@ -128,7 +78,6 @@ export function* exampleModalSaga(modal) {
     modal.hide();
   }
 }
-
 ```
 
 ## License
