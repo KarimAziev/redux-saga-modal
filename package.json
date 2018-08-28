@@ -2,11 +2,12 @@
   "name": "redux-saga-modal",
   "version": "0.2.1",
   "private": false,
-  "description": "saga modals",
+  "description": "redux saga modal",
   "main": "lib/index.js",
   "scripts": {
     "start:dev": "webpack-dev-server",
     "build": "webpack --mode production",
+    "prepublishOnly": "npm run build",
     "build:dev": "webpack --watch --mode development --config webpack.config.babel.js --info-verbosity verbose",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
