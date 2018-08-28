@@ -51,12 +51,14 @@ const ConnectedModal = sagaModal({
   initProps: { title: 'Hello' }
  })(CustomModal);
 ```
-From now you can manage modals within you sagas. 
+From now you can manage modals as within you sagas as within your connected component. As a first argument your saga will receive object with methods `show`, `hide`, `update`, `click`, and props `name`, `isOpen`. These methods will also passed to your component as a props. You can also use some helpers for saga.
+
 ```javascript
 import { takeModalClick } from 'redux-saga-modal';
+import { showModal } from 'redux-saga-modal';
 import { race, call } from 'redux-saga/effects';
 import api from '../api';
-
+//first argument is object with methods (already connected to store)
 export function* exampleModalSaga(modal) {
   modal.show({ 
     text: 'You are leaving without saving', 
@@ -65,8 +67,8 @@ export function* exampleModalSaga(modal) {
   
   while (true) {
     const click = yield race({
-      ok: takeModalClick('ok'),
-      cancel: takeModalClick('cancel'),
+      ok: takeModalClick(modal.name, 'ok'),
+      cancel: takeModalClick(modal.name, 'cancel'),
     })
 
     if (click.ok) {
@@ -76,9 +78,26 @@ export function* exampleModalSaga(modal) {
     }
     
     modal.hide();
+    yield put(showModal, 'ANOTHER_MODAL_NAME');
   }
 }
 ```
+## API
+#### Action creators:
+* showModal(modalName, modalProps)
+* hideModal(modalName)
+* clickModal(modalName, clickedValue)
+* updateModal(modalName, modalProps)
+#### Modal methods:
+* show(modalName)
+* hide()
+* update(modalName, modalProps) 
+* click(clickedValue) 
+#### Saga helpers:
+* takeModalShow(modalName)
+* takeModalHide(modalName)
+* takeModalClick(modalName, modalValue)
+* takeModalUpdate(modalName)
 
 ## License
 
