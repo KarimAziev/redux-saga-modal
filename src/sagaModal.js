@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -8,26 +8,25 @@ import { getDisplayName } from './utils';
 import { modalsStateSelector } from './selectors';
 
 const initialState = {};
-export default function connectSagaModal({
-  name,
-  saga,
-  getModalsState = modalsStateSelector,
-  initProps = initialState,
-}) {
-  return WrappedComponent => {
-    class ConnectModal extends React.Component {
-      static displayName = `ConnectSagaModal(${getDisplayName(WrappedComponent, name)})`;
 
+const sagaModal = ({ 
+  name, 
+  saga, 
+  getModalsState = modalsStateSelector, 
+  initProps = initialState, 
+}) => (
+  ModalComponent => {
+    class ConnectedModal extends Component {
       static propTypes = {
         modal: PropTypes.object.isRequired,
       };
-
+      static displayName = `ConnectedModal(${getDisplayName(ModalComponent, name)})`;
       static contextTypes = {
         store: PropTypes.object.isRequired,
       };
 
       state = {
-        isOpen: this.props.modal.isOpen,
+        isOpen: !!this.props.modal.isOpen,
       };
 
       componentDidMount() {
@@ -98,7 +97,7 @@ export default function connectSagaModal({
           isOpen: isOpen,
         }
         const Modal = isOpen
-          ? React.createElement(WrappedComponent, props)
+          ? React.createElement(ModalComponent, props)
           : null;
 
         return Modal;
@@ -116,9 +115,10 @@ export default function connectSagaModal({
       }, dispatch) })
 
 
-    return connect(
-      mapStateToProps,
-      mapDispatchToProps,
-    )(hoistStatics(ConnectModal, WrappedComponent));
-  };
-}
+    return connect(mapStateToProps, mapDispatchToProps)(
+      hoistStatics(ConnectedModal, ModalComponent)
+    );
+  }
+)
+
+export default sagaModal;

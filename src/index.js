@@ -3,12 +3,12 @@ import 'regenerator-runtime/runtime';
 import reducer from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
-import connectSagaModal from './SagaModal';
+import sagaModal from './sagaModal';
 import sagas from './sagas';
 import * as lib from './lib';
 
 export default {
-  connectSagaModal,
+  sagaModal,
   reducer,
   sagas,
   ...actions,
