@@ -7,7 +7,7 @@
 npm i redux-saga-modal
 ```
 ## Usage
-Pass the `modalReducer` to your store. It serves for all of your modals.
+Pass the `modalReducer` to your store. It keeps the state of all your modal components.
 
 ```javascript
 import { createStore, combineReducers } from 'redux'
@@ -51,7 +51,7 @@ const ConnectedModal = sagaModal({
   initProps: { title: 'Hello' }
  })(CustomModal);
 ```
-From now you can manage modals as within you sagas as within your connected component. As a first argument your saga will receive object with methods `show`, `hide`, `update`, `click`, and props `name`, `isOpen`. These methods will also passed to your component as a props. You can also use some helpers for saga.
+From now you can manage your modals as within you sagas as within its component. As a first argument your saga function will receive object with methods `show`, `hide`, `update`, `click`, and props `name`, `isOpen`. These methods will also passed to your component as a props. Moreover you can use some helpers for saga.
 
 ```javascript
 import { takeModalClick } from 'redux-saga-modal';
