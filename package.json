@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-modal",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "A wrapper to manage modals within redux-saga",
   "main": "lib/index.js",
   "files": [
@@ -10,7 +10,7 @@
   "scripts": {
     "start:dev": "webpack-dev-server",
     "build": "webpack --mode production",
-    "prepare": "npm run build",
+    "prepare": "yarn build",
     "build:dev": "webpack --watch --mode development --config webpack.config.babel.js --info-verbosity verbose"
   },
   "keywords": [
