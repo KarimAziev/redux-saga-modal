@@ -15,7 +15,7 @@
     "prepublish": "yarn build",
     "precommit": "lint-staged",
     "build:dev": "webpack --watch --mode development --config webpack.config.babel.js --info-verbosity verbose",
-    "release": "release-it --preRelease=beta --verbose --github.release"
+    "release": "release-it --verbose --github.release"
   },
   "lint-staged": {
     "*.{js, json, lock}": [
