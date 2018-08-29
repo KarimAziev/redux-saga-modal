@@ -8,10 +8,20 @@
     "src"
   ],
   "scripts": {
+    "clean": "rimraf lib",
+    "prebuild": "yarn clean",
     "start:dev": "webpack-dev-server",
     "build": "webpack --mode production",
-    "prepare": "yarn build",
-    "build:dev": "webpack --watch --mode development --config webpack.config.babel.js --info-verbosity verbose"
+    "prepublish": "yarn build",
+    "precommit": "lint-staged",
+    "build:dev": "webpack --watch --mode development --config webpack.config.babel.js --info-verbosity verbose",
+    "release": "release-it --preRelease=beta --verbose --github.release"
+  },
+  "lint-staged": {
+    "*.{js, json, lock}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "keywords": [
     "redux-saga",
@@ -43,11 +53,14 @@
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.3.0",
     "eslint-plugin-react-app": "^3.0.0",
+    "lint-staged": "^7.2.2",
+    "prettier": "^1.14.2",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
+    "rimraf": "^2.6.2",
     "webpack": "^4.4.1",
     "webpack-cli": "^2.0.12",
     "webpack-dev-server": "^3.1.4"

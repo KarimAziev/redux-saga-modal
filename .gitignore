@@ -23,7 +23,8 @@ $ IDE
 .env.development.local
 .env.test.local
 .env.production.local
-
+.release-it.json
+coverage
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
