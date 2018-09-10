@@ -80,7 +80,7 @@ export function* exampleModalSaga(props) {
     }
     
     this.hide();
-    yield put(showModal, 'ANOTHER_MODAL_NAME');
+    yield put(showModal('ANOTHER_MODAL_NAME', { text: 'Goodbye'}));
   }
 }
 ```
