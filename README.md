@@ -15,9 +15,9 @@ import { reducer as modalReducer } from 'redux-saga-modal'
 
 const rootReducer = combineReducers({
   // ...your other reducers
-  // you have to pass formReducer under 'modal' key,
-  // for custom keys use 'getModalState'
-  modals: formReducer
+  // you have to pass modalReducer under 'modal' key,
+  // for custom keys use 'getModalsState'
+  modals: modalReducer
 })
 
 const store = createStore(rootReducer)
@@ -48,10 +48,12 @@ const ConnectedModal = sagaModal({
   // saga to forked
   saga: exampleModalSaga,
   // modals own init props
-  initProps: { title: 'Hello' }
+  initProps: { title: 'Hello' },
+  // getModalsState - optional selector. Use it if your modals reducer's name is not "modals",
+  getModalsState: state => state.myCustomModalReducer, 
  })(CustomModal);
 ```
-From now you can manage your modals as within you sagas as within its component. Your saga function will fork with context, includes methods `show`, `hide`, `update`, `click`, and props `name`, `isOpen`. These methods will also passed to your component as a props. Moreover you can use some helpers for saga.
+From now you can manage your modals as within you sagas as within its component. Your saga function will fork with context, includes methods `show`, `hide`, `update`, `click`, and prop `name`. It will also be passed to your component as a props. Moreover you can use some helpers for saga.
 
 ```javascript
 import { takeModalClick } from 'redux-saga-modal';
@@ -125,4 +127,4 @@ export function* exampleModalSaga(props) {
 * name  : String [required]
 ## License
 
-MIT
+**MIT**
