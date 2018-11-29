@@ -1,6 +1,6 @@
 {
   "name": "redux-saga-modal",
-  "version": "0.2.13",
+  "version": "0.3.0-alpha.0",
   "description": "A wrapper to manage modals within redux-saga",
   "main": "lib/index.js",
   "files": [
