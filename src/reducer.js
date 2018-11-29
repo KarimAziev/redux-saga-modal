@@ -1,5 +1,5 @@
 import types from './types';
-import { omitFunctions } from './utils';
+import { omitFunctions, omitProps } from './utils';
 
 const initialState = {};
 
@@ -7,26 +7,25 @@ export default function reducer(state = initialState, action = {}) {
   switch (action.type) {
     
   case types.FORK_MODAL: {
-    const { name, isOpen, props } = action.payload;
-
+    const { name, isOpen, saga } = action.payload;
     return {
       ...state,
       [name]: {
-        isOpen: isOpen,
-        props: omitFunctions(props),
-        clicked: null,
+        ...omitProps(['isOpen', 'name'], omitFunctions(action.payload)),
+        isOpen,
+        saga,
       },
     };
   }
 
   case types.SHOW_MODAL: {
-    const { name, props, clicked } = action.payload;
+    const { name } = action.payload;
     return {
       ...state,
       [name]: {
+        ...omitProps(['isOpen', 'name'], omitFunctions(action.payload)),
         isOpen: true,
-        props: props,
-        clicked: clicked,
+        saga: state[name] && state[name].saga,
       },
     };
   }
@@ -36,9 +35,9 @@ export default function reducer(state = initialState, action = {}) {
     return {
       ...state,
       [name]: {
-        props: {},
         isOpen: false,
         clicked: null,
+        saga: state[name] && state[name].saga,
       },
     };
   }
@@ -55,17 +54,19 @@ export default function reducer(state = initialState, action = {}) {
   }
     
   case types.UPDATE_MODAL: {
-    const { name, props } = action.payload;
+    const { name } = action.payload;
     return {
       ...state,
       [name]: {
         ...state[name],
-        props: {
-          ...state[name].props,
-          ...props,
-        },
+        ...omitProps(['isOpen', 'name'], omitFunctions(action.payload)),
       },
     };
+  }
+
+  case types.DESTROY_MODAL: {
+    const { name } = action.payload;
+    return omitProps([name], state);
   }
 
   default: 

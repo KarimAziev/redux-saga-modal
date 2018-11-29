@@ -12,3 +12,7 @@ export const takeModalClick = (name, value) => take(action =>
   checkActionType(types.CLICK_MODAL)(action) && checkModalName(name)(action) && checkModalClick(value)(action));
 export const takeModalUpdate = name => take(action => 
   checkActionType(types.UPDATE_MODAL)(action) && checkModalName(name)(action));
+
+export const takeModalDestroy = name => take(action => 
+  checkActionType(types.DESTROY_MODAL)(action) && checkModalName(name)(action));
+  

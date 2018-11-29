@@ -36,3 +36,15 @@ export function omitFunctions(data) {
 
   return result;
 }
+
+
+export const isObjEmpty = obj => Object.keys(obj).length <= 0;
+export const omitProps = (keys, obj) => {
+  const data = {};
+  
+  Object.keys(obj)
+    .filter(key => !keys.includes(key))
+    .forEach(key => data[key] = obj[key]);
+
+  return data;
+};

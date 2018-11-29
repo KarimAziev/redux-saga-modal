@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import hoistStatics from 'hoist-non-react-statics';
-import { getDisplayName } from './utils';
+import { getDisplayName, omitFunctions } from './utils';
 import { modalsStateSelector } from './selectors';
 
 const initialState = {};
@@ -14,6 +14,7 @@ const sagaModal = ({
   saga, 
   getModalsState = modalsStateSelector, 
   initProps = initialState, 
+  destroyOnUnmount = true,
 }) => (
   ModalComponent => {
     class ConnectedModal extends Component {
@@ -29,50 +30,55 @@ const sagaModal = ({
         isOpen: !!this.props.modal.isOpen,
       };
 
-      componentDidMount() {
-        const payload = { 
-          name, 
-          saga, 
-          props: this.getProps(), 
-          isOpen: this.state.isOpen,
-          context: {
-            ...this.getCurriedActions(),
-            name,
-          },
-        };
-   
-        this.props.forkModal(payload);
-      }
 
       componentDidUpdate(prevProps) {
         const { modal } = this.props;
-        if (modal.isOpen !== prevProps.modal.isOpen ) {
-          this.setState({ isOpen: modal.isOpen });
+        const { isOpen } = modal;
+        const isToggled = isOpen !== prevProps.modal.isOpen;
+        if (isToggled ) {
+          
+          const payload = !modal.saga && isOpen 
+            ? this.createSagaProps(modal)
+            : null;
+
+          if (payload) {
+            this.fork(payload);
+          }
+          this.setState({ isOpen });
         }
       }
+      
+      createSagaProps = (modal) => ({ 
+        name, 
+        ...omitFunctions(this.getProps()), 
+        saga: saga ? saga : this.props.saga, 
+        isOpen: modal.isOpen,
+        context: {
+          ...this.getCurriedActions(),
+          name,
+        },
+      });
 
+      fork = payload => this.props.forkModal.bind(this)(name, payload);
       hide = () => {
         this.props.hideModal(name);
+        if (destroyOnUnmount) {
+          this.props.destroyModal(name);
+        }
       };
 
-      show = (payload) => {
-        this.props.showModal(name, payload);
-      }
+      show = (payload) => this.props.showModal(name, payload);
 
-      click = (value) => {
-        this.props.clickModal(name, value);
-      };
+      click = (value) => this.props.clickModal(name, value);
 
-      update = (newProps) => {
-        this.props.updateModal(name, newProps);
-      }
+      update = (newProps) => this.props.updateModal(name, newProps);
 
       getProps = () => {
         const { modal, ...ownProps } = this.props;
 
         return ({
           ...ownProps,
-          ...modal.props,
+          ...modal,
         })
       }
 
@@ -91,16 +97,15 @@ const sagaModal = ({
         if (!isOpen) {
           return null;
         }
+
         const props = {
           ...this.getProps(),
           ...this.getCurriedActions(),
           isOpen: isOpen,
+          saga: saga ? saga : this.props.saga,
         }
-        const Modal = isOpen
-          ? React.createElement(ModalComponent, props)
-          : null;
 
-        return Modal;
+        return React.createElement(ModalComponent, props);
       }
     }
     
