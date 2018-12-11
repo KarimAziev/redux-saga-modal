@@ -21,39 +21,43 @@ const rootReducer = combineReducers({
 })
 
 const store = createStore(rootReducer)
+
 ```
-Add `modalsSaga` from `redux-saga-modal` to your root saga. 
-> **NOTE**: You don't need to fork your modals sagas here, instead pass them as a prop to the `sagaModal` wrapper. 
+Create a config object with modals names as keys and sagas as values. Pass the config as argument to `modalsSaga` and fork it in your rootSaga.
 
 ```javascript
 import { fork, all } from 'redux-saga/effects'
 import { sagas as modalsSaga } from 'redux-saga-modal'
+import { confirmModalSaga, anotherModalSaga } from './sagas';
+
+const modalsConfig = {
+  'CONFIRM_MODAL': confirmModalSaga,
+  'ANOTHER_MODAL': anotherModalSaga,
+};
 
 export default function* rootSaga() {
   yield all([
     //...another app sagas, don't fork here modals sagas, pass them to the sagaModal wrapper
-    fork(modalsSaga),
+    fork(modalsSaga, modalsConfig),
   ]);
 }
 ```
 Wrap your modal component with `sagaModal`.  
 ```javascript
 import { sagaModal } from 'redux-saga-modal'
-import { exampleModalSaga } from '../sagas/modals'
 import CustomModal from './ExampleModal'
 
 const ConnectedModal = sagaModal({
-  // a unique name for the modal 
-  name: 'bootstrap', 
+  // an unique name for the modal 
+  name: 'CONFIRM_MODAL', 
   // saga to forked
-  saga: exampleModalSaga,
   // modals own init props
   initProps: { title: 'Hello' },
   // getModalsState - optional selector. Use it if your modals reducer's name is not "modals",
   getModalsState: state => state.myCustomModalReducer, 
  })(CustomModal);
 ```
-From now you can manage your modals as within you sagas as within its component. Your saga function will fork with context, includes methods `show`, `hide`, `update`, `click`, and prop `name`. It will also be passed to your component as a props. Moreover you can use some helpers for saga.
+From now your sagas will be called every time when action `showModal` has been dispatched and cancelled after `hideModal`. They will  receive the context includes methods `hide`, `update`, `click`, prop `name` and helper `takeClick`. It will also be passed to your component as a props.
 
 ```javascript
 import { takeModalClick } from 'redux-saga-modal';
@@ -61,70 +65,56 @@ import { showModal } from 'redux-saga-modal';
 import { race, call } from 'redux-saga/effects';
 import api from '../api';
 
-export function* exampleModalSaga(props) {
-  this.show({ 
-    text: 'You are leaving without saving', 
-    title: 'Save changes?',
-  })
-  
+export function* confirmModalSaga(props) {
   while (true) {
-    const click = yield race({
-      ok: takeModalClick(this.name, 'ok'),
-      cancel: takeModalClick(this.name, 'cancel'),
-    })
+   const click = yield race({
+     //will take click with value 'SUBMIT'
+      submit: this.takeClick('SUBMIT'), 
+      //if takeClick receive function as an argument it will be called as a custom checker
+      cancel: this.takeClick(value => value === 'CANCEL'),
+    });
 
-    if (click.ok) {
-      this.update({ title: 'Saving', isLoading: true });
+    if (click.submit) {
+      yield this.update({ title: 'Saving', isLoading: true });
       yield call(api.save);
-      this.update({ title: 'Changes saved', isLoading: true });
+      yield this.update({ title: 'Changes saved', isLoading: false });
     }
     
-    this.hide();
-    yield put(showModal('ANOTHER_MODAL_NAME', { text: 'Goodbye'}));
+    yield this.hide();
+    yield put(showModal('ANOTHER_MODAL', { text: 'Goodbye'}));
   }
 }
 ```
 ## API
 ### Action creators:
 **showModal**(name, props)
-* name  : String [required]
-* props : Object 
+* name  : string [required]
+* props : object 
 
 **hideModal**(name)
-* name: String [required]
+* name: string [required]
 
 **clickModal**(name, value)
-* name: String [required]
-* value: String - a value of an item on the modal that have been clicked
+* name: string [required]
+* value: string - a value of an item on the modal that have been clicked
 
 **updateModal**(name, props) 
-* name  : String [required]
-* props : Object 
+* name  : string [required]
+* props : object 
 
 ### Context:
-**show**() 
 
 **hide**()
 
 **update**(props) 
-* props : Object 
+* props : object 
 
 **click**(value) 
-* value: String [required]
+* value: string
 
-### Saga helpers:
-**takeModalShow**(name)
-* name  : String [required]
+**takeClick**(value)
+* value: string | function 
 
-**takeModalHide**(name)
-* name  : String [required]
-
-**takeModalClick**(name, value)
-* name  : String [required]
-* value : String [required]
-
-**takeModalUpdate**(name)
-* name  : String [required]
 ## License
 
 **MIT**

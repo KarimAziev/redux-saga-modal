@@ -1,13 +1,4 @@
 import types from './types';
-export function forkModal(name, payload = {}) {
-  return {
-    type: types.FORK_MODAL,
-    payload: {
-      ...payload,
-      name,
-    },
-  };
-}
 export function showModal(name, payload = {}) {
   return {
     type: types.SHOW_MODAL,
@@ -43,13 +34,4 @@ export function updateModal(name, payload = {}) {
       ...payload,
     },
   };
-}
-
-export function destroyModal(name) {
-  return {
-    type: types.DESTROY_MODAL,
-    payload: {
-      name,
-    },
-  }
 }
