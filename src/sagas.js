@@ -17,7 +17,6 @@ export default function* rootModalSaga(config = {}) {
       
     
       return takeLatest(filters, function* forker (action) {
-        console.log('sagasForker', action);
         const { type, payload } = action;
         if (type === types.HIDE_MODAL) {
           return;
