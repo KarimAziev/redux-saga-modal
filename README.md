@@ -4,7 +4,7 @@
 
 ## Installation
 ```bash
-npm i redux-saga-modal@^0.3.0-beta
+npm i redux-saga-modal
 ```
 ## Usage
 Pass the `modalReducer` to your store. It keeps the state of all your modal components.
