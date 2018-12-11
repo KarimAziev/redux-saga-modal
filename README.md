@@ -1,10 +1,10 @@
-# Redux Saga Modal
+# Redux Saga Modal (0.3.0-beta.0)
 
-`redux-saga-modal` allows to manage your modals within redux-saga by passing a this context to your saga and keep modals's state in the redux store. 
+`redux-saga-modal` allows to manage your modals within [redux-saga](https://github.com/redux-saga/redux-saga) by passing a context to your saga and keep modals's state in the redux store. Old [docs (version 0.2)](https://github.com/KarimAziev/redux-saga-modal/blob/57d356d16510a25bb28dae48ebb90ec3b401a6bc/README.md)
 
 ## Installation
 ```bash
-npm i redux-saga-modal
+npm i redux-saga-modal@^0.3.0-beta
 ```
 ## Usage
 Pass the `modalReducer` to your store. It keeps the state of all your modal components.
@@ -30,6 +30,8 @@ import { fork, all } from 'redux-saga/effects'
 import { sagas as modalsSaga } from 'redux-saga-modal'
 import { confirmModalSaga, anotherModalSaga } from './sagas';
 
+
+ //key is a modal name and modal is a value
 const modalsConfig = {
   'CONFIRM_MODAL': confirmModalSaga,
   'ANOTHER_MODAL': anotherModalSaga,
@@ -37,7 +39,6 @@ const modalsConfig = {
 
 export default function* rootSaga() {
   yield all([
-    //...another app sagas, don't fork here modals sagas, pass them to the sagaModal wrapper
     fork(modalsSaga, modalsConfig),
   ]);
 }
