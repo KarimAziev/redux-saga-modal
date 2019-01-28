@@ -17,6 +17,8 @@ $ IDE
 /config
 /scripts
 /dist
+/es
+es*
 
 # misc
 .DS_Store

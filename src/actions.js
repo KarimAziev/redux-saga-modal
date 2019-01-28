@@ -1,37 +1,49 @@
-import types from './types';
-export function showModal(name, payload = {}) {
+// @flow
+import actionTypes from './actionTypes';
+import type { 
+  ModalName,
+  ShowModal,
+  HideModal,
+  ClickModal,
+  UpdateModal, 
+} from './types';
+
+
+export function showModal(name: ModalName, payload: any): ShowModal {
   return {
-    type: types.SHOW_MODAL,
-    payload: {
-      ...payload,
+    type: actionTypes.SHOW_MODAL,
+    payload,
+    meta: {
       name,
     },
   };
 }
 
-export function hideModal(name) {
+export function hideModal(name: ModalName): HideModal {
   return {
-    type: types.HIDE_MODAL,
-    payload: { name },
-  };
-}
-
-export function clickModal(name, value) {
-  return {
-    type: types.CLICK_MODAL,
-    payload: {
-      name: name,
-      value: value,
+    type: actionTypes.HIDE_MODAL,
+    meta: {
+      name,
     },
   };
 }
 
-export function updateModal(name, payload = {}) {
+export function clickModal(name: ModalName, value: any): ClickModal {
   return {
-    type: types.UPDATE_MODAL,
-    payload: {
+    type: actionTypes.CLICK_MODAL,
+    payload: value,
+    meta: {
       name,
-      ...payload,
+    },
+  };
+}
+
+export function updateModal(name: ModalName, payload: any): UpdateModal {
+  return {
+    type: actionTypes.UPDATE_MODAL,
+    payload,
+    meta: {
+      name,
     },
   };
 }

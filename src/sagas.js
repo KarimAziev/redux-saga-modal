@@ -1,24 +1,25 @@
 
 import { fork, put, all, takeLatest } from 'redux-saga/effects';
-import types from './types';
+import actionTypes from './actionTypes';
 import * as actions from './actions';
 import { checkActionType, checkModalName, takeModalClick } from './lib';
 
 export default function* rootModalSaga(config = {}) {
   const names = Object.keys(config);
+
   try {
     yield all(names.map(name => {
       const saga = config[name];
       
       const filters = action => 
-        checkActionType([types.SHOW_MODAL, types.HIDE_MODAL])(action) && 
+        checkActionType([actionTypes.SHOW_MODAL, actionTypes.HIDE_MODAL])(action) && 
         checkModalName(name)(action);
 
       
     
       return takeLatest(filters, function* forker (action) {
         const { type, payload } = action;
-        if (type === types.HIDE_MODAL) {
+        if (type === actionTypes.HIDE_MODAL) {
           return;
         }
 

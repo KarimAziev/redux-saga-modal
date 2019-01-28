@@ -1,3 +1,4 @@
+// @flow
 import reducer from './reducer';
 import { clickModal, showModal, hideModal, updateModal } from './actions';
 import sagaModal from './sagaModal';

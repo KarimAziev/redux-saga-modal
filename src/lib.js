@@ -1,24 +1,31 @@
-import types from './types';
+
+// @flow
+import actionTypes from './actionTypes';
 import { take } from 'redux-saga/effects';
 import { toArrayMaybe, isFunction } from './utils';
-export const checkModalName = name => action => action.payload && action.payload.name === name;
+import type { ModalName, Action } from './types';
 
-export const checkActionType = type => action => toArrayMaybe(type).includes(action.type) && action;
-export const checkModalClick = value => action => isFunction(value) 
-  ? value(action.payload.value) 
-  : toArrayMaybe(value).includes(action.payload.value)
-export const takeModalShow = name => take(action => 
-  checkActionType(types.SHOW_MODAL)(action) && checkModalName(name)(action));
-export const takeModalHide = name => take(action => 
-  checkActionType(types.HIDE_MODAL)(action) && checkModalName(name)(action));
-export const takeModalClick = (name, value) => take(action => 
-  checkActionType(types.CLICK_MODAL)(action) && 
+export const checkModalName = (name:ModalName) => (action: Action) => action.meta && action.meta.name === name;
+
+export const checkActionType = (type: string | Array<string>) => (action: Action) => toArrayMaybe(type).includes(action.type) && action;
+export const checkModalClick = (value: any) => (action: Action) => {
+  const actionValue = action.payload;
+  return isFunction(value) 
+    ? value(actionValue) 
+    : toArrayMaybe(value).includes(actionValue);
+}
+export const takeModalShow = (name:ModalName) => take(action => 
+  checkActionType(actionTypes.SHOW_MODAL)(action) && checkModalName(name)(action));
+export const takeModalHide = (name:ModalName) => take(action => 
+  checkActionType(actionTypes.HIDE_MODAL)(action) && checkModalName(name)(action));
+export const takeModalClick = (name: ModalName, value: any) => take(action => 
+  checkActionType(actionTypes.CLICK_MODAL)(action) && 
   checkModalName(name)(action) && 
   checkModalClick(value)(action)
 )
-export const takeModalUpdate = name => take(action => 
-  checkActionType(types.UPDATE_MODAL)(action) && checkModalName(name)(action));
+export const takeModalUpdate = (name: ModalName) => take(action => 
+  checkActionType(actionTypes.UPDATE_MODAL)(action) && checkModalName(name)(action));
 
-export const takeModalDestroy = name => take(action => 
-  checkActionType(types.DESTROY_MODAL)(action) && checkModalName(name)(action));
+export const takeModalDestroy = (name: ModalName) => take(action => 
+  checkActionType(actionTypes.DESTROY_MODAL)(action) && checkModalName(name)(action));
   

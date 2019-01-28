@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+// @flow
+import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -6,25 +7,43 @@ import * as actions from './actions';
 import hoistStatics from 'hoist-non-react-statics';
 import { getDisplayName } from './utils';
 import { modalsStateSelector } from './selectors';
+import type { 
+  InjectedWrapperComponent, 
+  ConnectModalState, 
+  ConnectModalProps, 
+  Config,
+  ReduxContext,
+  ReduxModalState,
+  ModalState,
+} from './types';
 
-const initialState = {};
+const initialState: ModalState = {};
+
 
 const sagaModal = ({ 
   name, 
   getModalsState = modalsStateSelector, 
   initProps = initialState, 
-}) => (
-  ModalComponent => {
-    class ConnectedModal extends Component {
-      static propTypes = {
+}: Config): InjectedWrapperComponent => (
+  (ModalComponent) => {
+    class ConnectedModal extends React.Component<
+    ConnectModalProps,
+    ConnectModalState
+    > {
+      static propTypes: {
+        modal: ReduxModalState,
+        displayName?: string,
+      } = {
         modal: PropTypes.object.isRequired,
+        displayName: PropTypes.string,
       };
-      static displayName = `ConnectedModal(${getDisplayName(ModalComponent, name)})`;
-      static contextTypes = {
+
+      static displayName = `ConnectedModal(${String(getDisplayName(ModalComponent, name))})`;
+      static contextTypes: ReduxContext = {
         store: PropTypes.object.isRequired,
       };
 
-      state = {
+      state: ModalState = {
         isOpen: !!this.props.modal.isOpen,
       };
 
@@ -33,6 +52,7 @@ const sagaModal = ({
         const { modal } = this.props;
         const { isOpen } = modal;
         const isToggled = isOpen !== prevProps.modal.isOpen;
+
         if (isToggled ) {
           this.setState({ isOpen });
         }
@@ -64,7 +84,7 @@ const sagaModal = ({
 
         const props = {
           ...ownProps,
-          ...modal,
+          ...modal.props,
           ...this.getCurriedActions(),
           isOpen: isOpen,
         }
