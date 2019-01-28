@@ -16,6 +16,7 @@ $ IDE
 /ck
 /config
 /scripts
+/dist
 
 # misc
 .DS_Store

@@ -1,17 +1,32 @@
-import 'core-js/shim';
-import 'regenerator-runtime/runtime';
 import reducer from './reducer';
-import * as actions from './actions';
+import { clickModal, showModal, hideModal, updateModal } from './actions';
 import sagaModal from './sagaModal';
 import sagas from './sagas';
-import * as lib from './lib';
+import {
+  checkModalName,
+  checkActionType,
+  takeModalShow,
+  takeModalHide,
+  takeModalClick,
+  takeModalUpdate,
+  takeModalDestroy,
+} from './lib';
 
-export default {
+export {
   sagaModal,
   reducer,
   sagas,
-  ...actions,
-  ...lib,
+  clickModal,
+  showModal,
+  hideModal,
+  updateModal,
+  checkModalName,
+  checkActionType,
+  takeModalShow,
+  takeModalHide,
+  takeModalClick,
+  takeModalUpdate,
+  takeModalDestroy,
 };
 
 
