@@ -27,7 +27,4 @@ export const takeModalClick = (name: ModalName, value: any) => take<Pattern>(act
 )
 export const takeModalUpdate = (name: ModalName) => take<Pattern>(action => 
   checkActionType(actionTypes.UPDATE_MODAL)(action) && checkModalName(name)(action));
-
-export const takeModalDestroy = (name: ModalName) => take<Pattern>(action => 
-  checkActionType(actionTypes.DESTROY_MODAL)(action) && checkModalName(name)(action));
   

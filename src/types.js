@@ -4,53 +4,55 @@ import { Store } from 'redux';
 import { modalsStateSelector } from './selectors';
 import * as React from 'react';
 import type { Saga } from 'redux-saga';
-export type Dictionary<K, T> = {[K]: T};
+
+type Dictionary<K, T> = {[K]: T};
+type ActionMeta = {|
+  +name: ModalName,
+|};
 export type ModalComponentProps = {
   displayName?: any,
 };
 export type ModalName = string;
 export type ModalState = {
   isOpen?: boolean,
-}
+};
 
 export type ReduxModalState = {
   ...ModalState,
   clicked?: any,
   props: any,
 };
-export type ModalsState = Dictionary<ModalName, ReduxModalState>
+export type ModalsState = Dictionary<ModalName, ReduxModalState>;
 
 export type Config = {
   +name: ModalName,
   getModalsState?: typeof modalsStateSelector,
   initProps?: Object,
-}
+};
 
-type Meta = {|
-  +name: ModalName,
-|}
+
 export type ShowModal = {|
   +type: typeof actionTypes.SHOW_MODAL,
   payload?: any,
-  +meta: Meta,
-|}
+  +meta: ActionMeta,
+|};
 export type HideModal = {
   +type: typeof actionTypes.HIDE_MODAL,
-  +meta: Meta,
+  +meta: ActionMeta,
   payload?: any,
-}
+};
 
 export type ClickModal = {
   +type: typeof actionTypes.CLICK_MODAL,
   payload: any,
-  +meta: Meta,
-}
+  +meta: ActionMeta,
+};
 
 export type UpdateModal = {
   +type: typeof actionTypes.UPDATE_MODAL,
   payload: any,
-  +meta: Meta,
-}
+  +meta: ActionMeta,
+};
 
 type AnyAction = {
   +type: string, 
@@ -63,7 +65,6 @@ export type Action = AnyAction | ShowModal | HideModal | ClickModal | UpdateModa
 export interface ReduxContext {
   store: Store<any>;
 }
-
 
 
 export interface InjectedProps {
@@ -94,6 +95,6 @@ export interface InjectedWrapperComponent {
 
 export type SagaConfig = {
   [key: ModalName]: Saga<void>
-}
+};
 
-export type RootModalSaga = Saga<void>
+export type RootModalSaga = Saga<void>;

@@ -10,7 +10,6 @@ import {
   takeModalHide,
   takeModalClick,
   takeModalUpdate,
-  takeModalDestroy,
 } from './lib';
 
 export {
@@ -27,7 +26,6 @@ export {
   takeModalHide,
   takeModalClick,
   takeModalUpdate,
-  takeModalDestroy,
 };
 
 
