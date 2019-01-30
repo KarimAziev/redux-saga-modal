@@ -1,10 +1,11 @@
-
+// @flow
 import { fork, put, all, takeLatest } from 'redux-saga/effects';
 import actionTypes from './actionTypes';
 import * as actions from './actions';
 import { checkActionType, checkModalName, takeModalClick } from './lib';
+import type { SagaConfig, RootModalSaga } from './types';
 
-export default function* rootModalSaga(config = {}) {
+export default function* rootModalSaga(config: SagaConfig = {}): RootModalSaga {
   const names = Object.keys(config);
 
   try {

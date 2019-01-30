@@ -17,6 +17,7 @@ import type {
   ModalState,
 } from './types';
 
+
 const initialState: ModalState = {};
 
 
@@ -32,13 +33,12 @@ const sagaModal = ({
     > {
       static propTypes: {
         modal: ReduxModalState,
-        displayName?: string,
+        displayName: string,
       } = {
         modal: PropTypes.object.isRequired,
         displayName: PropTypes.string,
       };
-
-      static displayName = `ConnectedModal(${String(getDisplayName(ModalComponent, name))})`;
+      static displayName = `ConnectModal(${getDisplayName(ModalComponent)})`;
       static contextTypes: ReduxContext = {
         store: PropTypes.object.isRequired,
       };

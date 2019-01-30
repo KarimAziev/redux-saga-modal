@@ -18,7 +18,11 @@ $ IDE
 /scripts
 /dist
 /es
-/es/**
+
+dist
+es
+lib
+*.tgz
 
 # misc
 .DS_Store
@@ -41,10 +45,10 @@ yarn-error.log*
 .vs/ProjectSettings.json
 .vs/front-end-4/v15/.suo
 .vs/
+yarn-error.log
 
 # vs code javascript config 
 jsconfig.json
 .jsbeautifyrc
 .jshintrc
 bash
-es/actions.js

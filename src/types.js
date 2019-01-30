@@ -3,8 +3,11 @@ import actionTypes from './actionTypes';
 import { Store } from 'redux';
 import { modalsStateSelector } from './selectors';
 import * as React from 'react';
+import type { Saga } from 'redux-saga';
 export type Dictionary<K, T> = {[K]: T};
-export type ModalComponentProps = any;
+export type ModalComponentProps = {
+  displayName?: any,
+};
 export type ModalName = string;
 export type ModalState = {
   isOpen?: boolean,
@@ -73,7 +76,7 @@ export interface InjectedProps {
 export interface ConnectModalProps {
   hideModal: (name: ModalName) => HideModal;
   showModal: (name: ModalName) => ShowModal;
-  updateModal: (name: ModalName, props: Object) => UpdateModal;
+  updateModal: (name: ModalName, props: any) => UpdateModal;
   clickModal: (name: ModalName, value: any) => ClickModal;
   modal: ReduxModalState;
 }
@@ -87,3 +90,10 @@ export interface InjectedWrapperComponent {
     component: React.ComponentType<ModalComponentProps>
   ): React.ComponentType<$Diff<InjectedProps, ModalComponentProps>>;
 }
+
+
+export type SagaConfig = {
+  [key: ModalName]: Saga<void>
+}
+
+export type RootModalSaga = Saga<void>
