@@ -18,7 +18,7 @@ $ IDE
 /scripts
 /dist
 /es
-es*
+/es/**
 
 # misc
 .DS_Store
@@ -47,3 +47,4 @@ jsconfig.json
 .jsbeautifyrc
 .jshintrc
 bash
+es/actions.js
