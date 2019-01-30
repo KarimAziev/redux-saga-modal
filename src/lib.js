@@ -6,8 +6,7 @@ import { toArrayMaybe, isFunction } from './utils';
 import type { ModalName, Action } from './types';
 import type { Pattern } from 'redux-saga';
 export const checkModalName = (name:ModalName) => (action: Action): boolean %checks => 
-  !!action.meta && !!action.meta.name === name;
-
+  !!action.meta && action.meta.name === name;
 export const checkActionType = (type: string | Array<string>) => (action: Action): boolean %checks => 
   toArrayMaybe(type).includes(action.type) && !!action;
 export const checkModalClick = (value: any) => (action: Action) => {
