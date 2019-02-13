@@ -1,10 +1,10 @@
 
 // @flow
 import * as React from 'react';
-export function getDisplayName(WrappedComponent: React.ComponentType<any>) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
-}
-export const toArrayMaybe = <T>(item: T): Array<T> => Array.isArray(item) ? item : [item];
+
+export const getDisplayName = (WrappedComponent: React.ComponentType<any>) => 
+  WrappedComponent.displayName || WrappedComponent.name || 'Component';
+export const toArrayMaybe = (item: mixed): Array<mixed> => Array.isArray(item) ? item : [item];
 
 export const omitProps = (keys: Array<string>, obj: Object): Object => {
   const data = {};
@@ -16,14 +16,4 @@ export const omitProps = (keys: Array<string>, obj: Object): Object => {
   return data;
 };
 
-export function isFunction(val: any) {
-  return Object.prototype.toString.call(val) === '[object Function]';
-}
-
-export function isString(val: any): boolean {
-  return typeof val === 'string' || val instanceof String
-}
-
-export function isObject(obj: any) {
-  return obj === Object(obj);
-}
+export const isFunction = (val: any) => Object.prototype.toString.call(val) === '[object Function]';

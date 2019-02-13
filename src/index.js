@@ -5,12 +5,14 @@ import sagaModal from './sagaModal';
 import sagas from './sagas';
 import {
   checkModalName,
+  checkModalClick,
   checkActionType,
   takeModalShow,
   takeModalHide,
   takeModalClick,
   takeModalUpdate,
 } from './lib';
+
 
 export {
   sagaModal,
@@ -21,6 +23,7 @@ export {
   hideModal,
   updateModal,
   checkModalName,
+  checkModalClick,
   checkActionType,
   takeModalShow,
   takeModalHide,

@@ -1,17 +1,14 @@
 // @flow
 import actionTypes from './actionTypes';
-import { Store } from 'redux';
+import { Store, Dispatch } from 'redux';
 import { modalsStateSelector } from './selectors';
 import * as React from 'react';
-import type { Saga } from 'redux-saga';
+import type { Saga, PutEffect, SelectEffect, AllEffect } from 'redux-saga';
 
 type Dictionary<K, T> = {[K]: T};
 type ActionMeta = {|
   +name: ModalName,
 |};
-export type ModalComponentProps = {
-  displayName?: any,
-};
 export type ModalName = string;
 export type ModalState = {
   isOpen?: boolean,
@@ -24,11 +21,11 @@ export type ReduxModalState = {
 };
 export type ModalsState = Dictionary<ModalName, ReduxModalState>;
 
-export type Config = {
+export type Config = {|
   +name: ModalName,
   getModalsState?: typeof modalsStateSelector,
-  initProps?: Object,
-};
+  initProps?: {},
+|};
 
 
 export type ShowModal = {|
@@ -66,30 +63,44 @@ export interface ReduxContext {
   store: Store<any>;
 }
 
-
-export interface InjectedProps {
-  isOpen: $ElementType<ModalState, 'isOpen'>;
-  hide: () => void;
-  click: (value?: any) => void;
-  update: (data: Object) => void;
+export type ModalComponentMethods = {
+  hide(): Dispatch<HideModal>,
+  click(props: any): Dispatch<ClickModal>,
+  show(props: any): Dispatch<ShowModal>,
+  update(props: any): Dispatch<UpdateModal>,
+}
+export type ModalOwnProps = {
+  displayName?: any,
+  ...$ElementType<Config, 'initProps'>
 }
 
-export interface ConnectModalProps {
+export type ModalComponentProps = {
+  ...$Exact<ModalComponentMethods>,
+
+}
+
+
+
+export type ConnectModalProps = {
   hideModal: (name: ModalName) => HideModal;
-  showModal: (name: ModalName) => ShowModal;
+  showModal: (name: ModalName, props?: any) => ShowModal;
   updateModal: (name: ModalName, props: any) => UpdateModal;
   clickModal: (name: ModalName, value: any) => ClickModal;
   modal: ReduxModalState;
 }
 
-export interface ConnectModalState {
+export type ConnectModalState = {
   isOpen: $ElementType<ModalState, 'isOpen'>;
 }
-
+export type InjectedProps = {|
+  ...$Exact<ConnectModalState>,
+  ...$Exact<ModalComponentMethods>,
+  ...$Exact<ConnectModalProps>,
+  ...$Exact<ModalOwnProps>  
+|}
 export interface InjectedWrapperComponent {
-  <InjectedProps>(
-    component: React.ComponentType<ModalComponentProps>
-  ): React.ComponentType<$Diff<InjectedProps, ModalComponentProps>>;
+  <InjectedProps>(component: React.ComponentType<ModalOwnProps>
+  ): React.Component<InjectedProps>;
 }
 
 
@@ -97,4 +108,13 @@ export type SagaConfig = {
   [key: ModalName]: Saga<void>
 };
 
-export type RootModalSaga = Saga<void>;
+export type RootModalSaga = Saga<AllEffect>;
+
+export interface SagaContext<N: ModalName> {
+  name: N,
+  hide(): PutEffect<HideModal, null, void>,
+  show(): PutEffect<ShowModal, null, void>,
+  update(props: any): PutEffect<UpdateModal, null, void>,
+  click(props: any): PutEffect<ClickModal, null, void>,
+  select(selector?: Function): SelectEffect<Function, []>
+}

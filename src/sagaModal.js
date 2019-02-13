@@ -2,19 +2,22 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
+import type { BindActionCreators, Dispatch, Store } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import hoistStatics from 'hoist-non-react-statics';
 import { getDisplayName } from './utils';
-import { modalsStateSelector } from './selectors';
+import { modalSelector } from './selectors';
 import type { 
-  InjectedWrapperComponent, 
+  ConnectModalProps,
   ConnectModalState, 
-  ConnectModalProps, 
   Config,
   ReduxContext,
   ReduxModalState,
   ModalState,
+  InjectedProps,
+  ModalOwnProps,
+  ModalComponentMethods,
 } from './types';
 
 
@@ -23,10 +26,10 @@ const initialState: ModalState = {};
 
 const sagaModal = ({ 
   name, 
-  getModalsState = modalsStateSelector, 
+  getModalsState, 
   initProps = initialState, 
-}: Config): InjectedWrapperComponent => (
-  (ModalComponent) => {
+}: Config) => (
+  (ModalComponent: React.ComponentType<ModalOwnProps>) => {
     class ConnectedModal extends React.Component<
     ConnectModalProps,
     ConnectModalState
@@ -58,23 +61,20 @@ const sagaModal = ({
         }
       }
 
-      hide = () => {
-        this.props.hideModal(name);
-      };
+      hide = () => this.props.hideModal(name);
 
       click = (value) => this.props.clickModal(name, value);
 
       update = (newProps) => this.props.updateModal(name, newProps);
+      show = (props) => this.props.showModal(name, props);
 
-      getCurriedActions() {
-        return Object.freeze({
-          hide: this.hide.bind(this),
-          click: this.click.bind(this),
-          update: this.update.bind(this),
-        })
-      }
-
-      render() {
+      getCurriedActions = (): ModalComponentMethods => ({
+        hide: this.hide.bind(this),
+        click: this.click.bind(this),
+        update: this.update.bind(this),
+        show: this.show.bind(this),
+      });
+      render(): React.Node {
         const { isOpen } = this.state;
         const { modal, ...ownProps } = this.props;
         
@@ -82,23 +82,26 @@ const sagaModal = ({
           return null;
         }
 
-        const props = {
+        const props: InjectedProps = {
           ...ownProps,
           ...modal.props,
           ...this.getCurriedActions(),
           isOpen: isOpen,
+          modal: {
+            name,
+          },
         }
-
-        return React.createElement(ModalComponent, props);
+        const modalComp = React.createElement(ModalComponent, props);
+        return modalComp;
       }
     }
     
-    const mapStateToProps = state => ({
+    const mapStateToProps = (state: Store) => ({
       ...initProps,
-      modal: getModalsState(state)[name] || initialState,
+      modal: modalSelector(name, getModalsState)(state) || initialState,
     });
 
-    const mapDispatchToProps = dispatch => 
+    const mapDispatchToProps: BindActionCreators = (dispatch: Dispatch) => 
       ({ ...bindActionCreators({ 
         ...actions,
       }, dispatch) })
@@ -108,6 +111,7 @@ const sagaModal = ({
       hoistStatics(ConnectedModal, ModalComponent)
     );
   }
-)
+);
+
 
 export default sagaModal;

@@ -1,6 +1,6 @@
 // @flow
 import actionTypes from './actionTypes';
-import { omitProps, isObject } from './utils';
+import { omitProps } from './utils';
 import { Action } from 'redux';
 import type { ModalsState } from './types';
 
@@ -38,18 +38,16 @@ export default function reducer(state: ModalsState = initialState, action: Actio
     
   case actionTypes.UPDATE_MODAL: {
     const { name } = action.meta;
-    const { payload } = action;
-    const { props } = state[name];
+    const modal = state[name] || {};
     
-    const nextProps = isObject(props) && isObject(payload) 
-      ? { ...props, ...payload }
-      : payload;
-
     return {
       ...state,
       [name]: {
-        ...state[name],
-        props: nextProps,
+        ...modal,
+        props: {
+          ...modal.props,
+          ...action.payload,
+        },
       },
     };
   }

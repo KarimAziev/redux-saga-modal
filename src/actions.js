@@ -9,7 +9,7 @@ import type {
 } from './types';
 
 
-export function showModal(name: ModalName, payload: any): ShowModal {
+export function showModal(name: ModalName, payload: Object = {}): ShowModal {
   return {
     type: actionTypes.SHOW_MODAL,
     payload,
@@ -38,7 +38,7 @@ export function clickModal(name: ModalName, value: any): ClickModal {
   };
 }
 
-export function updateModal(name: ModalName, payload: any): UpdateModal {
+export function updateModal(name: ModalName, payload: Object = {}): UpdateModal {
   return {
     type: actionTypes.UPDATE_MODAL,
     payload,
