@@ -2,9 +2,14 @@
 import actionTypes from './actionTypes';
 import { omitProps } from './utils';
 import { Action } from 'redux';
-import type { ModalsState } from './types';
+import type { ModalsState } from './flow-types';
 
 const initialState: ModalsState = {};
+const initialModalState = {
+  props: {},
+}
+
+const pluckModalState = (state, name) => state[name] || initialModalState;
 export default function reducer(state: ModalsState = initialState, action: Action): ModalsState {
   switch (action.type) {
 
@@ -19,11 +24,7 @@ export default function reducer(state: ModalsState = initialState, action: Actio
     };
   }
   
-  case actionTypes.HIDE_MODAL: {
-    const { name } = action.meta;
-    return omitProps([name], state);
-  }
-
+  
   case actionTypes.CLICK_MODAL: {
     const { name } = action.meta;
 
@@ -35,21 +36,39 @@ export default function reducer(state: ModalsState = initialState, action: Actio
       },
     };
   }
-    
+  
   case actionTypes.UPDATE_MODAL: {
     const { name } = action.meta;
-    const modal = state[name] || {};
+    const modalState = pluckModalState(state, name);
     
     return {
       ...state,
       [name]: {
-        ...modal,
+        ...modalState,
         props: {
-          ...modal.props,
+          ...modalState.props,
           ...action.payload,
         },
       },
     };
+  }
+
+  case actionTypes.HIDE_MODAL: {
+    const { name } = action.meta;
+    const modalState = pluckModalState(state, name);
+                            
+    return {
+      ...state,
+      [name]: {
+        ...modalState,
+        isOpen: false,
+      },
+    }
+  }
+                        
+  case actionTypes.DESTROY_MODAL: {
+    const { name } = action.meta;
+    return omitProps([name], state);
   }
 
   default: 

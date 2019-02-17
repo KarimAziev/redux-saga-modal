@@ -17,3 +17,10 @@ export const omitProps = (keys: Array<string>, obj: Object): Object => {
 };
 
 export const isFunction = (val: any) => Object.prototype.toString.call(val) === '[object Function]';
+export const isGenerator = (obj: Object) => 'function' === typeof obj.next && 'function' === typeof obj.throw;
+export const isGeneratorFunction = (obj: Object) => {
+  const constructor = obj.constructor;
+  if (!constructor) return false;
+  if ('GeneratorFunction' === constructor.name || 'GeneratorFunction' === constructor.displayName) return true;
+  return isGenerator(constructor.prototype);
+}

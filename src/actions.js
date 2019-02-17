@@ -6,7 +6,8 @@ import type {
   HideModal,
   ClickModal,
   UpdateModal, 
-} from './types';
+  DestroyModal,
+} from './flow-types';
 
 
 export function showModal(name: ModalName, payload: Object = {}): ShowModal {
@@ -46,4 +47,13 @@ export function updateModal(name: ModalName, payload: Object = {}): UpdateModal 
       name,
     },
   };
+}
+
+export function destroyModal(name: ModalName): DestroyModal {
+  return {
+    type: actionTypes.DESTROY_MODAL,
+    meta: {
+      name,
+    },
+  }
 }

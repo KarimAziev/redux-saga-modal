@@ -51,6 +51,10 @@ export type UpdateModal = {
   +meta: ActionMeta,
 };
 
+export type DestroyModal = {
+  +type: typeof actionTypes.DESTROY_MODAL,
+  +meta: ActionMeta,
+}
 type AnyAction = {
   +type: string, 
   payload?: any,
@@ -86,6 +90,7 @@ export type ConnectModalProps = {
   showModal: (name: ModalName, props?: any) => ShowModal;
   updateModal: (name: ModalName, props: any) => UpdateModal;
   clickModal: (name: ModalName, value: any) => ClickModal;
+  destroyModal: (name: ModalName) => DestroyModal;
   modal: ReduxModalState;
 }
 
@@ -112,8 +117,9 @@ export type RootModalSaga = Saga<AllEffect>;
 
 export interface SagaContext<N: ModalName> {
   name: N,
-  hide(): PutEffect<HideModal, null, void>,
   show(): PutEffect<ShowModal, null, void>,
+  hide(): PutEffect<HideModal, null, void>,
+  destroy(): PutEffect<DestroyModal, null, void>,
   update(props: any): PutEffect<UpdateModal, null, void>,
   click(props: any): PutEffect<ClickModal, null, void>,
   select(selector?: Function): SelectEffect<Function, []>

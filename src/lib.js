@@ -3,7 +3,7 @@
 import actionTypes from './actionTypes';
 import { take } from 'redux-saga/effects';
 import { toArrayMaybe, isFunction } from './utils';
-import type { ModalName, Action } from './types';
+import type { ModalName, Action } from './flow-types';
 import type { Pattern } from 'redux-saga';
 
 const actionsKeys = Object.keys(actionTypes);
@@ -30,11 +30,14 @@ export const checkModalClick = (pattern: any, name?: ModalName) => (action: Acti
   return checker();
 }
 
+export const checkModalHide = (name:ModalName) => (action: Action): boolean %checks => 
+  checkActionType(actionTypes.HIDE_MODAL)(action) && checkModalName(name)(action);
+
 
 export const takeModalShow = (name:ModalName) => take<Pattern>((action: Action) => 
   checkActionType(actionTypes.SHOW_MODAL)(action) && checkModalName(name)(action));
-export const takeModalHide = (name:ModalName) => take<Pattern>((action): boolean %checks => 
-  checkActionType(actionTypes.HIDE_MODAL)(action) && checkModalName(name)(action));
+  
+export const takeModalHide = (name:ModalName) => take<Pattern>(checkModalHide(name));
 export const takeModalClick = (name: ModalName, pattern: any) => take<Pattern>(action => checkModalClick(pattern, name)(action))
 export const takeModalUpdate = (name: ModalName) => take<Pattern>(action => 
   checkActionType(actionTypes.UPDATE_MODAL)(action) && checkModalName(name)(action));

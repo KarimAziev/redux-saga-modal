@@ -51,11 +51,11 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.3.1",
-    "babel-eslint": "8.2.5",
+    "babel-eslint": "9.0.0",
     "babel-loader": "^8.0.5",
     "babel-plugin-add-module-exports": "^1.0.0",
     "cross-env": "^5.2.0",
-    "eslint": "^4.1.1",
+    "eslint": "5.12.0",
     "eslint-config-react-app": "^3.0.6",
     "eslint-loader": "^1.6.1",
     "eslint-plugin-babel": "^5.3.0",
@@ -77,6 +77,7 @@
     "webpack-cli": "^3.2.1"
   },
   "dependencies": {
+    "@redux-saga/is": "^1.0.1",
     "hoist-non-react-statics": "^2.0.0"
   },
   "peerDependencies": {

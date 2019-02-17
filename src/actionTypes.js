@@ -4,4 +4,5 @@ export default Object.freeze({
   HIDE_MODAL: '@@modal-saga/HIDE',
   CLICK_MODAL: '@@modal-saga/CLICK',
   UPDATE_MODAL: '@@modal-saga/UPDATE',
+  DESTROY_MODAL: '@@modal-saga/DESTROY',
 });

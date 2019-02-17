@@ -18,16 +18,17 @@ import type {
   InjectedProps,
   ModalOwnProps,
   ModalComponentMethods,
-} from './types';
+} from './flow-types';
 
 
-const initialState: ModalState = {};
+const initialState: ModalState = { props: {} };
 
 
 const sagaModal = ({ 
   name, 
   getModalsState, 
   initProps = initialState, 
+  destroyOnHide = true,
 }: Config) => (
   (ModalComponent: React.ComponentType<ModalOwnProps>) => {
     class ConnectedModal extends React.Component<
@@ -49,11 +50,9 @@ const sagaModal = ({
       state: ModalState = {
         isOpen: !!this.props.modal.isOpen,
       };
-
-
+      
       componentDidUpdate(prevProps) {
-        const { modal } = this.props;
-        const { isOpen } = modal;
+        const { isOpen } = this.props.modal;
         const isToggled = isOpen !== prevProps.modal.isOpen;
 
         if (isToggled ) {
@@ -61,23 +60,29 @@ const sagaModal = ({
         }
       }
 
-      hide = () => this.props.hideModal(name);
+      hide = () => {
+        const worker = destroyOnHide 
+          ? this.props.destroyModal
+          : this.props.hideModal
+        
+        worker(name);
+      };
 
       click = (value) => this.props.clickModal(name, value);
 
       update = (newProps) => this.props.updateModal(name, newProps);
       show = (props) => this.props.showModal(name, props);
-
+      destroy = () => this.props.destroyModal(name);
       getCurriedActions = (): ModalComponentMethods => ({
         hide: this.hide.bind(this),
         click: this.click.bind(this),
         update: this.update.bind(this),
         show: this.show.bind(this),
+        destroy: this.destroy.bind(this),
       });
       render(): React.Node {
         const { isOpen } = this.state;
         const { modal, ...ownProps } = this.props;
-        
         if (!isOpen) {
           return null;
         }
@@ -90,7 +95,8 @@ const sagaModal = ({
           modal: {
             name,
           },
-        }
+        };
+
         const modalComp = React.createElement(ModalComponent, props);
         return modalComp;
       }
@@ -102,9 +108,11 @@ const sagaModal = ({
     });
 
     const mapDispatchToProps: BindActionCreators = (dispatch: Dispatch) => 
-      ({ ...bindActionCreators({ 
-        ...actions,
-      }, dispatch) })
+      ({ 
+        ...bindActionCreators({ 
+          ...actions,
+        }, dispatch), 
+      })
 
 
     return connect(mapStateToProps, mapDispatchToProps)(
