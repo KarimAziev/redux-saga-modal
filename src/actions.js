@@ -1,14 +1,13 @@
 // @flow
 import actionTypes from './actionTypes';
-import type { 
+import type {
   ModalName,
   ShowModal,
   HideModal,
   ClickModal,
-  UpdateModal, 
+  UpdateModal,
   DestroyModal,
 } from './flow-types';
-
 
 export function showModal(name: ModalName, payload: Object = {}): ShowModal {
   return {
@@ -39,7 +38,10 @@ export function clickModal(name: ModalName, value: any): ClickModal {
   };
 }
 
-export function updateModal(name: ModalName, payload: Object = {}): UpdateModal {
+export function updateModal(
+  name: ModalName,
+  payload: Object = {}
+): UpdateModal {
   return {
     type: actionTypes.UPDATE_MODAL,
     payload,
@@ -55,5 +57,5 @@ export function destroyModal(name: ModalName): DestroyModal {
     meta: {
       name,
     },
-  }
+  };
 }

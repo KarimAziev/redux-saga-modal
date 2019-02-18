@@ -13,7 +13,6 @@ import {
   takeModalUpdate,
 } from './lib';
 
-
 export {
   sagaModal,
   reducer,
@@ -30,5 +29,3 @@ export {
   takeModalClick,
   takeModalUpdate,
 };
-
-

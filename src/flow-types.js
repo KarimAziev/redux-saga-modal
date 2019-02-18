@@ -5,11 +5,11 @@ import { modalsStateSelector } from './selectors';
 import * as React from 'react';
 import type { Saga, PutEffect, SelectEffect, AllEffect } from 'redux-saga';
 
-type Dictionary<K, T> = {[K]: T};
+type Dictionary<K, T> = { [K]: T };
+export type ModalName = string;
 type ActionMeta = {|
   +name: ModalName,
 |};
-export type ModalName = string;
 export type ModalState = {
   isOpen?: boolean,
 };
@@ -26,7 +26,6 @@ export type Config = {|
   getModalsState?: typeof modalsStateSelector,
   initProps?: {},
 |};
-
 
 export type ShowModal = {|
   +type: typeof actionTypes.SHOW_MODAL,
@@ -54,14 +53,18 @@ export type UpdateModal = {
 export type DestroyModal = {
   +type: typeof actionTypes.DESTROY_MODAL,
   +meta: ActionMeta,
-}
+};
 type AnyAction = {
-  +type: string, 
+  +type: string,
   payload?: any,
   meta?: any,
 };
-export type Action = AnyAction | ShowModal | HideModal | ClickModal | UpdateModal;
-
+export type Action =
+  | AnyAction
+  | ShowModal
+  | HideModal
+  | ClickModal
+  | UpdateModal;
 
 export interface ReduxContext {
   store: Store<any>;
@@ -72,55 +75,52 @@ export type ModalComponentMethods = {
   click(props: any): Dispatch<ClickModal>,
   show(props: any): Dispatch<ShowModal>,
   update(props: any): Dispatch<UpdateModal>,
-}
+};
 export type ModalOwnProps = {
   displayName?: any,
-  ...$ElementType<Config, 'initProps'>
-}
+  ...$ElementType<Config, 'initProps'>,
+};
 
 export type ModalComponentProps = {
   ...$Exact<ModalComponentMethods>,
-
-}
-
-
+};
 
 export type ConnectModalProps = {
-  hideModal: (name: ModalName) => HideModal;
-  showModal: (name: ModalName, props?: any) => ShowModal;
-  updateModal: (name: ModalName, props: any) => UpdateModal;
-  clickModal: (name: ModalName, value: any) => ClickModal;
-  destroyModal: (name: ModalName) => DestroyModal;
-  modal: ReduxModalState;
-}
+  hideModal: (name: ModalName) => HideModal,
+  showModal: (name: ModalName, props?: any) => ShowModal,
+  updateModal: (name: ModalName, props: any) => UpdateModal,
+  clickModal: (name: ModalName, value: any) => ClickModal,
+  destroyModal: (name: ModalName) => DestroyModal,
+  modal: ReduxModalState,
+};
 
 export type ConnectModalState = {
-  isOpen: $ElementType<ModalState, 'isOpen'>;
-}
+  isOpen: $ElementType<ModalState, 'isOpen'>,
+};
 export type InjectedProps = {|
   ...$Exact<ConnectModalState>,
   ...$Exact<ModalComponentMethods>,
   ...$Exact<ConnectModalProps>,
-  ...$Exact<ModalOwnProps>  
-|}
+  ...$Exact<ModalOwnProps>,
+|};
 export interface InjectedWrapperComponent {
-  <InjectedProps>(component: React.ComponentType<ModalOwnProps>
+  <InjectedProps>(
+    component: React.ComponentType<ModalOwnProps>
   ): React.Component<InjectedProps>;
 }
 
-
 export type SagaConfig = {
-  [key: ModalName]: Saga<void>
+  [key: ModalName]: Saga<void>,
 };
 
 export type RootModalSaga = Saga<AllEffect>;
 
 export interface SagaContext<N: ModalName> {
-  name: N,
-  show(): PutEffect<ShowModal, null, void>,
-  hide(): PutEffect<HideModal, null, void>,
-  destroy(): PutEffect<DestroyModal, null, void>,
-  update(props: any): PutEffect<UpdateModal, null, void>,
-  click(props: any): PutEffect<ClickModal, null, void>,
-  select(selector?: Function): SelectEffect<Function, []>
+  name: N;
+  show(): PutEffect<ShowModal, null, void>;
+  hide(): PutEffect<HideModal, null, void>;
+  destroy(): PutEffect<DestroyModal, null, void>;
+  update(props: any): PutEffect<UpdateModal, null, void>;
+  click(props: any): PutEffect<ClickModal, null, void>;
+  select(selector?: Function): SelectEffect<Function, []>;
 }

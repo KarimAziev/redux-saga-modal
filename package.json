@@ -2,6 +2,11 @@
   "name": "redux-saga-modal",
   "version": "0.3.0",
   "description": "A wrapper to manage modals within redux-saga",
+  "files": [
+    "lib",
+    "es",
+    "dist"
+  ],
   "main": "lib/index.js",
   "module": "es/index.js",
   "jsnext:main": "es/index.js",
@@ -9,7 +14,7 @@
   "scripts": {
     "clean": "rimraf es lib dist",
     "flow": "flow",
-    "lint": "eslint 'src/**'",
+    "format": "prettier-eslint --write \"src/**/*.js\"",
     "build:commonjs": "cross-env babel src --out-dir lib",
     "build:es": "cross-env babel src --out-dir es",
     "build:umd": "webpack --mode development --display-cached --display-cached-assets -o dist/redux-saga-modal.js",
@@ -17,11 +22,12 @@
     "build": "npm-run-all clean -p build:commonjs build:umd build:umd:min",
     "build:dev": "nodemon --watch src --exec 'yarn run build:es'",
     "prepublish": "yarn run build",
+    "precommit": "lint-staged",
     "release": "release-it --verbose --github.release"
   },
   "lint-staged": {
     "*.{js, json, lock}": [
-      "prettier --write",
+      "prettier-eslint --write",
       "git add"
     ]
   },
@@ -56,17 +62,20 @@
     "babel-plugin-add-module-exports": "^1.0.0",
     "cross-env": "^5.2.0",
     "eslint": "5.12.0",
-    "eslint-config-react-app": "^3.0.6",
-    "eslint-loader": "^1.6.1",
-    "eslint-plugin-babel": "^5.3.0",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-config-react-app": "^3.0.7",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-flowtype": "^3.4.2",
+    "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.3.0",
-    "eslint-plugin-react-app": "^3.0.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.4",
     "flow-bin": "^0.91.0",
     "lint-staged": "^7.2.2",
     "nodemon": "^1.18.9",
     "npm-run-all": "^4.1.5",
-    "prettier": "^1.14.2",
+    "prettier": "^1.16.4",
+    "prettier-eslint-cli": "^4.7.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",

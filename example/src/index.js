@@ -11,20 +11,20 @@ import { createLogger } from 'redux-logger';
 import reducer from './reducer';
 import rootSaga from './saga';
 
-const logger = createLogger()
+const logger = createLogger();
 const sagaMiddleware = createSagaMiddleware();
 
 const connectReducer = compose(
   applyMiddleware(logger, sagaMiddleware),
-  DevTools.instrument(),
+  DevTools.instrument()
 )(createStore);
 
 const store = {
   ...connectReducer(reducer),
   runSaga: sagaMiddleware.run(rootSaga),
-}
+};
 
-const render = RootApp => (
+const render = (RootApp) =>
   ReactDOM.render(
     <Provider store={store}>
       <div>
@@ -33,12 +33,9 @@ const render = RootApp => (
       </div>
     </Provider>,
     document.getElementById('root')
-  )
-);
+  );
 
 render(App);
-
-
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

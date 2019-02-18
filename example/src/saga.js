@@ -4,8 +4,8 @@ import { hideModal, clickModal } from 'redux-saga-modal';
 import api from 'api';
 
 const modalSagasConfig = {
-  'confirmModal': confirmModalWorker,
-}
+  confirmModal: confirmModalWorker,
+};
 
 export default function* rootAppSaga() {
   yield all([
@@ -14,12 +14,10 @@ export default function* rootAppSaga() {
   ]);
 }
 
-
-
 function* confirmModalWorker() {
   const modal = this;
-  const initProps = { 
-    text: 'You are leaving without saving. Save changes?', 
+  const initProps = {
+    text: 'You are leaving without saving. Save changes?',
     title: 'Save changes?',
     confirmBtn: {
       title: 'Save',
@@ -28,30 +26,31 @@ function* confirmModalWorker() {
       title: 'Close',
     },
   };
-  
-  yield modal.update(initProps);
 
+  yield modal.update(initProps);
 
   const click = yield race({
     ok: take(clickModal().type),
     hide: take(hideModal().type),
-  })
+  });
 
   if (click.ok) {
-    yield modal.update({ 
-      title: 'Saving', 
-      confirmBtn: {  
-        ...initProps.confirmBtn, 
-      
-        disabled: true, 
+    yield modal.update({
+      title: 'Saving',
+      confirmBtn: {
+        ...initProps.confirmBtn,
+
+        disabled: true,
         loading: true,
-      }, 
+      },
     });
     yield call(api.save);
-    yield modal.update({ title: 'Changes saved', confirmBtn: { loading: false } });
+    yield modal.update({
+      title: 'Changes saved',
+      confirmBtn: { loading: false },
+    });
   }
 
   yield delay(1000);
   yield modal.hide();
 }
-
