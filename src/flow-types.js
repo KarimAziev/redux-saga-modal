@@ -110,7 +110,13 @@ export interface InjectedWrapperComponent {
 }
 
 export type SagaConfig = {
-  [key: ModalName]: Saga<void>,
+  worker: Saga<void>,
+  destroyOnHide?: Boolean,
+  cancellable?: Boolean,
+  args?: Array<any>,
+};
+export type SagaRootConfig = {
+  [key: ModalName]: Saga<void> | SagaConfig,
 };
 
 export type RootModalSaga = Saga<AllEffect>;

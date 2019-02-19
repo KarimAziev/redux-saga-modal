@@ -4,10 +4,11 @@ import {
   put,
   select,
   all,
+  takeLeading,
+  take,
   takeLatest,
-  setContext,
+  delay,
 } from 'redux-saga/effects';
-import actionTypes from './actionTypes';
 import {
   updateModal,
   destroyModal,
@@ -15,53 +16,70 @@ import {
   clickModal,
   showModal,
 } from './actions';
-import { checkActionType, checkModalName } from './lib';
 import type {
   SagaContext,
-  SagaConfig,
+  SagaRootConfig,
   RootModalSaga,
   ModalName,
 } from './flow-types';
 import { modalSelector } from './selectors';
-
+import is, { show as isShow, hide as isHide, destroy as isDestroy } from './is';
 export const createModal = (name: ModalName): SagaContext<ModalName> => ({
   name,
-  show: () => put(showModal(name)),
+  show: (props) => put(showModal(name, props)),
   hide: () => put(hideModal(name)),
   destroy: () => put(destroyModal(name)),
   update: (props: any) => put(updateModal(name, props)),
   click: (props: any) => put(clickModal(name, props)),
   select: (customSelector) => select(modalSelector(name, customSelector)),
+
+  is: {
+    click: (pattern = () => true) => is.click(name, pattern),
+    show: (pattern = () => true) => is.show(name, pattern),
+    hide: () => is.hide(name),
+    destroy: () => is.destroy(name),
+  },
 });
-export default function* rootModalSaga(config: SagaConfig = {}): RootModalSaga {
+export default function* rootModalSaga(
+  config: SagaRootConfig = {}
+): RootModalSaga {
   const names = Object.keys(config);
 
   const tasks = yield all(
     names.map((name) => {
-      const saga = config[name];
+      const sagaConfig = config[name];
 
-      const filters = (action) =>
-        checkActionType([
-          actionTypes.SHOW_MODAL,
-          actionTypes.HIDE_MODAL,
-          actionTypes.DESTROY_MODAL,
-        ])(action) && checkModalName(name)(action);
+      const call = takeLeading(isShow(name, () => true), caller, sagaConfig);
 
-      return takeLatest(filters, function* forker(action) {
-        const { type, payload } = action;
-        if (
-          type === actionTypes.HIDE_MODAL ||
-          type === actionTypes.DESTROY_MODAL
-        ) {
-          return;
-        }
-
-        const context = createModal(name);
-        yield setContext({ modal: context });
-        yield fork([context, saga], payload);
-      });
+      return call;
     })
   );
 
   return tasks;
+}
+
+function* caller(sagaConfig, action) {
+  const { name } = action.meta;
+  const saga = sagaConfig.worker || sagaConfig;
+  const sagaArgs = sagaConfig.args;
+  const modal = createModal(name);
+  const isCancellable = sagaConfig.cancellable !== false;
+  const isDestroyOnHide = sagaConfig.destroyOnHide !== false;
+
+  const [task, subtasks] = yield all([
+    fork([modal, saga], sagaArgs),
+    takeLatest(isHide(name), function*(params) {
+      yield delay(500);
+      const { isOpen } = yield modal.select();
+      if (!isOpen && isCancellable) {
+        if (!task.isCancelled()) {
+          yield task.cancel();
+        }
+        return yield isDestroyOnHide && put(destroyModal(name));
+      }
+    }),
+  ]);
+  yield take(isDestroy(name));
+
+  return task.result();
 }

@@ -1,62 +1,52 @@
 // @flow
-import actionTypes from './actionTypes';
-import { take } from 'redux-saga/effects';
-import { toArrayMaybe, isFunction } from './utils';
-import type { ModalName, Action } from './flow-types';
-import type { Pattern } from 'redux-saga';
+import * as React from 'react';
 
-const actionsKeys = Object.keys(actionTypes);
-export const isModalAction = (action: Action): boolean =>
-  actionsKeys.includes(action.type);
+type Curry<A, R> = (...r: [A]) => R;
 
-export const checkModalName = (name: ModalName) => (
-  action: Action
-): boolean %checks => !!action.meta && action.meta.name === name;
-export const checkActionType = (type: string | Array<string>) => (
-  action: Action
-): boolean %checks => toArrayMaybe(type).includes(action.type) && !!action;
-
-export const checkModalClick = (pattern: any, name?: ModalName) => (
-  action: Action
-): boolean => {
-  const isClick = checkActionType(actionTypes.CLICK_MODAL);
-  const isAnotherModal = name && !checkModalName(name);
-  if (!isClick || isAnotherModal) {
-    return false;
-  }
-
-  const { payload: clickedValue } = action;
-
-  const checker = isFunction(pattern)
-    ? () => !!pattern(clickedValue)
-    : () =>
-        pattern === undefined ||
-        pattern === '*' ||
-        toArrayMaybe(pattern).includes(clickedValue);
-
-  return checker();
+export const curry: Curry = function curry(fn) {
+  return function(...args) {
+    return args.length >= fn.length
+      ? fn.apply(null, args)
+      : (...rest) => fn.apply(null, [...args, ...rest]);
+  };
 };
 
-export const checkModalHide = (name: ModalName) => (
-  action: Action
-): boolean %checks =>
-  checkActionType(actionTypes.HIDE_MODAL)(action) &&
-  checkModalName(name)(action);
+export const allPass = curry((checkers, args) =>
+  checkers.map((fn) => fn.call(null, args)).every((r) => !!r)
+);
 
-export const takeModalShow = (name: ModalName) =>
-  take<Pattern>(
-    (action: Action) =>
-      checkActionType(actionTypes.SHOW_MODAL)(action) &&
-      checkModalName(name)(action)
-  );
+export const anyPass = curry((checkers, args) =>
+  checkers.map((fn) => fn.call(null, args)).some((r) => !!r)
+);
+export const getDisplayName = (WrappedComponent: React.ComponentType<any>) =>
+  WrappedComponent.displayName || WrappedComponent.name || 'Component';
+export const toArrayMaybe = (item: mixed): Array<mixed> =>
+  Array.isArray(item) ? item : [item];
 
-export const takeModalHide = (name: ModalName) =>
-  take<Pattern>(checkModalHide(name));
-export const takeModalClick = (name: ModalName, pattern: any) =>
-  take<Pattern>((action) => checkModalClick(pattern, name)(action));
-export const takeModalUpdate = (name: ModalName) =>
-  take<Pattern>(
-    (action) =>
-      checkActionType(actionTypes.UPDATE_MODAL)(action) &&
-      checkModalName(name)(action)
-  );
+export const omitProps = (keys: Array<string>, obj: Object): Object => {
+  const data = {};
+
+  Object.keys(obj)
+    .filter((key) => !keys.includes(key))
+    .forEach((key) => (data[key] = obj[key]));
+
+  return data;
+};
+
+export const isFunction = (val: any) =>
+  Object.prototype.toString.call(val) === '[object Function]';
+export const isGenerator = (obj: Object) =>
+  'function' === typeof obj.next && 'function' === typeof obj.throw;
+export const isGeneratorFunction = (obj: Object) => {
+  const { constructor } = obj;
+  if (!constructor) {
+    return false;
+  }
+  if (
+    'GeneratorFunction' === constructor.name ||
+    'GeneratorFunction' === constructor.displayName
+  ) {
+    return true;
+  }
+  return isGenerator(constructor.prototype);
+};

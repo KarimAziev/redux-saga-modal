@@ -6,14 +6,31 @@ import type { BindActionCreators, Dispatch, Store } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from './actions';
 import hoistStatics from 'hoist-non-react-statics';
-import { getDisplayName } from './utils';
+import { getDisplayName } from './lib';
 import { modalSelector } from './selectors';
-import type { ConnectModalProps, ConnectModalState, Config, ReduxContext, ReduxModalState, ModalState, InjectedProps, ModalOwnProps, ModalComponentMethods } from './flow-types';
+import type {
+  ConnectModalProps,
+  ConnectModalState,
+  Config,
+  ReduxContext,
+  ReduxModalState,
+  ModalState,
+  InjectedProps,
+  ModalOwnProps,
+  ModalComponentMethods,
+} from './flow-types';
 
 const initialState: ModalState = { props: {} };
 
-const sagaModal = ({ name, getModalsState, initProps = initialState }: Config) => (ModalComponent: React.ComponentType<ModalOwnProps>) => {
-  class ConnectedModal extends React.Component<ConnectModalProps, ConnectModalState> {
+const sagaModal = ({
+  name,
+  getModalsState,
+  initProps = initialState,
+}: Config) => (ModalComponent: React.ComponentType<ModalOwnProps>) => {
+  class ConnectedModal extends React.Component<
+    ConnectModalProps,
+    ConnectModalState
+  > {
     static propTypes: {
       modal: ReduxModalState,
       displayName: string,

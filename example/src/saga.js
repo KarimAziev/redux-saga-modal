@@ -1,6 +1,15 @@
 import { sagas as modalSagas } from 'redux-saga-modal';
-import { all, race, call, take, fork, delay } from 'redux-saga/effects';
-import { hideModal, clickModal } from 'redux-saga-modal';
+import {
+  all,
+  race,
+  call,
+  take,
+  fork,
+  delay,
+  takeMaybe,
+  takeEvery,
+  cancelled,
+} from 'redux-saga/effects';
 import api from 'api';
 
 const modalSagasConfig = {
@@ -8,14 +17,13 @@ const modalSagasConfig = {
 };
 
 export default function* rootAppSaga() {
-  yield all([
+  const [modalsTasks] = yield all([
     fork(modalSagas, modalSagasConfig),
     //another app sagas
   ]);
 }
 
 function* confirmModalWorker() {
-  const modal = this;
   const initProps = {
     text: 'You are leaving without saving. Save changes?',
     title: 'Save changes?',
@@ -26,15 +34,13 @@ function* confirmModalWorker() {
       title: 'Close',
     },
   };
+  const modal = this;
 
-  yield modal.update(initProps);
+  try {
+    yield modal.update(initProps);
 
-  const click = yield race({
-    ok: take(clickModal().type),
-    hide: take(hideModal().type),
-  });
+    yield take(modal.is.click('OK'));
 
-  if (click.ok) {
     yield modal.update({
       title: 'Saving',
       confirmBtn: {
@@ -45,12 +51,25 @@ function* confirmModalWorker() {
       },
     });
     yield call(api.save);
+    yield delay(1000);
     yield modal.update({
       title: 'Changes saved',
       confirmBtn: { loading: false },
     });
-  }
 
-  yield delay(1000);
-  yield modal.hide();
+    yield modal.hide();
+  } finally {
+    if (yield cancelled()) {
+      yield all([
+        modal.show({
+          title: 'Are you sure?',
+          confirmBtn: {
+            ...initProps.confirmBtn,
+            disabled: false,
+            loading: false,
+          },
+        }),
+      ]);
+    }
+  }
 }

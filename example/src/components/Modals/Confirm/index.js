@@ -42,7 +42,7 @@ const Confirm = (props) => {
           <Button {...cancelBtn} onClick={hide}>
             {cancelBtn.title}
           </Button>
-          <Button type={'submit'} {...confirmBtn} onClick={(e) => click('ok')}>
+          <Button type={'submit'} {...confirmBtn} onClick={(e) => click('OK')}>
             {confirmBtn.title}
           </Button>
         </span>

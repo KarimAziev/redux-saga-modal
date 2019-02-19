@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { showModal } from 'redux-saga-modal';
 import { Button } from './components';
 import { Confirm } from './components/Modals';
+
 class App extends Component {
   render() {
     return (

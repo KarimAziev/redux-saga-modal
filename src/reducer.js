@@ -1,6 +1,6 @@
 // @flow
 import actionTypes from './actionTypes';
-import { omitProps } from './utils';
+import { omitProps } from './lib';
 import { Action } from 'redux';
 import type { ModalsState } from './flow-types';
 
