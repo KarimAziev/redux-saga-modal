@@ -2,10 +2,9 @@
 import actionTypes from './actionTypes';
 import { isFunction, curry, allPass } from './lib';
 import type { ModalName, Action } from './flow-types';
-import type { Pattern } from 'redux-saga';
+
 import * as is from '@redux-saga/is';
 
-type Checker = (name: ModalName, pattern: Pattern, action: Action) => boolean;
 
 const callPattern = curry(
   (pattern, payload): boolean %checks =>
@@ -26,14 +25,14 @@ export const isModalName = curry(
     action.meta && action.meta.name && callPattern(name, action.meta.name)
 );
 
-export const click: Checker = curry(
+export const click = curry(
   (name, pattern, action) =>
     allPass([isActionType(actionTypes.CLICK_MODAL), isModalName(name)])(
       action
     ) && callPattern(pattern, action.payload)
 );
 
-export const hide: Checker = curry((name, action) =>
+export const hide = curry((name, action) =>
   allPass([isActionType(actionTypes.HIDE_MODAL), isModalName(name)])(action)
 );
 
@@ -44,25 +43,23 @@ export const show = curry((name, pattern, action) =>
     : false
 );
 
+export const update = curry(
+  (name, pattern, action) =>
+    allPass([isActionType(actionTypes.UPDATE_MODAL), isModalName(name)])(
+      action
+    ) && callPattern(pattern, action.payload)
+);
+
 export const destroy = curry((name, action) =>
   allPass([isActionType(actionTypes.DESTROY_MODAL), isModalName(name)])(action)
 );
 
-const modalCheckers = {
+const isModal = {
   click,
   show,
   hide,
   destroy,
+  update,
 };
 
-export default modalCheckers;
-
-// export const mockAction = {
-//   type: actionTypes.CLICK_MODAL,
-//   payload: 'ok',
-//   meta: { name: 'name' },
-// };
-
-// const mockClick = isClick('name', 'ok')(mockAction);
-
-//
+export default isModal;

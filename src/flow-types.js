@@ -4,7 +4,8 @@ import { Store, Dispatch } from 'redux';
 import { modalsStateSelector } from './selectors';
 import * as React from 'react';
 import type { Saga, PutEffect, SelectEffect, AllEffect } from 'redux-saga';
-
+import type { Pattern } from 'redux-saga';
+import isModal from './is';
 type Dictionary<K, T> = { [K]: T };
 export type ModalName = string;
 type ActionMeta = {|
@@ -115,12 +116,19 @@ export type SagaConfig = {
   cancellable?: Boolean,
   args?: Array<any>,
 };
-export type SagaRootConfig = {
-  [key: ModalName]: Saga<void> | SagaConfig,
-};
 
 export type RootModalSaga = Saga<AllEffect>;
-
+export type CheckPattern = (
+  name: ModalName,
+  pattern: Pattern,
+  action: Action
+) => boolean;
+export interface is {
+  click(): CheckPattern;
+  show(): CheckPattern;
+  hide(): CheckPattern;
+  destroy(): CheckPattern;
+}
 export interface SagaContext<N: ModalName> {
   name: N;
   show(): PutEffect<ShowModal, null, void>;
@@ -129,4 +137,9 @@ export interface SagaContext<N: ModalName> {
   update(props: any): PutEffect<UpdateModal, null, void>;
   click(props: any): PutEffect<ClickModal, null, void>;
   select(selector?: Function): SelectEffect<Function, []>;
+  is: typeof isModal;
 }
+
+export type SagaRootConfig = {
+  [key: ModalName]: () => [SagaContext<ModalName>, Generator<void, void, void>],
+};

@@ -4,10 +4,13 @@ import {
   put,
   select,
   all,
-  takeLeading,
   take,
+  call,
+  setContext,
+  race,
+  takeEvery,
   takeLatest,
-  delay,
+  getContext,
 } from 'redux-saga/effects';
 import {
   updateModal,
@@ -23,7 +26,8 @@ import type {
   ModalName,
 } from './flow-types';
 import { modalSelector } from './selectors';
-import is, { show as isShow, hide as isHide, destroy as isDestroy } from './is';
+import is from './is';
+
 export const createModal = (name: ModalName): SagaContext<ModalName> => ({
   name,
   show: (props) => put(showModal(name, props)),
@@ -35,10 +39,23 @@ export const createModal = (name: ModalName): SagaContext<ModalName> => ({
 
   is: {
     click: (pattern = () => true) => is.click(name, pattern),
+    update: (pattern = () => true) => is.update(name, pattern),
     show: (pattern = () => true) => is.show(name, pattern),
     hide: () => is.hide(name),
     destroy: () => is.destroy(name),
   },
+
+  takeClick: (pattern = () => true) => take(is.click(name, pattern)),
+  takeEveryClick: (pattern = () => true, func) =>
+    takeEvery(is.click(name, pattern), func),
+  takeLatestClick: (pattern = () => true, func) =>
+    takeLatest(is.click(name, pattern), func),
+
+  takeUpdate: (pattern = () => true) => take(is.update(name, pattern)),
+  takeEveryUpdate: (pattern = () => true, func) =>
+    takeEvery(is.update(name, pattern), func),
+  takeLatestUpdate: (pattern = () => true, func) =>
+    takeLatest(is.update(name, pattern), func),
 });
 export default function* rootModalSaga(
   config: SagaRootConfig = {}
@@ -47,39 +64,35 @@ export default function* rootModalSaga(
 
   const tasks = yield all(
     names.map((name) => {
-      const sagaConfig = config[name];
-
-      const call = takeLeading(isShow(name, () => true), caller, sagaConfig);
-
-      return call;
+      return fork(forker, name, config);
     })
   );
 
   return tasks;
 }
 
-function* caller(sagaConfig, action) {
-  const { name } = action.meta;
-  const saga = sagaConfig.worker || sagaConfig;
-  const sagaArgs = sagaConfig.args;
+function* forker(name, config) {
+  const saga = config[name];
   const modal = createModal(name);
-  const isCancellable = sagaConfig.cancellable !== false;
-  const isDestroyOnHide = sagaConfig.destroyOnHide !== false;
 
-  const [task, subtasks] = yield all([
-    fork([modal, saga], sagaArgs),
-    takeLatest(isHide(name), function*(params) {
-      yield delay(500);
-      const { isOpen } = yield modal.select();
-      if (!isOpen && isCancellable) {
-        if (!task.isCancelled()) {
-          yield task.cancel();
-        }
-        return yield isDestroyOnHide && put(destroyModal(name));
-      }
-    }),
-  ]);
-  yield take(isDestroy(name));
+  while (true) {
+    const { payload } = yield take(modal.is.show());
+    yield setContext({ [modal.name]: modal });
 
-  return task.result();
+    yield race({
+      task: call(modalTask, saga, name, payload),
+      destroyAction: take(modal.is.destroy()),
+    });
+  }
+}
+
+function* modalTask(saga, name, payload = {}) {
+  const modal = yield getContext(name);
+
+  yield fork([modal, saga], payload);
+
+  while (true) {
+    yield take(modal.is.hide());
+    yield modal.destroy();
+  }
 }

@@ -5,15 +5,19 @@ import { connect } from 'react-redux';
 import { showModal } from 'redux-saga-modal';
 import { Button } from './components';
 import { Confirm } from './components/Modals';
+import { MODAL_TYPES } from './saga';
+
 
 class App extends Component {
   render() {
     return (
       <div className="App">
         <header className="App-header" />
-        <Button onClick={() => this.props.showModal('confirmModal')}>
-          Confirm Modal
+
+        <Button onClick={() => this.props.showModal(MODAL_TYPES.CONFIRM)}>
+         {`Click to show ${MODAL_TYPES.CONFIRM}`}
         </Button>
+
         <Confirm />
       </div>
     );

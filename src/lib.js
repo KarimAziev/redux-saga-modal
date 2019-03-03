@@ -3,11 +3,11 @@ import * as React from 'react';
 
 type Curry<A, R> = (...r: [A]) => R;
 
-export const curry: Curry = function curry(fn) {
-  return function(...args) {
+export function curry(fn: any) {
+  return function(...args: any) {
     return args.length >= fn.length
       ? fn.apply(null, args)
-      : (...rest) => fn.apply(null, [...args, ...rest]);
+      : (...rest: any) => fn.apply(null, [...args, ...rest]);
   };
 };
 

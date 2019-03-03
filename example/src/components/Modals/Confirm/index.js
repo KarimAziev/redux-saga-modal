@@ -2,8 +2,9 @@ import React from 'react';
 import Modal from 'react-modal';
 import { Button } from 'components';
 import styles from './styles.module.css';
-
 import { sagaModal } from 'redux-saga-modal';
+import { MODAL_TYPES } from 'saga';
+
 
 Modal.setAppElement('#root');
 
@@ -26,7 +27,7 @@ const style = {
 };
 
 const Confirm = (props) => {
-  const { isOpen, text, title, click, hide, confirmBtn, cancelBtn } = props;
+  const { isOpen, text, title, click, hide, update, confirmBtn, cancelBtn } = props;
 
   return (
     <Modal
@@ -55,4 +56,14 @@ Confirm.defaultProps = {
   cancelBtn: {},
 };
 
-export default sagaModal({ name: 'confirmModal' })(Confirm);
+export default sagaModal({ 
+  name: MODAL_TYPES.CONFIRM,
+  initProps: {
+    text: 'Click save for a long request and then immediatelly click cancel',
+    title: 'Save changes?',
+    confirmBtn: { title: 'Save'},
+    cancelBtn: {
+      title: 'Cancel',
+    },
+  }
+})(Confirm);
