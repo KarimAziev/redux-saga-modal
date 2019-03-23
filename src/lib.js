@@ -7,9 +7,9 @@ export function curry(fn: any) {
   return function(...args: any) {
     return args.length >= fn.length
       ? fn.apply(null, args)
-      : (...rest: any) => fn.apply(null, [...args, ...rest]);
+    : (...rest: any) => fn.apply(null, [...args, ...rest]);
   };
-};
+}
 
 export const allPass = curry((checkers, args) =>
   checkers.map((fn) => fn.call(null, args)).every((r) => !!r)

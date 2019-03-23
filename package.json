@@ -29,7 +29,7 @@
     "start": "npm-run-all clean -p build:dev example:dev"
   },
   "lint-staged": {
-    "*.{js, json, lock}": [
+    "*.js": [
       "prettier-eslint --write",
       "git add"
     ]

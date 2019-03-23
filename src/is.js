@@ -5,7 +5,6 @@ import type { ModalName, Action } from './flow-types';
 
 import * as is from '@redux-saga/is';
 
-
 const callPattern = curry(
   (pattern, payload): boolean %checks =>
     pattern &&
