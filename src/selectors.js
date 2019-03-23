@@ -6,6 +6,6 @@ export const modalSelector = (
   name: ModalName,
   selector: typeof modalsStateSelector = modalsStateSelector
 ) => (state: Store) => {
-  const modalsState: ModalsState = modalsStateSelector(state);
+  const modalsState: ModalsState = selector(state);
   return modalsState && modalsState[name];
 };
