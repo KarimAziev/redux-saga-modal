@@ -27,7 +27,15 @@ const style = {
 };
 
 const Confirm = (props) => {
-  const { isOpen, text, title, click, hide, update, confirmBtn, cancelBtn } = props;
+  const { 
+    isOpen, 
+    text, 
+    title, 
+    click, 
+    hide, 
+    confirmBtn, 
+    cancelBtn,
+   } = props;
 
   return (
     <Modal
@@ -43,7 +51,10 @@ const Confirm = (props) => {
           <Button {...cancelBtn} onClick={hide}>
             {cancelBtn.title}
           </Button>
-          <Button type={'submit'} {...confirmBtn} onClick={(e) => click('OK')}>
+          <Button 
+            type={'submit'} 
+            {...confirmBtn} 
+            onClick={(e) => click('OK')}>
             {confirmBtn.title}
           </Button>
         </span>

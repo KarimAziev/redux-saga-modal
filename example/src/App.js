@@ -24,7 +24,6 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({ modals: state.modals });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -35,6 +34,6 @@ const mapDispatchToProps = (dispatch) =>
   );
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(App);
