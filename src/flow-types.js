@@ -8,6 +8,9 @@ import type { Pattern } from 'redux-saga';
 import isModal from './is';
 type Dictionary<K, T> = { [K]: T };
 export type ModalName = string;
+export type HideParams = {|
+  destroy: boolean 
+ |};
 type ActionMeta = {|
   +name: ModalName,
 |};
@@ -35,8 +38,10 @@ export type ShowModal = {|
 |};
 export type HideModal = {
   +type: typeof actionTypes.HIDE_MODAL,
-  +meta: ActionMeta,
-  payload?: any,
+  +meta: {|
+    +name: ModalName,
+    +destroy: boolean,
+  |},
 };
 
 export type ClickModal = {
@@ -109,13 +114,6 @@ export interface InjectedWrapperComponent {
     component: React.ComponentType<ModalOwnProps>
   ): React.Component<InjectedProps>;
 }
-
-export type SagaConfig = {
-  worker: Saga<void>,
-  destroyOnHide?: Boolean,
-  cancellable?: Boolean,
-  args?: Array<any>,
-};
 
 export type RootModalSaga = Saga<AllEffect>;
 export type CheckPattern = (

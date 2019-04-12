@@ -59,3 +59,11 @@ export function destroyModal(name: ModalName): DestroyModal {
     },
   };
 }
+
+
+export function confirmModal(payload: Object = {}) {
+  return {
+    type: actionTypes.CONFIRM_MODAL,
+    payload,
+  };
+};
