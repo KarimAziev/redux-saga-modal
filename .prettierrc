@@ -3,9 +3,12 @@
   "trailingComma": "es5",
   "bracketSpacing": true,
   "semi": true,
-  "arrowParens": "always",
-  "tabWidth": 2,
-  "parser": "flow",
+  "arrowParens": "avoid",
+  "tabWidth": 4,
+  "parser": "babel-flow",
   "insertPragma": false,
-  "printWidth": 80
+  "jsxSingleQuote": true,
+  "quoteProps": "consistent",
+  "jsxBracketSameLine": true,
+  "rangeStart": 0
 }

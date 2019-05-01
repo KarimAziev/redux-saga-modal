@@ -6,6 +6,4 @@ export default Object.freeze({
   UPDATE_MODAL: '@@modal-saga/UPDATE',
   DESTROY_MODAL: '@@modal-saga/DESTROY',
   CONFIRM_MODAL: '@@modal-saga/CONFIRM',
-  SHOW_MODAL_TRIGGER: '@@modal-saga/SHOW_TRIGGER',
-  HIDE_MODAL_TRIGGER: '@@modal-saga/HIDE_TRIGGER',
 });

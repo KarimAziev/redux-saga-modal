@@ -6,6 +6,7 @@ export const modalSelector = (
   name: ModalName,
   selector: typeof modalsStateSelector = modalsStateSelector
 ) => (state: Store) => {
+  console.count('selector');
   const modalsState: ModalsState = selector(state);
   return modalsState && modalsState[name];
 };

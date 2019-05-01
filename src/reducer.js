@@ -15,64 +15,64 @@ export default function reducer(
   action: Action
 ): ModalsState {
   switch (action.type) {
-    case actionTypes.SHOW_MODAL: {
-      const { name } = action.meta;
-      return {
-        ...state,
-        [name]: {
-          props: action.payload,
-          isOpen: true,
+  case actionTypes.SHOW_MODAL: {
+    const { name } = action.meta;
+    return {
+      ...state,
+      [name]: {
+        props: action.payload,
+        isOpen: true,
+      },
+    };
+  }
+
+  case actionTypes.CLICK_MODAL: {
+    const { name } = action.meta;
+
+    return {
+      ...state,
+      [name]: {
+        ...state[name],
+        clicked: action.payload,
+      },
+    };
+  }
+
+  case actionTypes.UPDATE_MODAL: {
+    const { name } = action.meta;
+    const modalState = pluckModalState(state, name);
+
+    return {
+      ...state,
+      [name]: {
+        ...modalState,
+        props: {
+          ...modalState.props,
+          ...action.payload,
         },
-      };
-    }
+      },
+    };
+  }
 
-    case actionTypes.CLICK_MODAL: {
-      const { name } = action.meta;
+  case actionTypes.HIDE_MODAL: {
+    const { name } = action.meta;
+    const modalState = pluckModalState(state, name);
 
-      return {
-        ...state,
-        [name]: {
-          ...state[name],
-          clicked: action.payload,
-        },
-      };
-    }
+    return {
+      ...state,
+      [name]: {
+        ...modalState,
+        isOpen: false,
+      },
+    };
+  }
 
-    case actionTypes.UPDATE_MODAL: {
-      const { name } = action.meta;
-      const modalState = pluckModalState(state, name);
+  case actionTypes.DESTROY_MODAL: {
+    const { name } = action.meta;
+    return omitProps([name], state);
+  }
 
-      return {
-        ...state,
-        [name]: {
-          ...modalState,
-          props: {
-            ...modalState.props,
-            ...action.payload,
-          },
-        },
-      };
-    }
-
-    case actionTypes.HIDE_MODAL: {
-      const { name } = action.meta;
-      const modalState = pluckModalState(state, name);
-
-      return {
-        ...state,
-        [name]: {
-          ...modalState,
-          isOpen: false,
-        },
-      };
-    }
-
-    case actionTypes.DESTROY_MODAL: {
-      const { name } = action.meta;
-      return omitProps([name], state);
-    }
-
-    default:
-      return state;
+  default:
+    return state;
   }
 }
