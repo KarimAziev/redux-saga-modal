@@ -28,7 +28,7 @@ import {
   import { modalSelector } from './selectors';
   import is from './is';
   
-  export const createModal = (name: ModalName): SagaContext<ModalName> => ({
+  export const getModalEffects = (name: ModalName): SagaContext<ModalName> => ({
     name,
     show: (props) => put(showModal(name, props)),
     hide: () => put(hideModal(name)),
@@ -75,7 +75,7 @@ import {
   
   function* forker(name, config) {
     const saga = config[name];
-    const modal = createModal(name);
+    const modal = getModalEffects(name);
   
     while (true) {
       const { payload } = yield take(modal.is.show());
@@ -105,7 +105,7 @@ import {
     onConfirm,
     onHide
   ) {
-    const modal = createModal(name);
+    const modal = getModalEffects(name);
     const state = yield modal.select();
     const isOpen = state ? state.isOpen : false;
     if (!isOpen) {

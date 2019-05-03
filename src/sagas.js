@@ -1,23 +1,14 @@
 // @flow
 import {
   fork,
-  put,
+  apply,
   all,
   take,
   call,
-  setContext,
   race,
-  getContext,
   actionChannel,
 } from 'redux-saga/effects';
-import { channel } from 'redux-saga';
-import {
-  destroyModal,
-} from './actions';
-import type {
-  SagaRootConfig,
-  RootModalSaga,
-} from './flow-types';
+import type { SagaRootConfig, RootModalSaga } from './flow-types';
 import { getModalEffects } from './effects';
 
 export default function* rootModalSaga(
@@ -27,95 +18,39 @@ export default function* rootModalSaga(
 
   const tasks = yield all(
     names.map(name => {
-      return fork(forker, name, config);
+      return fork(forkModal, name, config[name]);
     })
   );
 
   return tasks;
 }
 
-function* forker(name, config) {
-  const saga = config[name];
-  const modalChan = yield call(channel);
-  const modal = getModalEffects(name);
-  const chan = yield actionChannel(modal.isShow());
-
+export function* forkModal(modalName, modalSaga) {
+  const modal = getModalEffects(modalName);
+  const showChan = yield actionChannel(modal.isShow());
+  
   while (true) {
-    const { payload } = yield take(chan);
-    yield setContext({ [modal.name]: modal });
-
-    const winner = yield race({
-      task: call(modalTask, saga, name, payload, modalChan),
-      destroy: take(modalChan),
-    });
-
-    if (winner.destroy) {
-      yield modal.destroy();
-    }
+    const { payload } = yield take(showChan);
+    yield call(callModal, modalName, modalSaga, payload);
   }
 }
 
-function* modalTask(saga, name, payload = {}, modalChan) {
-  const modal = yield getContext(name);
-  const hideChan = yield actionChannel(modal.isHide());
+export function* callModal(modalName, modalSaga, ...args) {
+  const modal = getModalEffects(modalName);
 
-  const task = yield fork([modal, saga], payload);
-
-  while (true) {
-    const { meta } = yield take(hideChan);
-
-    if (meta.destroy) {
-      yield put(modalChan, { 
-        ...destroyModal(name),
-        task: task, 
-      });
-    } else {
-      return task;
-    }
-  }
-}
-
-export function* callModal(name, { props, onConfirm, onHide }) {
-  const modal = getModalEffects(name);
-  const state = yield modal.select();
-  const isOpen = state ? state.isOpen : false;
-  if (!isOpen) {
-    yield modal.show(props);
-  }
-
-  yield setContext({ [modal.name]: modal });
-
-  const { confirm } = yield race({
-    confirm: modal.takeClick(),
+  const winner = yield race({
+    task: apply(modal, modalSaga, args),
     hide: modal.takeHide(),
+    destroy: modal.takeDestroy(),
   });
-  if (!confirm) {
-    const worker = onHide ? onHide : false;
-    return yield worker;
+  if (winner.hide || winner.destroy) {
+    return false;
   } else {
-    return yield onConfirm || true;
+    const state = yield modal.select();
+    if (state.isOpen) {
+      yield modal.hide();
+    }
+    const task = winner.task || true;
+    return yield task;
   }
 }
-
-// export function* confirmModal(name, {
-//   props,
-//   onConfirm,
-//   onHide,
-// }) {
-
-//   const modal = getModalEffects(name);
-//   console.log('callModal modal', modal);
-//   const state = yield modal.select();
-//   const isOpen = state ? state.isOpen : false;
-//   if (!isOpen) {
-//     yield modal.show(props);
-//   }
-//   const { confirm, hide } = yield race({
-//     confirm: modal.takeClick(),
-//     hide: modal.takeHide(),
-//   });
-//   if (confirm) {
-//     yield call(onConfirm);
-//   }
-
-// }

@@ -1,7 +1,7 @@
 // @flow
 import reducer from './reducer';
 import sagaModal from './sagaModal';
-import sagas from './sagas';
+import sagas, { forkModal, callModal } from './sagas';
 import {
   clickModal,
   showModal,
@@ -11,11 +11,11 @@ import {
   confirmModal,
 } from './actions';
 import actionTypes from './actionTypes';
-import { createModal, getModalEffects } from './effects';
+import { getModalEffects } from './effects';
 
 export {
   sagaModal,
-  createModal,
+  getModalEffects,
   reducer,
   sagas,
   clickModal,
@@ -24,6 +24,7 @@ export {
   updateModal,
   destroyModal,
   confirmModal,
-  getModalEffects,
   actionTypes,
+  forkModal,
+  callModal,
 };

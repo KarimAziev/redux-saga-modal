@@ -5,8 +5,7 @@ export const modalsStateSelector = (state: Store): ModalsState => state.modals;
 export const modalSelector = (
   name: ModalName,
   selector: typeof modalsStateSelector = modalsStateSelector
-) => (state: Store) => {
-  console.count('selector');
-  const modalsState: ModalsState = selector(state);
+) => (state: Store, props: any) => {
+  const modalsState: ModalsState = selector(state, props);
   return modalsState && modalsState[name];
 };
