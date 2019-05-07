@@ -12,9 +12,11 @@ import {
 } from './actions';
 import actionTypes from './actionTypes';
 import { getModalEffects } from './effects';
+import Modal from './Modal';
 
 export {
   sagaModal,
+  Modal,
   getModalEffects,
   reducer,
   sagas,

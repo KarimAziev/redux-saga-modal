@@ -9,7 +9,7 @@ import {
 } from 'redux-saga/effects';
 import { modalSelector } from './selectors';
 import {
-  actionsCreators,
+  actionCreators,
 } from './actions';
 import { callModal } from './sagas';
 import { capitalize } from './lib';
@@ -17,10 +17,10 @@ const effects = {
   take,
 };
 export const curryModalActions = (name: ModalName) => 
-  Object.keys(actionsCreators)
+  Object.keys(actionCreators)
     .reduce((acc, key) => ({
       ...acc,
-      [key]: (props) => actionsCreators[key](name, props), 
+      [key]: (props) => actionCreators[key](name, props), 
     }), {});
 
 export const curryModalEffects = (name, effect, curriedActions) => {

@@ -51,4 +51,9 @@ export const isGeneratorFunction = (obj: Object) => {
   return isGenerator(constructor.prototype);
 };
 
+
+export function isString(obj) {
+  return (Object.prototype.toString.call(obj) === '[object String]');
+}
+
 export const capitalize = name => name.charAt(0).toUpperCase() + name.slice(1)

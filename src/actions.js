@@ -74,7 +74,7 @@ export function confirmModal(
   };
 }
 
-export const actionsCreators = {
+export const actionCreators = {
   show: showModal,
   hide: hideModal,
   destroy: destroyModal,

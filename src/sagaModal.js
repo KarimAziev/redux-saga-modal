@@ -15,8 +15,7 @@ import type {
   ModalState,
   InjectedProps,
 } from './flow-types';
-import { bindModalActionCreators } from './utils';
-import { actionsCreators } from './actions';
+import { getBoundModalActions } from './utils';
 
 const initialState: ModalState = { props: {} };
 
@@ -24,6 +23,7 @@ const sagaModal = ({
   name,
   getModalsState,
   initProps = initialState,
+  renameMap,
 }) => ModalComponent => {
   const ConnectedModal = ({ modal, ...rest }) =>
     !modal.isOpen
@@ -36,18 +36,17 @@ const sagaModal = ({
           name,
         },
       });
+      
   const mapStateToProps = (state: Store) => ({
     ...initProps,
     modal: modalSelector(name, getModalsState)(state) || initialState,
   });
 
   const mapDispatchToProps: BindActionCreators = (dispatch: Dispatch) => ({
-    ...bindModalActionCreators(
-      {
-        ...actionsCreators,
-      },
+    ...getBoundModalActions(
+      name,
       dispatch,
-      name
+      renameMap,
     ),
   });
   ConnectedModal.displayName = `ConnectModal(${getDisplayName(
