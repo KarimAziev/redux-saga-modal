@@ -1,4 +1,5 @@
-import { actionCreators } from './actions';
+import * as actionCreators from './actions';
+
 
 export function bindActionCreator(actionCreator, name, effect) {
   return function(...args) {
@@ -33,7 +34,7 @@ export function getBoundModalActions(name, effect, renameMap, customBinder) {
     const actionCreator = actionCreators[key];
 
     const boundKey = renameMap && renameMap[key] 
-      ? renameMap[key]
+    ? renameMap[key]
       : key;
 
     if (typeof actionCreator === 'function') {
@@ -45,4 +46,19 @@ export function getBoundModalActions(name, effect, renameMap, customBinder) {
     } 
   }
   return boundActionCreators;
+}
+
+export const konst = v => () => v;
+export const kTrue = konst(true);
+export const kFalse = konst(false);
+export const noop = () => {};
+export const identity = v => v;
+
+const hasSymbol = typeof Symbol === 'function';
+export const asyncIteratorSymbol = hasSymbol && Symbol.asyncIterator ? Symbol.asyncIterator : '@@asyncIterator';
+
+export function check(value, predicate, error) {
+  if (!predicate(value)) {
+    throw new Error(error);
+  }
 }

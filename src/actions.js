@@ -1,11 +1,11 @@
 // @flow
-import actionTypes from './actionTypes';
+import * as actionTypes from './actionTypes';
 import type {
   ModalName,
   ShowModal,
   HideModal,
-  ClickModal,
   UpdateModal,
+  ClickModal,
   DestroyModal,
   ConfirmModal,
 } from './flow-types';
@@ -61,24 +61,15 @@ export function destroyModal(name: ModalName): DestroyModal {
   };
 }
 
-export function confirmModal(
+export function submitModal(
   name: ModalName,
   payload: Object = {}
 ): ConfirmModal {
   return {
-    type: actionTypes.CONFIRM_MODAL,
+    type: actionTypes.SUBMIT_MODAL,
     payload,
     meta: {
       name,
     },
   };
 }
-
-export const actionCreators = {
-  show: showModal,
-  hide: hideModal,
-  destroy: destroyModal,
-  confirm: confirmModal,
-  update: updateModal,
-  click: clickModal,
-};

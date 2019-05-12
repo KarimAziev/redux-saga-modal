@@ -16,6 +16,7 @@ import type {
   InjectedProps,
 } from './flow-types';
 import { getBoundModalActions } from './utils';
+import * as defaults from './defaults';
 
 const initialState: ModalState = { props: {} };
 
@@ -23,7 +24,7 @@ const sagaModal = ({
   name,
   getModalsState,
   initProps = initialState,
-  renameMap,
+  renameMap = defaults.renameActionsMap,
 }) => ModalComponent => {
   const ConnectedModal = ({ modal, ...rest }) =>
     !modal.isOpen

@@ -1,5 +1,5 @@
 // @flow
-import actionTypes from './actionTypes';
+import * as actionTypes from './actionTypes';
 import { Store, Dispatch } from 'redux';
 import { modalsStateSelector } from './selectors';
 import * as React from 'react';
@@ -62,7 +62,7 @@ export type DestroyModal = {
 };
 
 export type ConfirmModal = {
-    +type: typeof actionTypes.CONFIRM_MODAL,
+    +type: typeof actionTypes.SUBMIT_MODAL,
     payload?: any,
     +meta: ActionMeta,
 };
