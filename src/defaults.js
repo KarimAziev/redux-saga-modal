@@ -9,3 +9,4 @@ export const renameActionsMap = {
   submitModal: 'submit',
 };
 
+export const createCancelPattern = modal => modal.pattern.hide();

@@ -58,7 +58,7 @@ const hasSymbol = typeof Symbol === 'function';
 export const asyncIteratorSymbol = hasSymbol && Symbol.asyncIterator ? Symbol.asyncIterator : '@@asyncIterator';
 
 export function check(value, predicate, error) {
-  if (!predicate(value)) {
+  if (!predicate(value) && process.env.NODE_ENV !== 'production') {
     throw new Error(error);
   }
 }

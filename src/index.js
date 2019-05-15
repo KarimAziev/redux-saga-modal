@@ -1,7 +1,7 @@
 // @flow
 import reducer from './reducer';
 import sagaModal from './sagaModal';
-import sagas from './sagas';
+import sagas, { callModal } from './sagas';
 import {
   clickModal,
   showModal,
@@ -15,6 +15,7 @@ import { createModal } from './Modal';
 
 export {
   sagaModal,
+  callModal,
   createModal,
   reducer,
   sagas,
