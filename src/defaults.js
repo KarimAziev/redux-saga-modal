@@ -1,5 +1,3 @@
-
-
 export const renameActionsMap = {
   showModal: 'show',
   hideModal: 'hide',
@@ -8,5 +6,6 @@ export const renameActionsMap = {
   clickModal: 'click',
   submitModal: 'submit',
 };
+
 
 export const createCancelPattern = modal => modal.pattern.hide();

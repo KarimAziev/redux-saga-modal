@@ -1,7 +1,7 @@
 import * as is from '@redux-saga/is';
 import { kTrue } from './utils';
 
-export const array = patterns => input => 
+export const array = patterns => input =>
   patterns.some(p => payloadMatcher(p)(input));
 // eslint-disable-next-line no-shadow
 export const predicate = predicate => input => predicate(input);
@@ -27,16 +27,15 @@ export default function payloadMatcher(pattern) {
   }
 
   return matcherCreator(pattern);
-
 }
 
 export function modalMatcher(modalName, actionType, pattern, action) {
-
   const { type, payload, meta } = action;
-      
-  const isMatch = type === actionType && 
-      meta && meta.name === modalName && 
-      payloadMatcher(pattern)(payload);
-  console.log('isMatch result', isMatch);
+
+  const isMatch =
+        type === actionType &&
+        meta &&
+        meta.name === modalName &&
+        payloadMatcher(pattern)(payload);
   return isMatch;
 }

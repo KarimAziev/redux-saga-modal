@@ -54,6 +54,22 @@ export default function reducer(
     };
   }
 
+  case actionTypes.SUBMIT_MODAL: {
+    const { name } = action.meta;
+    const modalState = pluckModalState(state, name);
+    return {
+      ...state,
+      [name]: {
+        ...modalState,
+        props: {
+          ...modalState.props,
+        },
+        isSubmitted: true,
+        submitted: action.payload,
+      },
+    };
+  }
+
   case actionTypes.HIDE_MODAL: {
     const { name } = action.meta;
     const modalState = pluckModalState(state, name);

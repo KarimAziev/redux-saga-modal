@@ -20,7 +20,7 @@ export function showModal(name: ModalName, payload: Object = {}): ShowModal {
   };
 }
 
-export function hideModal(name: ModalName): HideModal {
+export function hideModal(name: ModalName, payload: Object = {}): HideModal {
   return {
     type: actionTypes.HIDE_MODAL,
     meta: {

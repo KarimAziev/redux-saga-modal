@@ -6,6 +6,7 @@ import * as React from 'react';
 import type { Saga, PutEffect, SelectEffect, AllEffect } from 'redux-saga';
 import type { Pattern } from 'redux-saga';
 import isModal from './is';
+
 type Dictionary<K, T> = { [K]: T };
 export type ModalName = string;
 export type HideParams = {|
