@@ -4,12 +4,9 @@
       "@babel/preset-flow"
     ],
     [
-      "@babel/preset-env",
-      {
-        "loose": true,
-        "modules": false
-      }
-    ]
+      "@babel/preset-env"
+    ],
+    ["@babel/react"]
   ],
   "plugins": [
     [

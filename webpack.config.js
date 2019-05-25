@@ -1,30 +1,28 @@
+const path = require('path');
+const nodeExternals = require('webpack-node-externals');
+
 module.exports = {
+  entry: path.resolve(__dirname, 'src/index.js'),
   output: {
-    library: 'ReduxSagaModal',
-    libraryTarget: 'umd',
+    path: path.resolve(__dirname, './lib'),
+    filename: 'index.js',
+    library: '',
+    libraryTarget: 'commonjs',
   },
+  externals: [nodeExternals()],
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
+        test: /\.jsx?$/,
+        exclude: /(node_modules)/,
         loader: 'babel-loader',
+        options: {
+          presets: ['@babel/preset-flow', '@babel/preset-env', '@babel/react'],
+        },
       },
     ],
   },
-  externals: {
-    'redux-saga/effects': {
-      commonjs: 'redux-saga/effects',
-      commonjs2: 'redux-saga/effects',
-      amd: 'redux-saga/effects',
-      root: 'ReduxSaga.effects',
-    },
-    'redux-saga': {
-      commonjs: 'redux-saga',
-      commonjs2: 'redux-saga',
-      amd: 'redux-saga',
-      root: 'ReduxSaga',
-    },
+  resolve: {
+    extensions: ['.js', '.jsx'],
   },
-  devtool: 'source-map',
 };
