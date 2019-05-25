@@ -11,7 +11,7 @@ import {
   submitModal,
 } from './actions';
 import * as actionTypes from './actionTypes';
-import { createModal } from './Modal';
+import createModal from './createModal';
 import createModalActions from './helpers/createModalActions';
 import createModalPatterns from './helpers/createModalPatterns';
 import createModalEffects from './helpers/createModalEffects';

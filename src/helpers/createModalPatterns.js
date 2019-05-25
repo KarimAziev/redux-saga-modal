@@ -14,12 +14,7 @@ export default function createModalPatterns(
     const patternKey = renameMap[actionKey];
     const actionType = actionCreator(modalName).type;
     acc[patternKey] = patternOrAction => {
-      console.log('patternOrAction', patternOrAction);
       if (is.object(patternOrAction)) {
-        console.log(
-          'is.object(patternOrAction)',
-          is.object(patternOrAction)
-        );
         return modalMatcher(
           modalName,
           actionType,

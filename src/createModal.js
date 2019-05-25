@@ -6,7 +6,7 @@ import * as defaults from './defaults';
 import { check } from './utils';
 import { string } from '@redux-saga/is';
 
-export function createModal(modalName, params) {
+export default function createModal(modalName, params) {
   if (process.env.NODE_ENV !== 'production') {
     check(
       modalName,

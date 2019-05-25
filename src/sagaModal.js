@@ -12,6 +12,7 @@ import createModalActions from './helpers/createModalActions';
 import * as defaults from './defaults';
 import * as is from '@redux-saga/is';
 
+
 const initialState: ModalState = {
   props: {},
 };
@@ -26,19 +27,30 @@ const sagaModal = ({
   keepComponentOnHide = false,
   renameMap = defaults.renameActionsMap,
 }) => ModalComponent => {
-  const ConnectedModal = ({ modal, ...rest }) => (
-    modal.isOpen || (keepComponentOnHide && is.undef(modal.isOpen))
-      ? React.createElement(ModalComponent, {
-        ...rest,
-        ...modal.props,
-        isOpen: modal.isOpen,
-        modal: {
-          name,
-          destroyOnHide,
-        },
-      })
-      : null
-  );
+  const ConnectedModal = ({ modal, ...rest }) => {
+    const { isOpen } = modal;
+
+    React.useEffect(() => {
+      if (isOpen === false && destroyOnHide) {
+        rest.destroy();
+      }
+    }, [isOpen])
+    return (
+      modal.isOpen || (keepComponentOnHide && is.undef(isOpen))
+        ? React.createElement(ModalComponent, {
+          ...rest,
+          ...modal.props,
+          isOpen: isOpen,
+          modal: {
+            name,
+            destroyOnHide,
+            keepComponentOnHide,
+            isOpen: modal.isOpen,
+          },
+        })
+        : null
+    );
+  }
   
 
   const mapStateToProps = (state: Store) => ({

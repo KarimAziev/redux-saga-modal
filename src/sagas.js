@@ -1,7 +1,7 @@
 // @flow
 import { fork, all, take, call, race } from 'redux-saga/effects';
 import type { SagaRootConfig, RootModalSaga } from './flow-types';
-import { createModal } from './Modal';
+import createModal from './createModal';
 import * as is from '@redux-saga/is';
 import * as defaults from './defaults';
 
@@ -9,7 +9,6 @@ export default function* rootModalSaga(
   config: SagaRootConfig = {}
 ): RootModalSaga {
   const names = Object.keys(config);
-
   const tasks = yield all(
     names.map(key =>
       fork(function*() {
@@ -23,7 +22,6 @@ export default function* rootModalSaga(
 
           const modal = createModal(key);
           const action = yield take(modal.pattern.show());
-
           yield call([{ modal }, modalSaga], {
             ...params,
             initProps: { ...params.initProps,
@@ -58,7 +56,7 @@ export function* modalSaga(...args) {
         createCancelPattern && createCancelPattern(modalContext);
 
   const winner = yield race({
-    task: call([{ modal: modalContext }, task], initProps),
+    task: call([modalContext, task], initProps),
     cancel: take(cancelPattern),
   });
 
