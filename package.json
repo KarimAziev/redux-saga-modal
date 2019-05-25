@@ -2,24 +2,26 @@
   "name": "redux-saga-modal",
   "version": "0.3.0",
   "description": "A wrapper to manage modals within redux-saga",
-  "main": "lib/index.js",
   "files": [
-    "lib",
-    "src"
+    "lib"
   ],
+  "main": "lib/index.js",
   "scripts": {
     "clean": "rimraf lib",
-    "prebuild": "yarn clean",
-    "start:dev": "webpack-dev-server",
-    "build": "webpack --mode production",
-    "prepublish": "yarn build",
+    "flow": "flow",
+    "format": "prettier-eslint --write \"src/**/*.js\"",
+    "build": "npm-run-all clean -p build:prod",
+    "build:dev": "webpack --watch --mode=production",
+    "build:prod": "webpack --mode=production",
+    "prebuild": "yarn run clean",
+    "prepublishOnly": "yarn run build",
     "precommit": "lint-staged",
-    "build:dev": "webpack --watch --mode development --config webpack.config.babel.js --info-verbosity verbose",
-    "release": "release-it --verbose --github.release"
+    "release": "release-it --verbose --github.release",
+    "start": "npm-run-all clean -p build:dev"
   },
   "lint-staged": {
-    "*.{js, json, lock}": [
-      "prettier --write",
+    "*.js": [
+      "prettier-eslint --write",
       "git add"
     ]
   },
@@ -39,39 +41,60 @@
     "url": "https://github.com/KarimAziev/redux-saga-modal/issues"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-eslint": "8.2.5",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
-    "eslint": "^4.1.1",
-    "eslint-config-react-app": "^2.1.0",
-    "eslint-loader": "^1.6.1",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.3.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.3.1",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.3.1",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.4.4",
+    "@babel/runtime": "^7.3.1",
+    "@redux-saga/is": "^1.0.1",
+    "babel-eslint": "9.0.0",
+    "babel-loader": "^8.0.5",
+    "babel-plugin-add-module-exports": "^1.0.0",
+    "chai": "^4.2.0",
+    "cross-env": "^5.2.0",
+    "eslint": "5.12.0",
+    "eslint-config-fbjs": "^3.1.0",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-config-react-app": "^4.0.0",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-flowtype": "^3.6.1",
+    "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.3.0",
-    "eslint-plugin-react-app": "^3.0.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "flow-bin": "^0.91.0",
+    "invariant": "^2.2.4",
     "lint-staged": "^7.2.2",
-    "prettier": "^1.14.2",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "mocha": "^6.1.4",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.16.4",
+    "prettier-eslint-cli": "^4.7.1",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
-    "redux-saga": "^0.16.0",
+    "redux-saga": ">=0.15.0",
     "rimraf": "^2.6.2",
-    "webpack": "^4.4.1",
-    "webpack-cli": "^2.0.12",
-    "webpack-dev-server": "^3.1.4"
+    "sinon": "^7.3.2",
+    "webpack": "^4.29.0",
+    "webpack-cli": "^3.2.3"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^2.0.0"
+    "hoist-non-react-statics": "^2.0.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "webpack-node-externals": "^1.7.2"
   },
   "peerDependencies": {
-    "react": "^0.14.0 || >=15.0.0",
+    "@babel/runtime": ">=7.0.0",
+    "react": "^16.8.6",
     "react-redux": "^4.0.0 || ^5.0.0",
-    "redux": "^3.0.0 || ^4.0.0"
+    "redux": "^3.0.0 || ^4.0.0",
+    "redux-saga": ">=0.15.0"
   },
   "testURL": "http://localhost"
 }

@@ -1,11 +1,25 @@
 {
   "presets": [
-    "env",
-    "react"
+    [
+      "@babel/preset-env"
+    ],
+    ["@babel/react"]
   ],
   "plugins": [
-    "add-module-exports",
-    "transform-object-rest-spread",
-    "transform-class-properties"
+    [
+      "@babel/plugin-proposal-object-rest-spread",
+      {
+        "loose": true
+      }
+    ],
+    ["@babel/plugin-proposal-class-properties"],
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": false,
+        "helpers": true,
+        "regenerator": true
+      }
+    ]
   ]
 }
