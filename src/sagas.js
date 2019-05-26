@@ -1,40 +1,26 @@
-
-import { fork, put, all, takeLatest } from 'redux-saga/effects';
-import types from './types';
-import * as actions from './actions';
-import { checkActionType, checkModalName, takeModalClick } from './lib';
+import { fork, all, take, race, call } from 'redux-saga/effects';
+import createModal from './createModal';
 
 export default function* rootModalSaga(config = {}) {
   const names = Object.keys(config);
-  try {
-    yield all(names.map(name => {
+  yield all(
+    names.map(name => {
       const saga = config[name];
-      
-      const filters = action => 
-        checkActionType([types.SHOW_MODAL, types.HIDE_MODAL])(action) && 
-        checkModalName(name)(action);
-
-      
-    
-      return takeLatest(filters, function* forker (action) {
-        const { type, payload } = action;
-        if (type === types.HIDE_MODAL) {
-          return;
+      const modal = createModal(name);
+      return fork(function*() {
+        while (true) {
+          const { payload } = yield take(modal.pattern.show);
+          try {
+            yield race({
+              task: call([modal, saga], payload),
+              cancel: modal.takeDestroy(),
+            });
+           
+          } catch (error) {
+            yield modal.destroy();
+          } 
         }
-
-        const context = {
-          name,
-          update: (props) => put(actions.updateModal(name, props)),
-          hide: () => put(actions.hideModal(name)),
-          takeClick: (value) => takeModalClick(name, value),
-        };
-        
-        yield fork([context, saga], payload);
-      })
-      
-    }))
-  } catch (error) {
-    console.error('ERROR IN @@REDUX-SAGA-MODAL', error)
-  }
+      });
+    })
+  );
 }
-

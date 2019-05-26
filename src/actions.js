@@ -1,37 +1,60 @@
-import types from './types';
+import * as actionTypes from './actionTypes';
+
 export function showModal(name, payload = {}) {
   return {
-    type: types.SHOW_MODAL,
-    payload: {
-      ...payload,
+    type: actionTypes.SHOW_MODAL,
+    payload,
+    meta: {
       name,
     },
   };
 }
 
-export function hideModal(name) {
+export function hideModal(name, payload) {
   return {
-    type: types.HIDE_MODAL,
-    payload: { name },
+    type: actionTypes.HIDE_MODAL,
+    payload,
+    meta: {
+      name,
+    },
   };
 }
 
 export function clickModal(name, value) {
   return {
-    type: types.CLICK_MODAL,
-    payload: {
-      name: name,
-      value: value,
+    type: actionTypes.CLICK_MODAL,
+    payload: value,
+    meta: {
+      name,
     },
   };
 }
 
 export function updateModal(name, payload = {}) {
   return {
-    type: types.UPDATE_MODAL,
-    payload: {
+    type: actionTypes.UPDATE_MODAL,
+    payload,
+    meta: {
       name,
-      ...payload,
+    },
+  };
+}
+
+export function destroyModal(name) {
+  return {
+    type: actionTypes.DESTROY_MODAL,
+    meta: {
+      name,
+    },
+  };
+}
+
+export function submitModal(name, payload = {}) {
+  return {
+    type: actionTypes.SUBMIT_MODAL,
+    payload,
+    meta: {
+      name,
     },
   };
 }
