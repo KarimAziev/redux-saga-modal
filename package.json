@@ -17,7 +17,8 @@
     "prepublishOnly": "yarn run build",
     "precommit": "lint-staged",
     "release": "release-it --verbose --github.release",
-    "start": "npm-run-all clean -p build:dev"
+    "start": "npm-run-all clean -p build:dev",
+    "test": "mocha --require @babel/register test"
   },
   "lint-staged": {
     "*.js": [
@@ -52,6 +53,7 @@
     "@babel/register": "^7.4.4",
     "@babel/runtime": "^7.3.1",
     "@redux-saga/is": "^1.0.1",
+    "@redux-saga/testing-utils": "^1.0.2",
     "babel-eslint": "9.0.0",
     "babel-loader": "^8.0.5",
     "babel-plugin-add-module-exports": "^1.0.0",

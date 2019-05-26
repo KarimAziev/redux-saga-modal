@@ -10,10 +10,9 @@ export function showModal(name, payload = {}) {
   };
 }
 
-export function hideModal(name, payload) {
+export function hideModal(name) {
   return {
     type: actionTypes.HIDE_MODAL,
-    payload,
     meta: {
       name,
     },
