@@ -13,6 +13,7 @@ yarn add redux-saga-modal
 
 ## Usage
 
+In sagas 
 
 ```javascript
 
@@ -34,9 +35,9 @@ function* confirmModal(initProps) {
   if (winner.submit) {
     yield modal.hide();
     return true;
-  } else {
-    return false;
-  }
+  } 
+
+  return false;
 }
 
 export function* removeUserSaga() {
@@ -52,12 +53,13 @@ export function* removeUserSaga() {
       continue;
     }
 
-    yield call(remove, userId);
+    yield call(api.remove, userId);
   }
 }
 
 ```
-Connect your modal component with `sagaModal`.  
+In component
+
 ```javascript
 import { sagaModal } from 'redux-saga-modal';
 import ReactModal from "react-modal";
@@ -94,7 +96,8 @@ const ConnectedModal = sagaModal({
  })(Modal);
 
 ```
-Pass the `modalReducer` to your store. It keeps the state of all your modal components.
+
+Pass the `reducer` to your store. It keeps the state of all your modal components.
 
 ```javascript
 import { createStore, combineReducers } from 'redux'
@@ -110,37 +113,91 @@ const rootReducer = combineReducers({
 const store = createStore(rootReducer)
 
 ```
-## Action creators:
-**showModal**(name, props)
-* name  : string [required]
-* props : object 
 
-**updateModal**(name, payload) 
-  merges payload with props in the modal state
-* name  : string [required]
-* props : object 
+## API
+## Actions creators
 
-**submitModal**(name, props) 
+**showModal**(name, payload = {})
 * name  : string [required]
-* props : any 
+* payload : object 
+```javascript
+{
+    type: String,
+    payload: Object,
+    meta: {
+      name: String,
+    }
+  }
+  ```
+**updateModal**(name, payload = {}) 
+  merges payload with props in the modal state. 
+* name  : string [required]
+* payload : object [required]
+```javascript
+{
+    type: String,
+    payload: Object,
+    meta: {
+      name: String,
+    }
+  }
+  ```
 
-**clickModal**(name, value)
+**submitModal**(name, payload) 
+* name  : string [required]
+* payload : any 
+```javascript
+{
+    type: String,
+    payload: any,
+    meta: {
+      name: String,
+    }
+  }
+  ```
+**clickModal**(name, payload)
 * name: string [required]
-* value: any
+* payload: any
+```javascript
+{
+    type: String,
+    payload: any,
+    meta: {
+      name: String,
+    }
+  }
+  ```
 
 **hideModal**(name)
 * name: string [required]
 
+```javascript
+{
+    type: String,
+    meta: {
+      name: String,
+    }
+  }
+
+  ```
+
 **destroyModal**(name) 
 * name  : string [required]
+```javascript
+{
+    type: String,
+    meta: {
+      name: String,
+    }
+  }
+  ```
+## Helpers and effects
 
-## Helpers
-To create a minimal set of helpers without high-level effects use `createModalHelpers`. 
-To create as high-level effects, as helpers use `createModal`. 
+To get all helpers and effects use `createModal`. 
+To create a minimal set of helpers without high-level API use `createModalHelpers`. 
 
 ```javascript
-   import { createModalHelpers } from 'redux-saga-modal';
-   import { createModal } from 'redux-saga-modal';
+   import { createModalHelpers, createModal, showModal } from 'redux-saga-modal';
    
    const {
      patterns,
@@ -148,19 +205,42 @@ To create as high-level effects, as helpers use `createModal`.
      selector,
      name,
    } = createModalHelpers('CONFIRM_MODAL');
+
+  const {
+     patterns,
+     actions,
+     selector,
+     name,
+     ...effects
+   } = createModal('CONFIRM_MODAL');
+
+      //all of them will put the same action
+   yield effects.show({ text: 'Some text' }});
+   yield put(actions.show({ text: 'Some text' }}));
+   yield put(showModal('CONFIRM_MODAL', { text: 'Some text' }}));
+   
+
+  //all of them will wait for the same action
+
+   yield effects.takeClick('value');
+   yield take(patterns.click('value'));
+   yield take(action => action.type === clickModal().type && 
+                      action.meta.name === 'CONFIRM_MODAL' &&
+                      action.payload === 'value'
+              );
 ```
 
 ### Patterns:
-
-A collection of patterns for filtering modal actions inside `redux-saga` take effects, such as `take`, `takeLatest`, `takeEvery` etc. Every of pattern accepts optional argument for checking payload.
-Payload pattern can be a string, undefined, an array or a function.
-
   * show
   * click
   * submit
   * update
   * hide
   * destroy
+
+A collection of patterns for filtering modal actions inside `redux-saga` take effects, such as `take`, `takeLatest`, `takeEvery` etc. Every of pattern accepts optional argument for checking payload.
+Payload pattern can be a string, undefined, an array or a function.
+
 
 ```javascript
 //matches an action showModal with name 'CONFIRM_MODAL' and any payload
@@ -172,41 +252,15 @@ yield take(patterns.show((payload) => payload.text));
 
 //If payload pattern is a String, the action is matched if payload === pattern
 //matches submitModal with name CONFIRM_MODAL only if payload equals CUSTOM_VALUE
-yield take(patterns.submit('CUSTOM_VALUE');
+yield take(patterns.submit('CUSTOM_VALUE'));
 
 
 //will take an action submitModal with name CONFIRM_MODAL if any of the payload patterns in the array matches
 yield take(patterns.submit(['CUSTOM_VALUE', (payload) => payload.text)]);
-
 ```
 
 ### Actions: 
-The same as action creators but bound with a name of modal. 
-  * show
-  * click
-  * submit
-  * update
-  * hide
-  * destroy
-
-  
-### Selector
-
-```javascript
-   import { createModal } from 'redux-saga-modal';
-   
-   const {
-     patterns,
-     actions,
-     selector,
-     name,
-   } = createModal('CONFIRM_MODAL');
-   
-   const state = yield select(selector);
-
-```
-
-### Put effects:
+The same as actions creators but bound with a name of modal. 
 
 **show**(payload) 
 * payload : object
@@ -221,17 +275,55 @@ The same as action creators but bound with a name of modal.
 * payload: any
 
 **hide**()
+
 **destroy**()
 
-### Take effects:
-All take effects accepts optional payload for waiting an action which matches not only actionType and name, but also payload payload. 
+### Selectors
+```javascript
+   import { createModal } from 'redux-saga-modal';
+   
+   const {
+     patterns,
+     actions,
+     selector,
+     name,
+     ...effects
+   } = createModal('CONFIRM_MODAL');
+   
+   // the same
+   yield select(selector);
+   yield effects.select();
+
+```
+
+### Put effects
+
+**show**(payload) 
+* payload : object
+
+**update**(payload) 
+* payload : object 
+
+**submit**(payload)
+* payload: any
+
+**click**(payload) 
+* payload: any
+
+**hide**()
+
+**destroy**()
+
+### Take effects
+All take effects accepts optional payload for waiting an action which matches not only actionType and name, but also payload.
  
-**takeClick**
-**takeDestroy**
-**takeHide**
-**takeShow**:
-**takeSubmit**: 
-**takeUpdate**: 
+* takeClick
+* takeDestroy
+* takeHide
+* takeShow
+* takeSubmit
+* takeUpdate
+
 
 ## License
 
