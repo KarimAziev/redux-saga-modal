@@ -48,7 +48,7 @@ export function destroyModal(name) {
   };
 }
 
-export function submitModal(name, payload = {}) {
+export function submitModal(name, payload) {
   return {
     type: actionTypes.SUBMIT_MODAL,
     payload,
