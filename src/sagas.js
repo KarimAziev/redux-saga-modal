@@ -1,15 +1,18 @@
 import { fork, all, take, race, call } from 'redux-saga/effects';
 import createModal from './createModal';
+import { isDev } from './utils';
 
-export default function* rootModalSaga(config = {}) {
+
+export default function* rootModalSaga(config = {}, params) {
   const names = Object.keys(config);
-  yield all(
+  const tasks = yield all(
     names.map(name => {
       const saga = config[name];
-      const modal = createModal(name);
+      const modal = createModal(name, params);
+   
       return fork(function*() {
         while (true) {
-          const { payload } = yield take(modal.pattern.show);
+          const { payload } = yield take(modal.patterns.show);
           try {
             yield race({
               task: call([modal, saga], payload),
@@ -17,10 +20,15 @@ export default function* rootModalSaga(config = {}) {
             });
            
           } catch (error) {
+            if (isDev) {
+              console.error(`Error catched in the modal task ${name}: `, error);
+            }
             yield modal.destroy();
           } 
         }
       });
     })
   );
+
+  return tasks;
 }

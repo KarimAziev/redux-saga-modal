@@ -8,6 +8,7 @@ import { modalsStateSelector } from './selectors';
 import createModalActions from './createModalActions';
 import renameActionsMap from './renameActionsMap';
 import * as is from '@redux-saga/is';
+import * as actionsCreators from './actions';
 
 const initialState = {};
 
@@ -39,11 +40,12 @@ const sagaModal = ({
           const { modal } = this.props;
           const { isOpen } = modal;
           const isToggled = isOpen !== prevProps.modal.isOpen;
+          
           if (isToggled) {
             this.setState({ isOpen });
           } 
 
-          if (isOpen === false && destroyOnHide) {
+          if (isOpen === false && destroyOnHide && !keepComponentOnHide) {
             this.props.destroy();
           }
 
@@ -51,23 +53,20 @@ const sagaModal = ({
 
         render() {
           const { isOpen } = this.state;
-          const { modal, ...ownProps } = this.props;
+          const { modal, ...rest } = this.props;
 
-          if (is.undef(isOpen)) {
+          if (is.undef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
             return null;
           }
-
-
-          const props = {
-            ...ownProps,
+   
+          return React.createElement(ModalComponent, {
+            ...rest,
             ...modal.props,
             modal: {
               name: modal.name,
             },
             isOpen: isOpen,
-          };
-
-          return React.createElement(ModalComponent, props);
+          });
         }
   }
 
@@ -78,7 +77,7 @@ const sagaModal = ({
 
   const mapDispatchToProps = (dispatch) => ({
     ...bindActionCreators(actions, dispatch),
-    ...createModalActions(name, null, dispatch),
+    ...bindActionCreators(actionsCreators, dispatch),
     ...createModalActions(name, renameActionsMap, dispatch),
   });
 

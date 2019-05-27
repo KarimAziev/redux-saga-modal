@@ -5,7 +5,7 @@ import sagas from './sagas';
 import createModalActions from './createModalActions';
 import createModalPatterns from './createModalPatterns';
 import createModalEffects, { createTakeEffects } from './createModalEffects';
-import createModal from './createModal';
+import createModal, { createModalHelpers } from './createModal';
 
 export {
   sagaModal,
@@ -20,4 +20,5 @@ export {
   createTakeEffects,
   createModalPatterns, 
   createModalActions,
+  createModalHelpers,
 };
