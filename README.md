@@ -3,19 +3,29 @@
 [![](https://img.shields.io/npm/v/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
 [![](https://img.shields.io/npm/dt/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
 
-`redux-saga-modal` provides some helpers and high-level API of [redux-saga](https://github.com/redux-saga/redux-saga) effects.
+`redux-saga-modal` provides some interface and high-level API of [redux-saga](https://github.com/redux-saga/redux-saga) effects.
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Usage](#usage)
 - [API](#api)
-  - [Context](#context) 
+  - [createModal](#createModal)
+  - [createModalEffects](#createModalEffects)
+
+  - [Modal Interface](#Modal-Interface) 
+    - [name](#name)
     - [patterns](#patterns)
     - [effects](#effects)
     - [actions](#actions)
     - [selectors](#selectors)
+     
   - [Actions creators](#actions-creators)
+
+  - [sagaModal](#sagaModal)
+  - [sagas](#sagas)
+
+  - [reducer](#reducer)
    
   
   
@@ -188,9 +198,10 @@ Yout tasks will be fired on action `showModal` with it's name and **cancelled** 
 
 ## API
 
-## Context
- All [actions](#actions), [patterns](#patterns) and [effects](#effects) are named `show`, `update`, `submit`, `click`, `hide`, `destroy`. Patterns is used inside `take`, `takeEvery` and etc for matching action.
+## Modal interface
+ Created by [createModal](#createModal). Includes [actions](#actions), [patterns](#patterns) and [effects](#effects) are named `show`, `update`, `submit`, `click`, `hide`, `destroy`. Patterns is used inside `take`, `takeEvery` and etc for matching action.
 
+ To create a minimal set of helpers without effects use [createModalHelpers](#createModalHelpers). 
 ```javascript
    import { createModalHelpers, createModal, showModal } from 'redux-saga-modal';
    
@@ -225,8 +236,6 @@ Yout tasks will be fired on action `showModal` with it's name and **cancelled** 
   );
 ```
 
-To get both helpers and effects use `createModal`. 
-To create a minimal set of helpers without high-level API use `createModalHelpers`. 
 
 ### Patterns:
   * show
@@ -326,18 +335,18 @@ Effects includes put effects and take effects. All take effects accepts optional
 **takeClick**(payloadPattern)
 * payloadPattern: String | Array | Function
 
-**takeShow**(payload)
+**takeShow**(payloadPattern)
 * payloadPattern: String | Array | Function
 
-**takeSubmit**(payload)
+**takeSubmit**(payloadPattern)
 * payloadPattern: String | Array | Function
 
-**takeUpdate**(payload)
+**takeUpdate**(payloadPattern)
 * payloadPattern: String | Array | Function
 
-**takeHide**(payload)
+**takeHide**(payloadPattern)
 
-**takeDestroy**(payload)
+**takeDestroy**(payloadPattern)
 
 
 ### Actions creators
@@ -416,6 +425,87 @@ Effects includes put effects and take effects. All take effects accepts optional
     }
   }
   ```
+
+ ### createModal 
+ Created interface with  [actions](#actions), [patterns](#patterns), [effects](#effects), name and selector. 
+ 
+ Arguments:
+ * name: String[required]  
+ * Config: 
+   * name: *Required* String - name of the modal;
+   * getModalsState: Function - use it if you pass reducer under name different then `modals`. Default `state => state.modals`;
+
+```javascript
+import { createModal } from 'redux-saga-modal';
+  
+  const {
+     patterns,
+     actions,
+     selector,
+     name,
+     ...effects
+   } = createModal('CONFIRM_MODAL');
+```
+ ### createModalHelpers
+ 
+  Created interface with methods [actions](#actions), [patterns](#patterns), selector and name. 
+   
+  Arguments:
+  * name: String[required]  
+  * Config: 
+    * name: *Required* String - name of the modal;
+    * getModalsState: Function - use it if you pass reducer under name different then `modals`. Default `state => state.modals`;
+
+```javascript
+    import { createModalHelpers } from 'redux-saga-modal';
+   
+   const {
+     patterns,
+     actions,
+     selector,
+     name,
+   } = createModalHelpers('CONFIRM_MODAL');
+```
+
+ ### sagas
+ Calls your sagas it with modal context when action `showModal` dispatches with it's name. Config must be an object with keys as modals names and value as its sagas.
+   
+   **sagas**(config: {
+     [String]: Generator,
+   }) 
+
+
+ ### sagaModal
+ **sagaModal**(config: Object)(component: React.Component)
+ 
+ Config: 
+ * name: *Required* String - name of the modal;
+ * getModalsState: Function - use it if you pass reducer under name different then `modals`. Default `state => state.modals`;
+ * initProps: Object - init props that will be passed to component;
+ * actions: Object - custom actions to bind them with dispatch;
+ * destroyOnHide: Boolean - Whether automatically dispatch `destroy` to after `hide`. Default `true`;
+ * keepComponentOnHide: Boolean - Whether keep component when `isOpen` equals `false`. Default `false`;
+  
+
+  A HOC which connects you react component and injects props: 
+  * modal: {
+      name
+    }
+  * isOpen
+  * show
+  * update
+  * destroy
+  * click
+  * submit
+  * hide
+  * showModal
+  * updateModal
+  * submitModal
+  * clickModal
+  * hideModal
+  * destroyModal
+ ### reducer
+ The modals reducer keeps state of the all modals. Should be mounted to redux store under name `modals` or any other but in this case you need to pass selector `getModalsState` to `sagaModal`.
 
 ## License
 
