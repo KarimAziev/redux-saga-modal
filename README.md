@@ -9,11 +9,12 @@
 
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Helpers and effects](#Helpers-and-effects) 
 - [API](#api)
-  - [patterns](#patterns)
-  - [effects](#effects)
-  - [actions](#actions)
+  - [Context](#context) 
+    - [patterns](#patterns)
+    - [effects](#effects)
+    - [actions](#actions)
+    - [selectors](#selectors)
   - [Actions creators](#actions-creators)
    
   
@@ -184,8 +185,11 @@ Yout tasks will be fired on action `showModal` with it's name and **cancelled** 
  
 
 ```
-## Helpers and effects
- Methods of helpers (actions, patterns) and effects have the same names `show`, `update`, `submit`, `click`, `hide`, `destroy`. Patterns is used inside `take`, `takeEvery` and etc for matching action.
+
+## API
+
+## Context
+ All [actions](#actions), [patterns](#patterns) and [effects](#effects) are named `show`, `update`, `submit`, `click`, `hide`, `destroy`. Patterns is used inside `take`, `takeEvery` and etc for matching action.
 
 ```javascript
    import { createModalHelpers, createModal, showModal } from 'redux-saga-modal';
@@ -223,9 +227,6 @@ Yout tasks will be fired on action `showModal` with it's name and **cancelled** 
 
 To get both helpers and effects use `createModal`. 
 To create a minimal set of helpers without high-level API use `createModalHelpers`. 
-
-
-## API
 
 ### Patterns:
   * show
