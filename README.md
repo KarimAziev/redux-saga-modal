@@ -1,30 +1,26 @@
-# Redux Saga Modal
+# Redux-Saga-Modal
 
 [![](https://img.shields.io/npm/v/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
 [![](https://img.shields.io/npm/dt/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
 
-`redux-saga-modal` provides some interface and high-level API of [redux-saga](https://github.com/redux-saga/redux-saga) effects.
+`redux-saga-modal` provides interface with effects, patterns and actions for [redux-saga](https://github.com/redux-saga/redux-saga) effects.
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Usage](#usage)
 - [API](#api)
-  - [createModal](#createModal)
-  - [createModalEffects](#createModalEffects)
-
   - [Modal Interface](#Modal-Interface) 
     - [name](#name)
     - [patterns](#patterns)
     - [effects](#effects)
     - [actions](#actions)
-    - [selectors](#selectors)
-     
+    - [selectors](#selectors)  
   - [Actions creators](#actions-creators)
-
-  - [sagaModal](#sagaModal)
+  - [createModal](#createModal)
+  - [createModalEffects](#createModalEffects)
   - [sagas](#sagas)
-
+  - [sagaModal](#sagaModal)
   - [reducer](#reducer)
    
   
@@ -98,7 +94,7 @@ export default sagaModal({
  })(Modal);
 
 ```
-Now you can use `createModal`, which contains helpers and effects to manage the modal.
+Now you can use `createModal`, which contains [actions](#actions), [patterns](#patterns) and [effects](#effects) to manage the modal.
 
 ```javascript
 
@@ -130,69 +126,57 @@ function* confirmModal(initProps) {
 
   return false;
 }
-
-export function* removeUser() {
-  while (true) {
-    const { payload: userId } = yield take(
-      routines.removeUser.TRIGGER
-    );
-    const isConfirmed = yield call(confirmModal, {
-      text: 'Are you sure want to remove this user?',
-    });
-    
-    if (!isConfirmed) {
-      continue;
-    }
-
-    yield call(remove, userId);
-  }
-}
-
 ```
 For frequently repeated modals tasks create a config object with modals names as keys and tasks as values. Pass the config as argument to `sagas` and fork it in your rootSaga.
 
 Yout tasks will be fired on action `showModal` with it's name and **cancelled** on destroyModal.   
 
  ```javascript
- import { fork, all, getContext } from 'redux-saga/effects'
- import { sagas as modalsSaga } from 'redux-saga-modal'
- import { anotherModalSaga } from './sagas';
- 
-   export default function* rootSaga() {
-    yield all([
-      fork(modalsSaga, modalsConfig),
-    ]);
-  }
+import { race, call, fork, all, getContext } from 'redux-saga/effects';
+import { sagas as modalsSaga } from 'redux-saga-modal';
+import { anotherModalSaga } from './sagas';
 
-   //key is a modal name and modal is a value
-   const modalsConfig = {
-     'CONFIRM_MODAL': function* confirmModal(payload) {
+export default function* rootSaga() {
+  yield all([
+    fork(modalsSaga, modalsConfig),
+  ]);
+}
+
+//key is a modal name and modal is a value
+const modalsConfig = {
+  'CONFIRM_MODAL': function* confirmModal(payload) {
     const {
-       name,
-       patterns,
-       actions,
-       selector,
-       ...effects
-     } = this;
-    
+      name,
+      patterns,
+      actions,
+      selector,
+      ...effects
+    } = this;
+ 
     const apiCall = getContext('api');
-    
+ 
     const winner = yield race({
       submit: effects.modal.takeSubmit(),
       hide: effects.modal.takeHide(),
     });
-  
-   if (winner.submit) {
-      yield effects.update({ title: 'Saving', isLoading: true });
+
+    if (winner.submit) {
+      yield effects.update({ 
+        title: 'Saving', 
+        loading: true, 
+      });
       yield call(apiCall);
-      yield effects.update({ title: 'Changes saved', isLoading: false });
+      yield effects.update({ 
+        title: 'Changes saved',
+        loading: false, 
+      });
     } 
-  
+
     yield effects.destroy();
-   }  ,
-    'ANOTHER_MODAL': anotherModalSaga,
-   };
- 
+  },
+  'ANOTHER_MODAL': anotherModalSaga,
+};
+
 
 ```
 
@@ -329,8 +313,10 @@ Effects includes put effects and take effects. All take effects accepts optional
 * payload: any
 
 **hide**()
-
+  
 **destroy**()
+
+**select**()
 
 **takeClick**(payloadPattern)
 * payloadPattern: String | Array | Function
@@ -405,6 +391,8 @@ Effects includes put effects and take effects. All take effects accepts optional
 **hideModal**(name)
 * name: string [required]
 
+  Hides modal and doesn't destroy it's props in the state.
+
 ```javascript
 {
     type: String,
@@ -417,6 +405,9 @@ Effects includes put effects and take effects. All take effects accepts optional
 
 **destroyModal**(name) 
 * name  : string [required]
+ 
+  Hides modal and destroy it's props in the state.
+
 ```javascript
 {
     type: String,
