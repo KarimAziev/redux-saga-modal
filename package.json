@@ -51,7 +51,6 @@
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.4.4",
     "@babel/runtime": "^7.3.1",
-    "@redux-saga/is": "^1.0.1",
     "@redux-saga/testing-utils": "^1.0.2",
     "babel-eslint": "9.0.0",
     "babel-loader": "^8.0.5",
@@ -87,6 +86,7 @@
     "webpack-cli": "^3.2.3"
   },
   "dependencies": {
+    "@redux-saga/is": "^1.0.2",
     "hoist-non-react-statics": "^2.0.0",
     "prop-types": "^15.7.2",
     "webpack-node-externals": "^1.7.2"
