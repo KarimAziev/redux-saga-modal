@@ -11,7 +11,6 @@
 - [Usage](#usage)
 - [API](#api)
   - [Modal Interface](#Modal-Interface) 
-    - [name](#name)
     - [patterns](#patterns)
     - [effects](#effects)
     - [actions](#actions)
@@ -182,7 +181,7 @@ const modalsConfig = {
 
 ## API
 
-## Modal interface
+## Modal Interface
  Created by [createModal](#createModal). Includes [actions](#actions), [patterns](#patterns) and [effects](#effects) are named `show`, `update`, `submit`, `click`, `hide`, `destroy`. Patterns is used inside `take`, `takeEvery` and etc for matching action.
 
  To create a minimal set of helpers without effects use [createModalHelpers](#createModalHelpers). 
@@ -418,6 +417,7 @@ Effects includes put effects and take effects. All take effects accepts optional
   ```
 
  ### createModal 
+
  Created interface with  [actions](#actions), [patterns](#patterns), [effects](#effects), name and selector. 
  
  Arguments:
@@ -467,6 +467,7 @@ import { createModal } from 'redux-saga-modal';
 
 
  ### sagaModal
+
  **sagaModal**(config: Object)(component: React.Component)
  
  Config: 
@@ -495,7 +496,9 @@ import { createModal } from 'redux-saga-modal';
   * clickModal
   * hideModal
   * destroyModal
+
  ### reducer
+
  The modals reducer keeps state of the all modals. Should be mounted to redux store under name `modals` or any other but in this case you need to pass selector `getModalsState` to `sagaModal`.
 
 ## License
