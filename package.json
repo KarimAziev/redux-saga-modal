@@ -78,6 +78,7 @@
     "prettier-eslint-cli": "^4.7.1",
     "redux": "^3.7.2",
     "redux-saga": ">=0.15.0",
+    "release-it": "^12.2.1",
     "rimraf": "^2.6.2",
     "sinon": "^7.3.2",
     "webpack": "^4.29.0",
