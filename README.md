@@ -17,7 +17,7 @@
     - [selectors](#selectors)  
   - [Actions creators](#actions-creators)
   - [createModal](#createModal)
-  - [createModalEffects](#createModalEffects)
+  - [createModalHelpers](#createModalEffects)
   - [sagas](#sagas)
   - [sagaModal](#sagaModal)
   - [reducer](#reducer)
@@ -86,7 +86,7 @@ const Modal = ({
       <button onClick={() => submit()}>Ok</button>
     </ReactModal>
 )
-
+ 
 export default sagaModal({
   // an unique name for the modal 
   name: 'CONFIRM_MODAL',
@@ -96,33 +96,30 @@ export default sagaModal({
 Now you can use `createModal`, which contains [actions](#actions), [patterns](#patterns) and [effects](#effects) to manage the modal.
 
 ```javascript
-
 import { createModal } from 'redux-saga-modal';
-import { call, put, take, race } from 'redux-saga/effects';
-import * as routines from 'routines';
-import api from 'api';
+import { race } from 'redux-saga/effects';
 
 function* confirmModal(initProps) {
-  const {
-     name,
-     patterns,
-     actions,
-     selector,
-     ...effects
-   } = createModal('CONFIRM_MODAL');
-
-  yield effects.modal.show(initProps);
+  const { 
+    name, 
+    patterns, 
+    actions, 
+    selector, 
+    ...effects
+  } = createModal('CONFIRM_MODAL');
+  
+  yield effects.show(initProps);
 
   const winner = yield race({
-    submit: effects.modal.takeSubmit(),
-    hide: effects.modal.takeHide(),
+    submit: effects.takeSubmit(),
+    hide: effects.takeHide(),
   });
 
   if (winner.submit) {
-    yield effects.modal.hide();
+    yield effects.hide();
     return true;
-  } 
-
+  }
+  yield effects.destroy();
   return false;
 }
 ```
@@ -155,8 +152,8 @@ const modalsConfig = {
     const apiCall = getContext('api');
  
     const winner = yield race({
-      submit: effects.modal.takeSubmit(),
-      hide: effects.modal.takeHide(),
+      submit: effects.takeSubmit(),
+      hide: effects.takeHide(),
     });
 
     if (winner.submit) {
