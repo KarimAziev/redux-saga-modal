@@ -63,7 +63,7 @@ const sagaModal = ({
             ...rest,
             ...modal.props,
             modal: {
-              name: modal.name,
+              name: name,
             },
             isOpen: isOpen,
           });
