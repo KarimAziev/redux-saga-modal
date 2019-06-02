@@ -5,6 +5,8 @@
 
 `redux-saga-modal` provides interface with effects, patterns and actions for [redux-saga](https://github.com/redux-saga/redux-saga) effects.
 
+[Live Demo](https://codesandbox.io/s/reduxsagamodalexample-jzxve?fontsize=14) 
+
 ## Table of Contents
 
 - [Installation](#installation)
