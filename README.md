@@ -3,20 +3,13 @@
 [![](https://img.shields.io/npm/v/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
 [![](https://img.shields.io/npm/dt/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
 
-`redux-saga-modal` provides interface with effects, patterns and actions for [redux-saga](https://github.com/redux-saga/redux-saga) effects.
+`redux-saga-modal` allows to manage your modals within [redux-saga](https://github.com/redux-saga/redux-saga) by passing a this context to your saga or creating an instance.
 
 ## Table of Contents
 
 - [Installation](#installation)
 - [Usage](#usage)
-- [Actions Creators](#Actions-Creators)
-- [Effects Creators](#Effects-Creators)
-- [Patterns Creators](#Patterns-Creators)
-- [createModal](#createModal)
-- [createModalHelpers](#createModalHelpers)
-- [sagas](#sagas)
-- [sagaModal](#sagaModal)
-- [reducer](#reducer)
+- [API](#API)
   
 ## Installation
 
@@ -49,7 +42,7 @@ const store = createStore(rootReducer)
 
 ```
 
-Wrap your modal component with `sagaModal`. It provides the modal state, bound to it's name actions `show`, `update`, `submit`, `click`, `hide`, `destroy` and unbound `showModal`, `updateModal`, `submitModal`, `clickModal`, `hideModal` and `destroyModal` to trigger or handle another modals. 
+Connect a component to Redux Store with `sagaModal`.
 
 ```javascript
 import { sagaModal } from 'redux-saga-modal';
@@ -85,15 +78,19 @@ const Modal = ({
 )
 
 export default sagaModal({
-  // an unique name for the modal 
+  // an unique name for the modal
   name: 'CONFIRM_MODAL',
  })(Modal);
 
 ```
 
-Now you can create an instance to manage the modal within your sagas by calling `createModal` with modal name as first argument. It with create an instance with properties [actions](#Actions-Creators), [patterns](#Patterns-Creators) and [effects](#Effects-Creators), `name` and `selector`.
+To create an instance use `createModal` and pass the modal name as first argument.  
 
-And patterns, and actions, and effects have methods named `show`, `update`, `hide`, `submit`, `click` and `destroy`. All of them refers to it's name so you don't need manually pass it.
+The instance will receive properties [actions](#Actions-Creators), [patterns](#Patterns-Creators), `name`, `selector` and high-level [effects](#Effects-Creators) `show`, `update`, `hide`, `submit`, `click`, `destroy`, `takeShow`, `takeUpdate`, `takeHide`, `takeSubmit`, `takeClick` and `takeDestroy`.
+
+Both `patterns` and `actions` have methods also named `show`, `update`, `hide`, `submit`, `click` and `destroy`.
+
+All methods refers to the modal's name so you don't need manually pass it. If you don't need high-level effects use [createModalHelpers](#createModalHelpers).
 
 ```javascript
 import { createModal } from 'redux-saga-modal';
@@ -124,22 +121,19 @@ function* confirmModal(initProps) {
 ```
 
 For frequently repeated modals tasks create a config object with modals names as keys and tasks as values. Pass the config as argument to `sagas` and fork it in your rootSaga.
+Your tasks will be called with a `this` context to every time when an action `showModal` has been dispatched with it's name and **cancelled** on destroyModal.
 
-Yout tasks will be called with an instance context in `this` every time when an action `showModal` has been dispatched with it's name and **cancelled** on destroyModal.
+The context of your task will have properties [actions](#Actions-Creators), [patterns](#Patterns-Creators), `name`, `selector` and high-level [effects](#Effects-Creators) `show`, `update`, `hide`, `submit`, `click`, `destroy`, `takeShow`, `takeUpdate`, `takeHide`, `takeSubmit`, `takeClick` and `takeDestroy`.
+
+Both `patterns` and `actions` have methods also named `show`, `update`, `hide`, `submit`, `click` and `destroy`.
 
  ```javascript
 import { race, call, fork, all, getContext } from 'redux-saga/effects';
 import { sagas as modalsSaga } from 'redux-saga-modal';
 import { anotherModalSaga } from './sagas';
 
-export default function* rootSaga() {
-  yield all([
-    fork(modalsSaga, modalsConfig),
-  ]);
-}
-
-//key is a modal name and modal is a value
-const modalsConfig = {
+//key is a modal name and value is you modal saga
+const modalsTasks = {
   'CONFIRM_MODAL': function* confirmModal(payload) {
     const {
       name,
@@ -172,9 +166,72 @@ const modalsConfig = {
   },
   'ANOTHER_MODAL': anotherModalSaga,
 };
+
+export default function* rootSaga() {
+  yield all([
+    fork(modalsSaga, modalsTasks),
+  ]);
+}
 ```
 
 ## API
+
+- [createModal](#createModal)
+- [createModalHelpers](#createModalHelpers)
+- [Actions Creators](#Actions-Creators)
+- [Effects Creators](#Effects-Creators)
+- [Patterns Creators](#Patterns-Creators)
+- [sagas](#sagas)
+- [sagaModal](#sagaModal)
+- [reducer](#reducer)
+
+## createModal
+
+ Creates a modal instance with properties `name`, `selector`, [actions](#Actions-Creators), [patterns](#Patterns-Creators), and [effects creators](#Effects-Creators) `show`, `update`, `hide`, `submit`, `click`, `destroy`, `takeShow`, `takeUpdate`, `takeHide`, `takeSubmit`, `takeClick` and `takeDestroy`.
+
+ Both `patterns` and `actions` includes methods also named `show`, `update`, `hide`, `submit`, `click` and `destroy`. All methods refers to the modal's name so you don't need manually pass it.
+
+ **Arguments**
+
+- **name**(String)(Required) the name of a modal
+- **config**(Object)
+  - **getModalState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default reducer is mounted under the 'modals' key.
+
+```javascript
+
+
+import { createModal } from 'redux-saga-modal';
+  
+  const {
+     patterns,
+     actions,
+     selector,
+     name,
+     ...effects
+   } = createModal('CONFIRM_MODAL');
+```
+
+## createModalHelpers
+
+Created a model with methods [Actions Creators](#Actions-Creators), [Patterns Creators](#Patterns-Creators), selector and name.  
+
+**Arguments**
+
+- **name**(String)(Require) the name of a modal
+- **config**(Object)
+  - **getModalState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default reducer is mounted under the 'modals' key.
+
+```javascript
+    import { createModalHelpers } from 'redux-saga-modal';
+
+   const {
+     patterns,
+     actions,
+     selector,
+     name,
+   } = createModalHelpers('CONFIRM_MODAL');
+```
+
 
 ### Actions Creators
 
@@ -225,10 +282,7 @@ import { createModal, createModalActions, showModal } from 'redux-saga-modal';
    import { createModal } from 'redux-saga-modal';
 
    const {
-     patterns,
-     actions,
      selector,
-     name,
      ...effects
    } = createModal('CONFIRM_MODAL');
 
@@ -322,48 +376,6 @@ Payload pattern have the same meaning and rules as in's the [redux-saga](https:/
   );
 ```
 
-## createModal
-
- Creates a model with properties [actions](#Actions-Creators), [patterns](#Patterns-Creators), [effects](#Effects-Creators), `name` and `selector`.
-
- **Arguments**
-
-- **name**(String)(Require) the name of a modal
-- **config**(Object)
-  - **getModalState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default reducer is mounted under the 'modals' key.
-
-```javascript
-import { createModal } from 'redux-saga-modal';
-  
-  const {
-     patterns,
-     actions,
-     selector,
-     name,
-     ...effects
-   } = createModal('CONFIRM_MODAL');
-```
-
-## createModalHelpers
-
-Creates a model with methods [actions](#Actions-Creators), [patterns](#Patterns-Creators), `selector` and `name`.  
-
-**Arguments**
-
-- **name**(String)(Require) the name of a modal
-- **config**(Object)
-  - **getModalState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default reducer is mounted under the 'modals' key.
-
-```javascript
-    import { createModalHelpers } from 'redux-saga-modal';
-
-   const {
-     patterns,
-     actions,
-     selector,
-     name,
-   } = createModalHelpers('CONFIRM_MODAL');
-```
 
 ## sagas
 
