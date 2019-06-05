@@ -5,6 +5,8 @@
 
 `redux-saga-modal` allows to manage your modals within [redux-saga](https://github.com/redux-saga/redux-saga) by passing a this context to your saga or creating an instance.
 
+[Live Demo](https://codesandbox.io/s/reduxsagamodalexample-jzxve?fontsize=14) 
+
 ## Table of Contents
 
 - [Installation](#installation)
