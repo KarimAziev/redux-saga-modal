@@ -3,6 +3,7 @@ import { modalSelector, modalsStateSelector } from './selectors';
 import createModalActions from './createModalActions';
 import renameActionsMap from './renameActionsMap';
 import { capitalize } from './utils';
+import createModalPatterns from './createModalPatterns';
 
 export function createTakeEffects(patterns = {}) {
   return Object.keys(patterns)
@@ -36,6 +37,8 @@ export default function createModalEffects(modalName, params) {
     ...params,
   };
   
+  const patterns = params.patterns || createModalPatterns(modalName);
+
   const selector =
         config.selector || modalSelector(modalName, config.getModalsState);
 
@@ -44,7 +47,7 @@ export default function createModalEffects(modalName, params) {
       modalName,
       config.renameMap,
     ),
-    ...createTakeEffects(params.patterns),
+    ...createTakeEffects(),
   }
   effects.select = () => select(selector);
   

@@ -32,35 +32,6 @@ yarn add redux-saga-modal
 
 ## Usage
 
-```javascript
-import { createModal } from 'redux-saga-modal';
-import { race } from 'redux-saga/effects';
-
-function* confirmModal(initProps) {
-  const {
-    name,
-    patterns,
-    actions,
-    selector,
-    ...effects
-  } = createModal('CONFIRM_MODAL');
-  
-  yield effects.show(initProps);
-
-  const winner = yield race({
-    submit: effects.takeSubmit(),
-    hide: effects.takeHide(),
-  });
-
-  if (winner.submit) {
-    yield effects.hide();
-    return true;
-  }
-  yield effects.destroy();
-  return false;
-}
-```
-
 Pass the `reducer` to your store. It keeps the state of all your modal components, so you only have to pass it once.
 
 ```javascript
@@ -120,12 +91,41 @@ export default sagaModal({
 
 ```
 
-Now you can use `createModal`, which contains [Actions Creators](#Actions-Creators), [Patterns Creators](#Patterns-Creators) and [Effects Creators](#Effects-Creators) to manage the modal.
+Now you can create an instance to manage the modal within your sagas by calling `createModal` with modal name as first argument. It with create an instance with properties [actions](#Actions-Creators), [patterns](#Patterns-Creators) and [effects](#Effects-Creators), `name` and `selector`.
 
+And patterns, and actions, and effects have methods named `show`, `update`, `hide`, `submit`, `click` and `destroy`. All of them refers to it's name so you don't need manually pass it.
+
+```javascript
+import { createModal } from 'redux-saga-modal';
+import { race } from 'redux-saga/effects';
+
+function* confirmModal(initProps) {
+  const {
+    name,
+    patterns,
+    actions,
+    selector,
+    ...effects
+  } = createModal('CONFIRM_MODAL');
+  
+  yield effects.show(initProps);
+
+  const winner = yield race({
+    submit: effects.takeSubmit(),
+    hide: effects.takeHide(),
+  });
+
+  if (winner.submit) {
+    yield effects.hide();
+    return true;
+  }
+  yield effects.destroy();
+}
+```
 
 For frequently repeated modals tasks create a config object with modals names as keys and tasks as values. Pass the config as argument to `sagas` and fork it in your rootSaga.
 
-Yout tasks will be fired on action `showModal` with it's name and **cancelled** on destroyModal.   
+Yout tasks will be called with an instance context in `this` every time when an action `showModal` has been dispatched with it's name and **cancelled** on destroyModal.
 
  ```javascript
 import { race, call, fork, all, getContext } from 'redux-saga/effects';
@@ -180,7 +180,7 @@ const modalsConfig = {
 
 #### Scoped actions creators
 
-Created with `createModalActions`, `createModal` and `createModalHelpers` by passing them a modal's name. `createModal` and `createModalHelpers` locates them in the property `actions`.
+Creates with `createModalActions`, `createModal` and `createModalHelpers` by passing them a modal's name. `createModal` and `createModalHelpers` locates them in the property `actions`.
 
 | Name            |        Arguments                  |               Description                                     |
 |---------------- |---------------------------------- |-------------------------------------------------------------- |
@@ -324,7 +324,7 @@ Payload pattern have the same meaning and rules as in's the [redux-saga](https:/
 
 ## createModal
 
- Creates a model with  [Actions Creators](#Actions-Creators), [Patterns Creators](#Patterns-Creators), [Effects Creators](#Effects-Creators), name and selector. 
+ Creates a model with properties [actions](#Actions-Creators), [patterns](#Patterns-Creators), [effects](#Effects-Creators), `name` and `selector`.
 
  **Arguments**
 
@@ -346,7 +346,7 @@ import { createModal } from 'redux-saga-modal';
 
 ## createModalHelpers
 
-Created a model with methods [Actions Creators](#Actions-Creators), [Patterns Creators](#Patterns-Creators), selector and name.  
+Creates a model with methods [actions](#Actions-Creators), [patterns](#Patterns-Creators), `selector` and `name`.  
 
 **Arguments**
 

@@ -43,7 +43,7 @@ export function createModalHelpers(modalName, params) {
 
   return ({
     name: modalName,
-    selector: modalSelector(modalName, config.getModalState),
+    selector: modalSelector(modalName, config.getModalsState),
     patterns: createModalPatterns(modalName),
     actions: createModalActions(modalName),
   });
