@@ -5,10 +5,12 @@ import renameActionsMap from './renameActionsMap';
 import { capitalize } from './utils';
 import createModalPatterns from './createModalPatterns';
 
-export function createTakeEffects(patterns = {}) {
-  return Object.keys(patterns)
+export function createTakeEffects(modalName, patterns) {
+  const patternsData = patterns || createModalPatterns(modalName);
+
+  return Object.keys(patternsData)
     .reduce((acc, key) => {
-      const pattern = patterns[key];
+      const pattern = patternsData[key];
       const effectName = `take${capitalize(key)}`;
       const effect = payloadPattern => take((action) => {
         if (payloadPattern) {
@@ -37,7 +39,6 @@ export default function createModalEffects(modalName, params) {
     ...params,
   };
   
-  const patterns = params.patterns || createModalPatterns(modalName);
 
   const selector =
         config.selector || modalSelector(modalName, config.getModalsState);
@@ -47,7 +48,7 @@ export default function createModalEffects(modalName, params) {
       modalName,
       config.renameMap,
     ),
-    ...createTakeEffects(),
+    ...createTakeEffects(modalName, config.patterns),
   }
   effects.select = () => select(selector);
   
