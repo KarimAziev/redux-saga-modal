@@ -40,25 +40,41 @@ const sagaModal = ({
           const { modal } = this.props;
           const { isOpen } = modal;
           const isToggled = isOpen !== prevProps.modal.isOpen;
-          
+
           if (isToggled) {
             this.setState({ isOpen });
-          } 
+          }
 
           if (isOpen === false && destroyOnHide && !keepComponentOnHide) {
             this.props.destroy();
           }
+        }
 
+        componentWillUnmount() {
+          const {
+            modal: { isOpen },
+          } = this.props;
+
+          if (isOpen) {
+            this.props.hide();
+          }
+
+          if (isOpen && destroyOnHide) {
+            this.props.destroy();
+          }
         }
 
         render() {
           const { isOpen } = this.state;
           const { modal, ...rest } = this.props;
 
-          if (is.undef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
+          if (
+            is.undef(isOpen) ||
+                (isOpen === false && !keepComponentOnHide)
+          ) {
             return null;
           }
-   
+
           return React.createElement(ModalComponent, {
             ...rest,
             ...modal.props,
@@ -75,7 +91,7 @@ const sagaModal = ({
     modal: getModalsState(state)[name] || initialState,
   });
 
-  const mapDispatchToProps = (dispatch) => ({
+  const mapDispatchToProps = dispatch => ({
     ...bindActionCreators(actions, dispatch),
     ...bindActionCreators(actionsCreators, dispatch),
     ...createModalActions(name, renameActionsMap, dispatch),
