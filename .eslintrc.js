@@ -80,6 +80,7 @@ module.exports = {
     'react/require-default-props': WARN,
     'jsx-a11y/label-has-associated-control': WARN,
     'jsx-a11y/anchor-is-valid': WARN,
+    'jsx-a11y/label-has-associated-control': OFF,
     'react/jsx-curly-brace-presence': [
       ERROR,
       {
