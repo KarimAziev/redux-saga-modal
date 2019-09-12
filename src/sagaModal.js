@@ -25,10 +25,6 @@ const sagaModal = ({
       modal: PropTypes.object.isRequired,
     };
     static displayName = `ConnectedModal(${getDisplayName(ModalComponent, name)})`;
-    static contextTypes = {
-      store: PropTypes.object.isRequired,
-    };
-
     state = {
       isOpen: this.props.modal.isOpen,
     };
