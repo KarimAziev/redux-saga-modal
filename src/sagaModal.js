@@ -21,69 +21,63 @@ const sagaModal = ({
   keepComponentOnHide = false,
 }) => ModalComponent => {
   class ConnectedModal extends Component {
-        static propTypes = {
-          modal: PropTypes.object.isRequired,
-        };
-        static displayName = `ConnectedModal(${getDisplayName(
-          ModalComponent,
-          name
-        )})`;
-        static contextTypes = {
-          store: PropTypes.object.isRequired,
-        };
+    static propTypes = {
+      modal: PropTypes.object.isRequired,
+    };
+    static displayName = `ConnectedModal(${getDisplayName(ModalComponent, name)})`;
+    static contextTypes = {
+      store: PropTypes.object.isRequired,
+    };
 
-        state = {
-          isOpen: this.props.modal.isOpen,
-        };
+    state = {
+      isOpen: this.props.modal.isOpen,
+    };
 
-        componentDidUpdate(prevProps) {
-          const { modal } = this.props;
-          const { isOpen } = modal;
-          const isToggled = isOpen !== prevProps.modal.isOpen;
+    componentDidUpdate(prevProps) {
+      const { modal } = this.props;
+      const { isOpen } = modal;
+      const isToggled = isOpen !== prevProps.modal.isOpen;
 
-          if (isToggled) {
-            this.setState({ isOpen });
-          }
+      if (isToggled) {
+        this.setState({ isOpen });
+      }
 
-          if (isOpen === false && destroyOnHide && !keepComponentOnHide) {
-            this.props.destroy();
-          }
-        }
+      if (isOpen === false && destroyOnHide && !keepComponentOnHide) {
+        this.props.destroy();
+      }
+    }
 
-        componentWillUnmount() {
-          const {
-            modal: { isOpen },
-          } = this.props;
+    componentWillUnmount() {
+      const {
+        modal: { isOpen },
+      } = this.props;
 
-          if (isOpen) {
-            this.props.hide();
-          }
+      if (isOpen) {
+        this.props.hide();
+      }
 
-          if (isOpen && destroyOnHide) {
-            this.props.destroy();
-          }
-        }
+      if (isOpen && destroyOnHide) {
+        this.props.destroy();
+      }
+    }
 
-        render() {
-          const { isOpen } = this.state;
-          const { modal, ...rest } = this.props;
+    render() {
+      const { isOpen } = this.state;
+      const { modal, ...rest } = this.props;
 
-          if (
-            is.undef(isOpen) ||
-                (isOpen === false && !keepComponentOnHide)
-          ) {
-            return null;
-          }
+      if (is.undef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
+        return null;
+      }
 
-          return React.createElement(ModalComponent, {
-            ...rest,
-            ...modal.props,
-            modal: {
-              name: name,
-            },
-            isOpen: isOpen,
-          });
-        }
+      return React.createElement(ModalComponent, {
+        ...rest,
+        ...modal.props,
+        modal: {
+          name: name,
+        },
+        isOpen: isOpen,
+      });
+    }
   }
 
   const mapStateToProps = state => ({
@@ -99,7 +93,7 @@ const sagaModal = ({
 
   return connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
   )(hoistStatics(ConnectedModal, ModalComponent));
 };
 
