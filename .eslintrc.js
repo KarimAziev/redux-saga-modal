@@ -5,120 +5,137 @@ const WARN = 1;
 const ERROR = 2;
 
 module.exports = {
-
-  extends: [    
-    'prettier/react',
-    'fbjs',
-  ],
-
-  plugins: ['react', 'flowtype', 'prettier'],
-
-  // We're stricter than the default config, mostly. We'll override a few rules
-  // and then enable some React specific ones.
-  rules: {
-    'accessor-pairs': OFF,
-    'brace-style': [ERROR, '1tbs'],
-    'comma-dangle': [ERROR, 'always-multiline'],
-    'consistent-return': OFF,
-    'dot-location': [ERROR, 'property'],
-    'dot-notation': ERROR,
-    'eol-last': OFF,
-    eqeqeq: [ERROR, 'allow-null'],
-    indent: [WARN, 2],
-    'jsx-quotes': [ERROR, 'prefer-single'],
-    'keyword-spacing': [ERROR, { after: true, before: true }],
-    'no-bitwise': OFF,
-    'no-inner-declarations': [ERROR, 'functions'],
-    'no-multi-spaces': ERROR,
-    requireObjectKeysOnNewLine: true,
-    'no-restricted-syntax': [ERROR, 'WithStatement'],
-    'no-shadow': ERROR,
-    'no-unused-expressions': ERROR,
-    'no-unused-vars': [ERROR, { args: 'none' }],
-    'no-useless-concat': OFF,
-    'array-callback-return': WARN,
-    'object-curly-spacing': [ERROR, 'always'],
-    'space-before-blocks': ERROR,
-    'object-property-newline': [
-      ERROR,
-      { allowMultiplePropertiesPerLine: false },
-    ],
-    'class-methods-use-this': OFF,
-    'space-before-function-paren': OFF,
-    quotes: [ERROR, 'single'],
-    'max-len': [
-      2,
-      {
-        code: 80,
-        tabWidth: 4,
-        ignoreUrls: true,
-        ignoreStrings: true,
-        ignoreTemplateLiterals: true,
-        ignoreRegExpLiterals: true,
-      },
-    ],
-
-    // React & JSX
-    // Our transforms set this automatically
-    'react/jsx-boolean-value': [ERROR, 'always'],
-    'react/jsx-no-undef': ERROR,
-    // We don't care to do this
-    'react/jsx-sort-prop-types': OFF,
-    'react/jsx-uses-react': ERROR,
-    'react/no-is-mounted': OFF,
-    'no-restricted-globals': WARN,
-    'react/jsx-tag-spacing': [ERROR, { beforeSelfClosing: 'always' }],
-    'react/jsx-one-expression-per-line': [ERROR, { allow: 'literal' }],
-    // This isn't useful in our test code
-    'react/react-in-jsx-scope': ERROR,
-    'react/no-array-index-key': WARN,
-    'react/destructuring-assignment': [OFF, 'always'],
-    'react/jsx-first-prop-new-line': ERROR,
-    'react/self-closing-comp': ERROR,
-    'react/no-unused-prop-types': WARN,
-    'react/default-props-match-prop-types': WARN,
-    'react/require-default-props': WARN,
-    'jsx-a11y/label-has-associated-control': WARN,
-    'jsx-a11y/anchor-is-valid': WARN,
-    'jsx-a11y/label-has-associated-control': OFF,
-    'react/jsx-curly-brace-presence': [
-      ERROR,
-      {
-        props: 'always',
-        children: 'never',
-      },
-    ],
-    'react/jsx-closing-bracket-location': [
-      ERROR,
-      { selfClosing: 'line-aligned', nonEmpty: 'after-props' },
-    ],
-    'react/jsx-wrap-multilines': [
-      ERROR,
-      { declaration: false, assignment: false },
-    ],
-    'react/jsx-filename-extension': [
-      1,
-      {
-        extensions: ['.js', '.jsx'],
-      },
-    ],
-    'react/jsx-max-props-per-line': [
-      WARN,
-      {
-        maximum: 1,
-        when: 'multiline',
-      },
-    ],
-    'react/no-unused-state': WARN,
-    'react/button-has-type': WARN,
-    'react/prop-types': OFF,
-    'no-underscore-dangle': OFF,
+  env: {
+    browser: true,
+    es6: true,
+    jest: true,
+    node: true,
   },
-
+  extends: [
+    'plugin:import/typescript',
+    'plugin:react/recommended', // Uses the recommended rules from @eslint-plugin-react
+    'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    'prettier/@typescript-eslint', // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+    'plugin:prettier/recommended', // Enables eslint-plugin-prettier and displays prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+  ],
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
+    ecmaVersion: '2018',
+    project: ['./tsconfig.json'],
     sourceType: 'module',
+    tsconfigRootDir: __dirname,
+  },
+  plugins: ['@typescript-eslint', 'import', 'prettier', 'react', 'typescript'],
+  rules: {
+    'import/default': ['warn'],
+    'import/export': ['warn'],
+    'import/extensions': 'off',
+    'import/first': 'error',
+    'import/imports-first': ['error', 'absolute-first'],
+    'import/named': OFF,
+    'import/namespace': ['warn'],
+    'import/newline-after-import': [
+      'error',
+      {
+        count: 1,
+      },
+    ],
+    'import/no-extraneous-dependencies': 'error',
+    'import/no-named-as-default-member': OFF,
+    'import/no-unresolved': [
+      'error',
+      {
+        amd: true,
+        commonjs: true,
+      },
+    ],
+    'import/order': [
+      'error',
+      {
+        groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
+        pathGroups: [
+          {
+            group: 'external',
+            pattern: '@/**',
+          },
+        ],
+      },
+    ],
+    'import/prefer-default-export': OFF,
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+    ],
+    'react/prop-types': 0,
+    'react/display-name': 'off',
+  },
+  overrides: [
+    {
+      files: ['**/*.js?(x)'],
+      rules: {
+        'no-unused-vars': 'off',
+      },
+    },
+    {
+      files: ['**/*.ts?(x)'],
+      rules: {
+        '@typescript-eslint/ban-ts-comment': ['warn'],
+        '@typescript-eslint/ban-types': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-empty-interface': 'off',
+        '@typescript-eslint/no-non-null-assertion': 0,
+        '@typescript-eslint/no-explicit-any': ['off'],
+        '@typescript-eslint/no-unused-expressions': [
+          'error',
+          {
+            allowShortCircuit: true,
+            allowTaggedTemplates: true,
+            allowTernary: true,
+          },
+        ],
+        '@typescript-eslint/no-unused-vars': [
+          'warn',
+          {
+            args: 'none',
+            ignoreRestSiblings: true,
+          },
+        ],
+        '@typescript-eslint/no-use-before-define': [
+          'warn',
+          {
+            classes: false,
+            functions: false,
+            typedefs: false,
+            variables: false,
+          },
+        ],
+        '@typescript-eslint/no-useless-constructor': 'warn',
+        'default-case': 'off',
+        'no-dupe-class-members': 'off',
+        'no-undef': 'off',
+        'no-unused-expressions': 'off',
+        'no-unused-vars': 'off',
+        'no-useless-constructor': 'off',
+      },
+    },
+    {
+      files: ['*.test.ts', '*test.tsx', '*testUtil.tsx'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+        'react/jsx-uses-react': 'off',
+        'react/react-in-jsx-scope': 'off',
+      },
+    },
+  ],
+  settings: {
+    react: {
+      version: 'detect',
+    },
   },
 };

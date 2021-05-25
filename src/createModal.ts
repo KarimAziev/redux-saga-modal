@@ -1,50 +1,37 @@
 import { modalSelector, modalsStateSelector } from './selectors';
-import createModalActions from './createModalActions';
+import { createModalActions } from './createModalActions';
 import createModalPatterns from './createModalPatterns';
 import createModalEffects from './createModalEffects';
-import { check } from './utils';
-import { string } from '@redux-saga/is';
+import { ICreateModalParams, ModalHelpers } from './interface';
 
-export default function createModal(modalName, params) {
-  if (process.env.NODE_ENV !== 'production') {
-    check(
-      modalName,
-      string,
-      'name passed to the createModal is not a string!'
-    );
-  }
-
+export default function createModal(
+  modalName: string,
+  params?: ICreateModalParams,
+) {
   const helpers = createModalHelpers(modalName, params);
 
-  const modal = {
+  return {
     ...helpers,
     ...createModalEffects(modalName, {
       selector: helpers.selector,
       patterns: helpers.patterns,
     }),
   };
-
-  return modal;
 }
 
-export function createModalHelpers(modalName, params) {
-  if (process.env.NODE_ENV !== 'production') {
-    check(
-      modalName,
-      string,
-      'name passed to the createModal is not a string!'
-    );
-  }
-
+export function createModalHelpers(
+  modalName: string,
+  params?: ICreateModalParams,
+): ModalHelpers {
   const config = {
     getModalsState: modalsStateSelector,
     ...params,
   };
 
-  return ({
+  return {
     name: modalName,
     selector: modalSelector(modalName, config.getModalsState),
     patterns: createModalPatterns(modalName),
     actions: createModalActions(modalName),
-  });
+  };
 }
