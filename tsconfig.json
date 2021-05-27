@@ -7,6 +7,7 @@
     "sourceMap": true,
     "allowJs": false,
     "declaration": true,
+    "importHelpers": true,
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
@@ -20,6 +21,6 @@
     "jsx": "react",
     "skipLibCheck": true
   },
-  "include": ["src"],
+  "include": ["src", "types"],
   "exclude": ["node_modules", "lib"]
 }

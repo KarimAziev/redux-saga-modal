@@ -13,7 +13,8 @@
     "prebuild": "npm-run-all -s clean",
     "prepublishOnly": "npm-run-all -s build",
     "precommit": "lint-staged",
-    "release": "release-it major --preRelease=beta --verbose"
+    "release": "release-it major --preRelease=beta --verbose",
+    "test": "echo \"No test specified\""
   },
   "lint-staged": {
     "*.ts": ["prettier --write", "git add"]
