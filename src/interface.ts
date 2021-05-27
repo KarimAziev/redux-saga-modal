@@ -48,6 +48,7 @@ export interface SagaModalConfig {
   actions?: ActionCreatorsMapObject;
   keepComponentOnHide?: boolean;
 }
+
 export interface SagaModalInjectedProps {
   isOpen: boolean;
   isSubmitted?: boolean;
@@ -82,4 +83,10 @@ export interface ModalHelpers {
   selector: (state: State) => ModalItemState;
   patterns: ReturnType<typeof createModalPatterns>;
   actions: ReturnType<typeof createModalActions>;
+}
+
+export interface IReduxSagaModalInjectedComponent {
+  <P extends SagaModalInjectedProps>(
+    component: React.ComponentType<any>,
+  ): React.ComponentClass<Omit<P, keyof SagaModalInjectedProps> & any>;
 }

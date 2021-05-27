@@ -7,7 +7,7 @@ import {
   destroyModal,
   submitModal,
 } from './actionsCreators';
-import sagaModal from './sagaModal';
+import { sagaModal } from './sagaModal';
 import sagas from './sagas';
 import createModalBoundActions, {
   createModalActions,

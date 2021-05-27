@@ -45,10 +45,10 @@ export default function createModalBoundActions<E extends Function>(
 
 export function createModalActions(name: string) {
   return {
-    show<P extends Record<string, unknown>>(payload: P) {
+    show<P = {}>(payload: P) {
       return showModal<P>(name, payload);
     },
-    update<P extends Record<string, unknown>>(payload: P) {
+    update<P = {}>(payload: P) {
       return updateModal<P>(name, payload);
     },
     submit<P>(payload: P) {
