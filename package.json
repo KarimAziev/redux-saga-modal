@@ -8,12 +8,12 @@
   "scripts": {
     "clean": "rimraf lib es",
     "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"**/*.md\"",
-    "build": "cross-env NODE_ENV=production webpack --mode production --config webpack.config.js",
+    "build": "webpack --mode production --config webpack.config.js",
     "lint": "eslint src",
     "prebuild": "npm-run-all -s clean",
     "prepublishOnly": "npm-run-all -s build",
     "precommit": "lint-staged",
-    "release": "release-it --verbose --github.release"
+    "release": "release-it major --preRelease=beta --verbose"
   },
   "lint-staged": {
     "*.ts": ["prettier --write", "git add"]
@@ -77,6 +77,7 @@
     "prop-types": "^15.7.2"
   },
   "peerDependencies": {
+    "@babel/runtime": "*",
     "react": "*",
     "react-redux": "*",
     "redux": "*",

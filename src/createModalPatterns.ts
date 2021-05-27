@@ -40,10 +40,11 @@ const arrayPred = (patterns: any[]) => (input: unknown): boolean =>
 
 const eqMatcher = (pattern: unknown) => (input: unknown) =>
   input === pattern;
-const wildcard = () => kTrue;
+
 
 const konst = <T>(v: T): (() => T) => () => v;
 const kTrue = konst(true);
+const wildcard = () => kTrue;
 
 const capitalize = (v: string): Capitalize<string> =>
     v.charAt(0).toUpperCase() + v.slice(1);
@@ -85,9 +86,9 @@ function isAction(action: any): action is Action {
 const makeModalPattern = (
   modalName: string,
   actionCreator: ModalActionCreators,
-): ActionPattern => {
+) => {
   const actionType = actionCreator('', {}).type;
-  return function(pattern?: Action | unknown) {
+  return function(pattern?: Action | unknown): ActionPattern<ModalAction> {
     return isAction(pattern)
       ? modalMatcher(modalName, actionType, kTrue, pattern)
       : (action: Action): ReturnType<typeof modalMatcher> =>

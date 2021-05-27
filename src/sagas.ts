@@ -15,7 +15,7 @@ export default function* rootModalSaga(
 
       return fork(function*() {
         while (true) {
-          const { payload } = yield take(modal.patterns.show);
+          const { payload } = yield take(modal.patterns.show());
           try {
             yield race({
               task: call([modal, saga], payload),
