@@ -23,16 +23,6 @@ export interface ModalAction extends Action {
   payload?: any;
 }
 
-export interface RenameActionsMap
-  extends Record<keyof typeof actionsCreators, string> {
-  showModal: 'show';
-  updateModal: 'update';
-  clickModal: 'click';
-  destroyModal: 'destroy';
-  submitModal: 'submit';
-  hideModal: 'hide';
-}
-
 export interface ModalItemState {
   isOpen: boolean;
   props: any;

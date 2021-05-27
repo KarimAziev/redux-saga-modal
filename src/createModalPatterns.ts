@@ -1,9 +1,15 @@
 // prettier-ignore
 import { Action } from 'redux';
 import { take, ActionPattern } from 'redux-saga/effects';
-import * as actionsCreators from './actionsCreators';
-import { ModalActionCreators, ModalAction, RenameActionsMap } from './interface';
-import renameMap from './renameMap';
+import {
+  showModal,
+  updateModal,
+  hideModal,
+  clickModal,
+  destroyModal,
+  submitModal,
+} from './actionsCreators';
+import { ModalActionCreators, ModalAction } from './interface';
 
 const identity = <T>(v: T): T => v;
 
@@ -31,24 +37,18 @@ function isObject(obj: any): obj is object {
 }
 
 // eslint-disable-next-line no-shadow
- const predicate = (predicate: typeof payloadMatcher) => (
+const predicate = (predicate: typeof payloadMatcher) => (
   input: Parameters<typeof payloadMatcher>,
 ) => predicate(input);
 
 const arrayPred = (patterns: any[]) => (input: unknown): boolean =>
   patterns.some((p) => payloadMatcher(p)(input)) as boolean;
 
-const eqMatcher = (pattern: unknown) => (input: unknown) =>
-  input === pattern;
-
+const eqMatcher = (pattern: unknown) => (input: unknown) => input === pattern;
 
 const konst = <T>(v: T): (() => T) => () => v;
 const kTrue = konst(true);
 const wildcard = () => kTrue;
-
-const capitalize = (v: string): Capitalize<string> =>
-    v.charAt(0).toUpperCase() + v.slice(1);
-
 
 function payloadMatcher(pattern?: unknown) {
   const matchCreator = isUndef(pattern)
@@ -99,7 +99,7 @@ const makeModalPattern = (
 export const makeTakePattern = (
   modalName: string,
   actionCreator: ModalActionCreators,
-)  => {
+) => {
   const actionType = actionCreator('', {}).type;
   return function(pattern?: Action | unknown) {
     return isAction(pattern)
@@ -111,39 +111,24 @@ export const makeTakePattern = (
   };
 };
 
-
-
-
-
-const createModalPatterns = <
-    R extends {
-      // eslint-disable-next-line
-      [P in keyof RenameActionsMap as RenameActionsMap[P]]: ReturnType<typeof makeModalPattern>
+export default function createModalPatterns(modalName: string) {
+  return {
+    show: makeModalPattern(modalName, showModal),
+    update: makeModalPattern(modalName, updateModal),
+    click: makeModalPattern(modalName, clickModal),
+    destroy: makeModalPattern(modalName, destroyModal),
+    submit: makeModalPattern(modalName, submitModal),
+    hide: makeModalPattern(modalName, hideModal),
+  };
 }
-    >(
-      modalName: string,
-): R => (Object.keys(renameMap) as string[]).reduce(
-    (acc: R, k: any) => ({
-      ...acc,
-      [k]: makeModalPattern(modalName, actionsCreators[renameMap[k]]),
-    }),
-    {} as R
-  );
 
-// prettier-ignore
-export const createTakePatterns = <
-    R extends {
-      // eslint-disable-next-line
-      [P in keyof RenameActionsMap as `take${Capitalize<string & RenameActionsMap[P]>}`]: ReturnType<typeof makeTakePattern>
+export function createTakePatterns(modalName: string) {
+  return {
+    takeShow: makeTakePattern(modalName, showModal),
+    takeUpdate: makeTakePattern(modalName, updateModal),
+    takeClick: makeTakePattern(modalName, clickModal),
+    takeDestroy: makeTakePattern(modalName, destroyModal),
+    takeSubmit: makeTakePattern(modalName, submitModal),
+    takeHide: makeTakePattern(modalName, hideModal),
+  };
 }
-    >(
-      modalName: string,
-    ): R => (Object.keys(renameMap) as string[]).reduce(
-    (acc: R, k: any) => ({
-      ...acc,
-      [`take${capitalize(k)}`]: makeModalPattern(modalName, actionsCreators[renameMap[k]]),
-    }),
-    {} as R
-   )
-
-export default createModalPatterns;
