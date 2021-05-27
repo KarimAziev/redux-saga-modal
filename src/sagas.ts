@@ -1,10 +1,10 @@
 import { fork, all, take, race, call } from 'redux-saga/effects';
+import { Saga } from 'redux-saga';
 import createModal from './createModal';
-import { isDev } from './utils';
 import { ICreateModalParams } from './interface';
 
 export default function* rootModalSaga(
-  config = {},
+  config: Record<string, Saga>,
   params: ICreateModalParams,
 ) {
   const names = Object.keys(config);
@@ -22,10 +22,6 @@ export default function* rootModalSaga(
               cancel: modal.takeDestroy(),
             });
           } catch (error) {
-            if (isDev) {
-              console.error(`Error catched in the modal task ${name}: `, error);
-            }
-
             yield modal.destroy();
           }
         }

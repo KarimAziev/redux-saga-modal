@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import * as is from '@redux-saga/is';
 import PropTypes from 'prop-types';
-import { getDisplayName } from './utils';
 import { modalsStateSelector } from './selectors';
 import createModalBoundActions from './createModalActions';
 import {
@@ -14,12 +12,7 @@ import {
   destroyModal,
   submitModal,
 } from './actionsCreators';
-import {
-  SagaModalConfig,
-  ConnectModalProps,
-  State,
-  ConnectModalState,
-} from './interface';
+import { SagaModalConfig, State, ConnectModalState } from './interface';
 
 const initialState = {};
 
@@ -58,10 +51,10 @@ export const sagaModal = ({
   type HocProps = MapDispatchToProps & MapStateToProps;
 
   class ConnectedModal extends React.Component<HocProps, ConnectModalState> {
-    static displayName = `ConnectModal(${getDisplayName(
-      WrappedComponent,
-      name,
-    )})`;
+    static displayName = `ConnectModal(${WrappedComponent.displayName ||
+      WrappedComponent.name ||
+      name ||
+      'Component'})`;
 
     static propTypes = {
       modal: PropTypes.object.isRequired,
@@ -71,7 +64,7 @@ export const sagaModal = ({
       isOpen: this.props.modal.isOpen,
     };
 
-    componentDidUpdate(prevProps: ConnectModalProps) {
+    componentDidUpdate(prevProps: HocProps) {
       const { isOpen } = this.props.modal;
       const isToggled = isOpen !== prevProps.modal.isOpen;
 
@@ -102,7 +95,7 @@ export const sagaModal = ({
       const { isOpen } = this.state;
       const { modal, ...rest } = this.props;
 
-      if (is.undef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
+      if (isOpen === undefined || (isOpen === false && !keepComponentOnHide)) {
         return null;
       }
 

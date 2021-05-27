@@ -10,6 +10,16 @@ export function showModal<P = {}>(name: string, payload: P) {
   };
 }
 
+export function updateModal<P = {}>(name: string, payload: P) {
+  return {
+    type: ModalActionTypes.UPDATE_MODAL,
+    payload,
+    meta: {
+      name,
+    },
+  };
+}
+
 export function hideModal(name: string) {
   return {
     type: ModalActionTypes.HIDE_MODAL,
@@ -29,16 +39,6 @@ export function clickModal<P>(name: string, payload: P) {
   };
 }
 
-export function updateModal<P>(name: string, payload: P) {
-  return {
-    type: ModalActionTypes.UPDATE_MODAL,
-    payload,
-    meta: {
-      name,
-    },
-  };
-}
-
 export function destroyModal(name: string) {
   return {
     type: ModalActionTypes.DESTROY_MODAL,
@@ -48,7 +48,7 @@ export function destroyModal(name: string) {
   };
 }
 
-export function submitModal<P = {}>(name: string, payload: P) {
+export function submitModal<P>(name: string, payload: P) {
   return {
     type: ModalActionTypes.SUBMIT_MODAL,
     payload,

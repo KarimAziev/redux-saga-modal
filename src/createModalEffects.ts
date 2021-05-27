@@ -1,14 +1,8 @@
 import { put, select } from 'redux-saga/effects';
 import { modalSelector, modalsStateSelector } from './selectors';
 import createBoundModalActions from './createModalActions';
-import createModalPatterns, { createTakePatterns } from './createModalPatterns';
-import { ICreateModalParams } from './interface';
-
-export interface ICreateModalEffectsParams {
-  getModalsState?: ICreateModalParams['getModalsState'];
-  selector: ReturnType<typeof modalSelector>;
-  patterns: ReturnType<typeof createModalPatterns>;
-}
+import { createTakePatterns } from './createModalPatterns';
+import { ICreateModalEffectsParams } from './interface';
 
 export function createPutEffects(modalName: string) {
   return createBoundModalActions(modalName, put as Function);

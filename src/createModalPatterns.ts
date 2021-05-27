@@ -1,40 +1,55 @@
+// prettier-ignore
 import { Action } from 'redux';
-import {
-  undef as isUndef,
-  func as isFunc,
-  string as isString,
-  array as isArray,
-  object as isObject,
-  number as isNumber,
-} from '@redux-saga/is';
-import { take } from 'redux-saga/effects';
-import { kTrue, identity } from './utils';
-import {
-  showModal,
-  hideModal,
-  clickModal,
-  updateModal,
-  destroyModal,
-  submitModal,
-} from './actionsCreators';
-import { ModalActionCreators, ModalAction, Predicate } from './interface';
+import { take, ActionPattern } from 'redux-saga/effects';
+import * as actionsCreators from './actionsCreators';
+import { ModalActionCreators, ModalAction, RenameActionsMap } from './interface';
+import renameMap from './renameMap';
+
+const identity = <T>(v: T): T => v;
+
+function isFunc(f: any): f is Function {
+  return typeof f === 'function';
+}
+function isUndef(v: any): v is undefined {
+  return v === null || v === undefined;
+}
+
+function isString(s: any): s is string {
+  return typeof s === 'string';
+}
+
+function isNumber(n: any): n is number {
+  return typeof n === 'number';
+}
+
+function isArray(v: any): v is any[] {
+  return Array.isArray(v);
+}
+
+function isObject(obj: any): obj is object {
+  return obj && !isArray(obj) && typeof obj === 'object';
+}
 
 // eslint-disable-next-line no-shadow
-export const predicate = (predicate: typeof payloadMatcher) => (
+ const predicate = (predicate: typeof payloadMatcher) => (
   input: Parameters<typeof payloadMatcher>,
 ) => predicate(input);
 
-export const arrayPred = (patterns: any[]) => (input: unknown): boolean =>
+const arrayPred = (patterns: any[]) => (input: unknown): boolean =>
   patterns.some((p) => payloadMatcher(p)(input)) as boolean;
-export const stringMatcher = (pattern: string): Predicate<string> => (
-  input: string,
-) => input === pattern;
 
-export const eqMatcher = (pattern: unknown) => (input: unknown) =>
+const eqMatcher = (pattern: unknown) => (input: unknown) =>
   input === pattern;
-export const wildcard = () => kTrue;
+const wildcard = () => kTrue;
 
-export function payloadMatcher(pattern?: unknown) {
+const konst = <T>(v: T): (() => T) => () => v;
+const kTrue = konst(true);
+
+const capitalize = (v: string): Capitalize<string> =>
+    v.charAt(0).toUpperCase() + v.slice(1);
+
+
+function payloadMatcher(pattern?: unknown) {
   const matchCreator = isUndef(pattern)
     ? wildcard
     : isString(pattern)
@@ -49,7 +64,7 @@ export function payloadMatcher(pattern?: unknown) {
   return matchCreator;
 }
 
-export function modalMatcher(
+function modalMatcher(
   modalName: string,
   actionType: string,
   pattern: unknown,
@@ -70,48 +85,64 @@ function isAction(action: any): action is Action {
 const makeModalPattern = (
   modalName: string,
   actionCreator: ModalActionCreators,
-) => {
+): ActionPattern => {
   const actionType = actionCreator('', {}).type;
-  return function(patternOrAction?: Action | unknown) {
-    return isAction(patternOrAction)
-      ? modalMatcher(modalName, actionType, kTrue, patternOrAction)
+  return function(pattern?: Action | unknown) {
+    return isAction(pattern)
+      ? modalMatcher(modalName, actionType, kTrue, pattern)
       : (action: Action): ReturnType<typeof modalMatcher> =>
-          modalMatcher(modalName, actionType, patternOrAction, action);
+          modalMatcher(modalName, actionType, pattern, action);
   };
 };
 
 export const makeTakePattern = (
   modalName: string,
   actionCreator: ModalActionCreators,
-) => {
+)  => {
   const actionType = actionCreator('', {}).type;
-  return function(patternOrAction?: Action | unknown) {
-    return isAction(patternOrAction)
-      ? take(modalMatcher(modalName, actionType, kTrue, patternOrAction))
+  return function(pattern?: Action | unknown) {
+    return isAction(pattern)
+      ? take(modalMatcher(modalName, actionType, kTrue, pattern))
       : take(
           (action: Action): ReturnType<typeof modalMatcher> =>
-            modalMatcher(modalName, actionType, patternOrAction, action),
+            modalMatcher(modalName, actionType, pattern, action),
         );
   };
 };
-export default function createModalPatterns(modalName: string) {
-  return {
-    show: makeModalPattern(modalName, showModal),
-    update: makeModalPattern(modalName, updateModal),
-    click: makeModalPattern(modalName, clickModal),
-    destroy: makeModalPattern(modalName, destroyModal),
-    submit: makeModalPattern(modalName, submitModal),
-    hide: makeModalPattern(modalName, hideModal),
-  };
-}
 
-export function createTakePatterns(modalName: string) {
-  return {
-    takeShow: makeTakePattern(modalName, showModal),
-    takeUpdate: makeTakePattern(modalName, updateModal),
-    takeClick: makeTakePattern(modalName, clickModal),
-    takeDestroy: makeTakePattern(modalName, destroyModal),
-    takeSubmit: makeTakePattern(modalName, submitModal),
-    takeHide: makeTakePattern(modalName, hideModal),
-  };
+
+
+
+
+const createModalPatterns = <
+    R extends {
+      // eslint-disable-next-line
+      [P in keyof RenameActionsMap as RenameActionsMap[P]]: ReturnType<typeof makeModalPattern>
 }
+    >(
+      modalName: string,
+): R => (Object.keys(renameMap) as string[]).reduce(
+    (acc: R, k: any) => ({
+      ...acc,
+      [k]: makeModalPattern(modalName, actionsCreators[renameMap[k]]),
+    }),
+    {} as R
+  );
+
+// prettier-ignore
+export const createTakePatterns = <
+    R extends {
+      // eslint-disable-next-line
+      [P in keyof RenameActionsMap as `take${Capitalize<string & RenameActionsMap[P]>}`]: ReturnType<typeof makeTakePattern>
+}
+    >(
+      modalName: string,
+    ): R => (Object.keys(renameMap) as string[]).reduce(
+    (acc: R, k: any) => ({
+      ...acc,
+      [`take${capitalize(k)}`]: makeModalPattern(modalName, actionsCreators[renameMap[k]]),
+    }),
+    {} as R
+   )
+
+export default createModalPatterns;
