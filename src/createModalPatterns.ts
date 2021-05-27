@@ -1,6 +1,5 @@
-// prettier-ignore
 import { Action } from 'redux';
-import { take, ActionPattern } from 'redux-saga/effects';
+import { take } from 'redux-saga/effects';
 import {
   showModal,
   updateModal,
@@ -88,11 +87,11 @@ const makeModalPattern = (
   actionCreator: ModalActionCreators,
 ) => {
   const actionType = actionCreator('', {}).type;
-  return function(pattern?: Action | unknown): ActionPattern<ModalAction> {
+  return function(pattern?: Action | unknown): any {
     return isAction(pattern)
-      ? modalMatcher(modalName, actionType, kTrue, pattern)
-      : (action: Action): ReturnType<typeof modalMatcher> =>
-          modalMatcher(modalName, actionType, pattern, action);
+      ? modalMatcher(modalName, actionType, kTrue, pattern as ModalAction)
+      : (action: Action) =>
+          modalMatcher(modalName, actionType, pattern, action as ModalAction);
   };
 };
 
@@ -103,10 +102,10 @@ export const makeTakePattern = (
   const actionType = actionCreator('', {}).type;
   return function(pattern?: Action | unknown) {
     return isAction(pattern)
-      ? take(modalMatcher(modalName, actionType, kTrue, pattern))
+      ? take(modalMatcher(modalName, actionType, kTrue, pattern as ModalAction))
       : take(
           (action: Action): ReturnType<typeof modalMatcher> =>
-            modalMatcher(modalName, actionType, pattern, action),
+            modalMatcher(modalName, actionType, pattern, action as ModalAction),
         );
   };
 };

@@ -10,6 +10,7 @@
     "importHelpers": true,
     "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": false,
