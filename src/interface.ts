@@ -38,7 +38,10 @@ export interface ModalsState {
   [name: string]: ModalItemState;
 }
 
-export interface State extends DefaultRootState {}
+export interface State extends DefaultRootState {
+  modals: ModalsState;
+  [key: string]: ModalsState;
+}
 
 export interface SagaModalConfig {
   name: string;

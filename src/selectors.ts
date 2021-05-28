@@ -1,8 +1,6 @@
-import { State, ModalItemState } from './interface';
+import { State } from './interface';
 
-export const modalsStateSelector = (
-  state: State,
-): Record<string, ModalItemState> => (state['modals'] ? state['modals'] : {});
+export const modalsStateSelector = (state: State) => state.modals;
 
 export const modalSelector = (name: string, selector = modalsStateSelector) => (
   state: State,

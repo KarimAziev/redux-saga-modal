@@ -84,8 +84,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^3.3.2",
-    "prop-types": "^15.7.2"
+    "hoist-non-react-statics": "^3.3.2"
   },
   "peerDependencies": {
     "@babel/runtime": "*",

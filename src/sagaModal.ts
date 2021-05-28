@@ -33,7 +33,7 @@ export default function<T extends SagaModalInjectedProps>({
 }: SagaModalConfig) {
   return (WrappedComponent: React.ComponentType<T>) => {
     const mapStateToProps = (state: State) => ({
-      ...initProps,
+      ...(initProps || {}),
       modal: getModalsState(state)[name] || initialState,
     });
 
@@ -58,8 +58,9 @@ export default function<T extends SagaModalInjectedProps>({
     type HocProps = MapDispatchToProps & MapStateToProps;
 
     class ConnectedModal extends React.Component<HocProps, ConnectModalState> {
-      static displayName = `ConnectedSagaModal(${WrappedComponent?.displayName ||
-        WrappedComponent.name ||
+      static displayName = `ConnectedSagaModal(${(WrappedComponent &&
+        WrappedComponent.displayName) ||
+        (WrappedComponent && WrappedComponent.name) ||
         name ||
         'Component'})`;
 
