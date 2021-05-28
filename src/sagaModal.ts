@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 import { modalsStateSelector } from './selectors';
 import createModalBoundActions from './createModalActions';
 import {
@@ -21,8 +22,6 @@ import { isUndef } from './createModalPatterns';
 
 const initialState = {};
 
-const hoistNonReactStatics = require('hoist-non-react-statics');
-
 export default function<T extends SagaModalInjectedProps>({
   name,
   getModalsState = modalsStateSelector,
@@ -31,32 +30,31 @@ export default function<T extends SagaModalInjectedProps>({
   destroyOnHide = true,
   keepComponentOnHide = false,
 }: SagaModalConfig) {
+  const mapStateToProps = (state: State) => ({
+    ...(initProps || {}),
+    modal: getModalsState(state)[name] || initialState,
+  });
+
+  const mapDispatchToProps = (dispatch: Dispatch) => ({
+    ...bindActionCreators(actions, dispatch),
+    ...bindActionCreators(
+      {
+        showModal,
+        hideModal,
+        clickModal,
+        updateModal,
+        destroyModal,
+        submitModal,
+      },
+      dispatch,
+    ),
+    ...createModalBoundActions(name, dispatch),
+  });
+  type MapStateToProps = ReturnType<typeof mapStateToProps>;
+  type MapDispatchToProps = ReturnType<typeof mapDispatchToProps>;
+  type HocProps = MapDispatchToProps & MapStateToProps;
+
   return (WrappedComponent: React.ComponentType<T>) => {
-    const mapStateToProps = (state: State) => ({
-      ...(initProps || {}),
-      modal: getModalsState(state)[name] || initialState,
-    });
-
-    const mapDispatchToProps = (dispatch: Dispatch) => ({
-      ...bindActionCreators(actions, dispatch),
-      ...bindActionCreators(
-        {
-          showModal,
-          hideModal,
-          clickModal,
-          updateModal,
-          destroyModal,
-          submitModal,
-        },
-        dispatch,
-      ),
-      ...createModalBoundActions(name, dispatch),
-    });
-
-    type MapStateToProps = ReturnType<typeof mapStateToProps>;
-    type MapDispatchToProps = ReturnType<typeof mapDispatchToProps>;
-    type HocProps = MapDispatchToProps & MapStateToProps;
-
     class ConnectedModal extends React.Component<HocProps, ConnectModalState> {
       static displayName = `ConnectedSagaModal(${(WrappedComponent &&
         WrappedComponent.displayName) ||
