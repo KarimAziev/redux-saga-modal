@@ -8,9 +8,9 @@ export default function* rootModalSaga(
   params: ICreateModalParams,
 ) {
   const names = Object.keys(config);
-  // @ts-ignore
-  const tasks = yield all(
-    names.map((name) => {
+
+  yield all(
+    names.map((name: string) => {
       const saga = config[name];
       const modal = createModal(name, params);
 
@@ -29,6 +29,4 @@ export default function* rootModalSaga(
       });
     }),
   );
-
-  return tasks;
 }

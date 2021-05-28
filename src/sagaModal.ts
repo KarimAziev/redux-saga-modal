@@ -10,6 +10,7 @@ import {
   SagaModalConfig,
   ConnectModalProps,
   ConnectModalState,
+  IReduxSagaModalInjectedComponent,
 } from './interface';
 
 const initialState = {};
@@ -25,7 +26,7 @@ const sagaModal = <T extends ConnectModalProps>({
   actions = {},
   destroyOnHide = true,
   keepComponentOnHide = false,
-}: SagaModalConfig) => (ModalComponent: React.ComponentType<T>) => {
+}: SagaModalConfig): IReduxSagaModalInjectedComponent => (ModalComponent) => {
   class ConnectedModal extends Component<T, ConnectModalState> {
     static propTypes = {
       modal: PropTypes.object.isRequired,

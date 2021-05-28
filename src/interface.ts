@@ -111,10 +111,9 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface IReduxSagaModalInjectedComponent {
   <P extends SagaModalInjectedProps>(
-    component: React.ComponentType<P>,
-  ): React.ComponentClass<any & any>;
+    component: React.ComponentType<P> | React.FC<P>,
+  ): React.ComponentClass<P & any>;
 }
-
 export interface TakePatterns {
   takeShow: (payloadPattern?: any) => TakeEffect;
   takeUpdate: (payloadPattern?: any) => TakeEffect;
