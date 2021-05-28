@@ -1,126 +1,102 @@
-import * as React from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import hoistNonReactStatics from 'hoist-non-react-statics';
 import { modalsStateSelector } from './selectors';
-import createModalBoundActions from './createModalActions';
-import {
-  showModal,
-  hideModal,
-  clickModal,
-  updateModal,
-  destroyModal,
-  submitModal,
-} from './actionsCreators';
+import createModalActions from './createModalActions';
+import * as actionsCreators from './actionsCreators';
+import { isUndef } from './createModalPatterns';
 import {
   SagaModalConfig,
-  State,
+  ConnectModalProps,
   ConnectModalState,
-  SagaModalInjectedProps,
 } from './interface';
-import { isUndef } from './createModalPatterns';
 
 const initialState = {};
+function getDisplayName(WrappedComponent: React.ComponentType<any>) {
+  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+}
+const hoistStatics = require('hoist-non-react-statics');
 
-export default function<T extends SagaModalInjectedProps>({
+const sagaModal = <T extends ConnectModalProps>({
   name,
   getModalsState = modalsStateSelector,
   initProps = initialState,
   actions = {},
   destroyOnHide = true,
   keepComponentOnHide = false,
-}: SagaModalConfig) {
-  const mapStateToProps = (state: State) => ({
-    ...(initProps || {}),
+}: SagaModalConfig) => (ModalComponent: React.ComponentType<T>) => {
+  class ConnectedModal extends Component<T, ConnectModalState> {
+    static propTypes = {
+      modal: PropTypes.object.isRequired,
+    };
+    static displayName = `ConnectedModal(${getDisplayName(ModalComponent)})`;
+    state = {
+      isOpen: this.props.modal.isOpen,
+    };
+
+    componentDidUpdate(prevProps: ConnectModalProps) {
+      const { modal } = this.props;
+      const { isOpen } = modal;
+      const isToggled = isOpen !== prevProps.modal.isOpen;
+
+      if (isToggled) {
+        this.setState({ isOpen });
+      }
+
+      if (isOpen === false && destroyOnHide && !keepComponentOnHide) {
+        this.props.destroy();
+      }
+    }
+
+    componentWillUnmount() {
+      const {
+        modal: { isOpen },
+      } = this.props;
+
+      if (isOpen) {
+        this.props.hide();
+      }
+
+      if (isOpen && destroyOnHide) {
+        this.props.destroy();
+      }
+    }
+
+    render() {
+      const { isOpen } = this.state;
+      const { modal, ...rest } = this.props;
+
+      if (isUndef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
+        return null;
+      }
+
+      return React.createElement(ModalComponent, {
+        ...rest,
+        ...modal.props,
+        modal: {
+          name: name,
+        },
+        isOpen: isOpen,
+      });
+    }
+  }
+
+  const mapStateToProps = (state: any) => ({
+    ...initProps,
     modal: getModalsState(state)[name] || initialState,
   });
 
   const mapDispatchToProps = (dispatch: Dispatch) => ({
     ...bindActionCreators(actions, dispatch),
-    ...bindActionCreators(
-      {
-        showModal,
-        hideModal,
-        clickModal,
-        updateModal,
-        destroyModal,
-        submitModal,
-      },
-      dispatch,
-    ),
-    ...createModalBoundActions(name, dispatch),
+    ...bindActionCreators(actionsCreators, dispatch),
+    ...createModalActions(name, dispatch),
   });
-  type MapStateToProps = ReturnType<typeof mapStateToProps>;
-  type MapDispatchToProps = ReturnType<typeof mapDispatchToProps>;
-  type HocProps = MapDispatchToProps & MapStateToProps;
 
-  return (WrappedComponent: React.ComponentType<T>) => {
-    class ConnectedModal extends React.Component<HocProps, ConnectModalState> {
-      static displayName = `ConnectedSagaModal(${(WrappedComponent &&
-        WrappedComponent.displayName) ||
-        (WrappedComponent && WrappedComponent.name) ||
-        name ||
-        'Component'})`;
+  return connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(hoistStatics(ConnectedModal, ModalComponent));
+};
 
-      state = {
-        isOpen: this.props.modal.isOpen,
-      };
-
-      componentDidUpdate(prevProps: HocProps) {
-        const { modal } = this.props;
-        const { isOpen } = modal;
-        const isToggled = isOpen !== prevProps.modal.isOpen;
-
-        if (isToggled) {
-          this.setState({ isOpen });
-        }
-
-        if (isOpen === false && destroyOnHide && !keepComponentOnHide) {
-          this.props.destroy();
-        }
-      }
-
-      componentWillUnmount() {
-        const {
-          modal: { isOpen },
-        } = this.props;
-
-        if (isOpen) {
-          this.props.hide();
-        }
-
-        if (isOpen && destroyOnHide) {
-          this.props.destroy();
-        }
-      }
-
-      render() {
-        const { isOpen } = this.state;
-        const { modal, ...rest } = this.props;
-
-        if (isUndef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
-          return null;
-        }
-
-        return React.createElement(ConnectedModal, {
-          ...rest,
-          ...modal.props,
-          modal: {
-            name: name,
-          },
-          isOpen: isOpen,
-        });
-      }
-    }
-
-    return connect(
-      mapStateToProps,
-      mapDispatchToProps,
-    )(
-      hoistNonReactStatics(
-        ConnectedModal,
-        WrappedComponent,
-      ) as React.ComponentClass<HocProps, ConnectModalState>,
-    );
-  };
-}
+export default sagaModal;

@@ -4,9 +4,7 @@
   "description": "A wrapper to manage modals within redux-saga",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "scripts": {
     "clean": "rimraf lib es",
     "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"**/*.md\"",
@@ -19,18 +17,10 @@
     "test": "echo \"No test specified\""
   },
   "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.ts": ["prettier --write", "git add"]
   },
   "npmName": "redux-saga-modal",
-  "keywords": [
-    "redux-saga",
-    "modal",
-    "redux",
-    "dialog"
-  ],
+  "keywords": ["redux-saga", "modal", "redux", "dialog"],
   "author": "Karim Aziev <karim.aziev@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/KarimAziev/redux-saga-modal#readme",
@@ -71,6 +61,7 @@
     "lint-staged": "^7.2.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.16.4",
+    "hoist-non-react-statics": "^2.0.0",
     "react": "*",
     "react-redux": "*",
     "redux": "*",
@@ -81,17 +72,20 @@
     "typescript": "4.2.4",
     "webpack": "^4.29.0",
     "webpack-cli": "^3.2.3",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^3.3.2"
+    "hoist-non-react-statics": "^2.0.0",
+    "prop-types": "^15.7.2",
+    "webpack-node-externals": "^1.7.2"
   },
   "peerDependencies": {
-    "@babel/runtime": "*",
-    "react": "*",
-    "react-redux": "*",
-    "redux": "*",
-    "redux-saga": "*"
+    "@babel/runtime": ">=7.0.0",
+    "react": ">=15.0.0",
+    "react-dom": ">=15.0.0",
+    "react-redux": "^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0",
+    "redux": "^3.0.0 || ^4.0.0",
+    "redux-saga": ">=0.15.0"
   },
   "testURL": "http://localhost"
 }

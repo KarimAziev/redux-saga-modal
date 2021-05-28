@@ -76,6 +76,26 @@ export interface ConnectModalState {
   isOpen?: boolean;
 }
 
+export interface ConnectModalProps {
+  modal: {
+    isOpen?: boolean;
+    name: string;
+    props: any;
+  };
+  show(payload: unknown): void;
+  update(payload: unknown): void;
+  click(payload?: unknown): void;
+  submit(payload?: unknown): void;
+  hide(): void;
+  destroy(): void;
+  showModal(name: string, payload: any): void;
+  updateModal(name: string, payload: any): void;
+  submitModal(name: string, payload: any): void;
+  clickModal(name: string, payload: any): void;
+  hideModal(name: string): void;
+  destroyModal(name: string): void;
+}
+
 export type ModalActionCreators = typeof actionsCreators[keyof typeof actionsCreators];
 
 export type ModalPatterns = ReturnType<typeof createModalPatterns>;
@@ -87,11 +107,12 @@ export interface ModalHelpers {
   patterns: ReturnType<typeof createModalPatterns>;
   actions: ReturnType<typeof createModalActions>;
 }
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 export interface IReduxSagaModalInjectedComponent {
   <P extends SagaModalInjectedProps>(
-    component: React.ComponentType<any>,
-  ): React.ComponentClass<Omit<P, keyof SagaModalInjectedProps> & any>;
+    component: React.ComponentType<P>,
+  ): React.ComponentClass<any & any>;
 }
 
 export interface TakePatterns {
