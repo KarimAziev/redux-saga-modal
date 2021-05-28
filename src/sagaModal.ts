@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
-import hoistNonReactStatics from 'hoist-non-react-statics';
 import { modalsStateSelector } from './selectors';
 import createModalBoundActions from './createModalActions';
 import {
@@ -16,19 +15,21 @@ import {
   SagaModalConfig,
   State,
   ConnectModalState,
-  IReduxSagaModalInjectedComponent,
+  SagaModalInjectedProps,
 } from './interface';
 
 const initialState = {};
 
-export const sagaModal: ReturnType<IReduxSagaModalInjectedComponent & any> = ({
+const hoistNonReactStatics = require('hoist-non-react-statics');
+
+export default function<T extends SagaModalInjectedProps>({
   name,
   getModalsState = modalsStateSelector,
   initProps = initialState,
   actions = {},
   destroyOnHide = true,
   keepComponentOnHide = false,
-}: SagaModalConfig) => {
+}: SagaModalConfig) {
   const mapStateToProps = (state: State) => ({
     ...initProps,
     modal: getModalsState(state)[name] || initialState,
@@ -54,12 +55,8 @@ export const sagaModal: ReturnType<IReduxSagaModalInjectedComponent & any> = ({
   type MapDispatchToProps = ReturnType<typeof mapDispatchToProps>;
   type HocProps = MapDispatchToProps & MapStateToProps;
 
-  return (WrappedComponent: React.ComponentType) => {
-    class ConnectedModal extends React.Component<
-      HocProps,
-      ConnectModalState,
-      any
-    > {
+  return (WrappedComponent: React.ComponentType<T>) => {
+    class ConnectedModal extends React.Component<HocProps, ConnectModalState> {
       static displayName = `ConnectedSagaModal(${WrappedComponent?.displayName ||
         WrappedComponent.name ||
         name ||
@@ -100,10 +97,7 @@ export const sagaModal: ReturnType<IReduxSagaModalInjectedComponent & any> = ({
         const { isOpen } = this.state;
         const { modal, ...rest } = this.props;
 
-        if (
-          isOpen === undefined ||
-          (isOpen === false && !keepComponentOnHide)
-        ) {
+        if (!isOpen && !keepComponentOnHide) {
           return null;
         }
 
@@ -121,6 +115,11 @@ export const sagaModal: ReturnType<IReduxSagaModalInjectedComponent & any> = ({
     return connect(
       mapStateToProps,
       mapDispatchToProps,
-    )(hoistNonReactStatics(ConnectedModal, WrappedComponent));
+    )(
+      hoistNonReactStatics(
+        ConnectedModal,
+        WrappedComponent,
+      ) as React.ComponentClass<HocProps, ConnectModalState>,
+    );
   };
-};
+}

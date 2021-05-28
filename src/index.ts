@@ -7,13 +7,13 @@ import {
   destroyModal,
   submitModal,
 } from './actionsCreators';
-import { sagaModal } from './sagaModal';
+import sagaModal from './sagaModal';
 import sagas from './sagas';
 import createModalBoundActions, {
   createModalActions,
 } from './createModalActions';
 import createModalPatterns from './createModalPatterns';
-import createModalEffects from './createModalEffects';
+import createModalEffects, { createTakeEffects } from './createModalEffects';
 import createModal, { createModalHelpers } from './createModal';
 import { modalSelector, modalsStateSelector } from './selectors';
 
@@ -21,6 +21,7 @@ export {
   sagaModal,
   reducer,
   sagas,
+  createTakeEffects,
   createModalBoundActions,
   showModal,
   hideModal,

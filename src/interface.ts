@@ -1,4 +1,6 @@
 import { ActionCreatorsMapObject, Action } from 'redux';
+import { DefaultRootState } from 'react-redux';
+import { TakeEffect } from 'redux-saga/effects';
 import { modalsStateSelector, modalSelector } from './selectors';
 import * as actionsCreators from './actionsCreators';
 import { createModalActions } from './createModalActions';
@@ -11,6 +13,7 @@ export interface ICreateModalParams {
 export interface ICreateModalEffectsParams {
   getModalsState?: ICreateModalParams['getModalsState'];
   selector: ReturnType<typeof modalSelector>;
+  patterns?: ReturnType<typeof createModalPatterns>;
 }
 
 export type Predicate<T> = (arg: T) => boolean;
@@ -35,10 +38,7 @@ export interface ModalsState {
   [name: string]: ModalItemState;
 }
 
-export interface State {
-  modals: Record<string, ModalItemState>;
-  [key: string]: any;
-}
+export interface State extends DefaultRootState {}
 
 export interface SagaModalConfig {
   name: string;
@@ -89,4 +89,13 @@ export interface IReduxSagaModalInjectedComponent {
   <P extends SagaModalInjectedProps>(
     component: React.ComponentType<any>,
   ): React.ComponentClass<Omit<P, keyof SagaModalInjectedProps> & any>;
+}
+
+export interface TakePatterns {
+  takeShow: (payloadPattern?: any) => TakeEffect;
+  takeUpdate: (payloadPattern?: any) => TakeEffect;
+  takeClick: (payloadPattern?: any) => TakeEffect;
+  takeDestroy: (payloadPattern?: any) => TakeEffect;
+  takeSubmit: (payloadPattern?: any) => TakeEffect;
+  takeHide: (payloadPattern?: any) => TakeEffect;
 }
