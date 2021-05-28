@@ -5,7 +5,7 @@ import { ModalAction } from './interface';
 function isFunc(f: any): f is Function {
   return typeof f === 'function';
 }
-function isUndef(v: any): v is undefined {
+export function isUndef(v: any): v is undefined {
   return v === null || v === undefined;
 }
 

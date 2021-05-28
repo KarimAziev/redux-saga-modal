@@ -17,6 +17,7 @@ import {
   ConnectModalState,
   SagaModalInjectedProps,
 } from './interface';
+import { isUndef } from './createModalPatterns';
 
 const initialState = {};
 
@@ -30,32 +31,32 @@ export default function<T extends SagaModalInjectedProps>({
   destroyOnHide = true,
   keepComponentOnHide = false,
 }: SagaModalConfig) {
-  const mapStateToProps = (state: State) => ({
-    ...initProps,
-    modal: getModalsState(state)[name] || initialState,
-  });
-
-  const mapDispatchToProps = (dispatch: Dispatch) => ({
-    ...bindActionCreators(actions, dispatch),
-    ...bindActionCreators(
-      {
-        showModal,
-        hideModal,
-        clickModal,
-        updateModal,
-        destroyModal,
-        submitModal,
-      },
-      dispatch,
-    ),
-    ...createModalBoundActions(name, dispatch),
-  });
-
-  type MapStateToProps = ReturnType<typeof mapStateToProps>;
-  type MapDispatchToProps = ReturnType<typeof mapDispatchToProps>;
-  type HocProps = MapDispatchToProps & MapStateToProps;
-
   return (WrappedComponent: React.ComponentType<T>) => {
+    const mapStateToProps = (state: State) => ({
+      ...initProps,
+      modal: getModalsState(state)[name] || initialState,
+    });
+
+    const mapDispatchToProps = (dispatch: Dispatch) => ({
+      ...bindActionCreators(actions, dispatch),
+      ...bindActionCreators(
+        {
+          showModal,
+          hideModal,
+          clickModal,
+          updateModal,
+          destroyModal,
+          submitModal,
+        },
+        dispatch,
+      ),
+      ...createModalBoundActions(name, dispatch),
+    });
+
+    type MapStateToProps = ReturnType<typeof mapStateToProps>;
+    type MapDispatchToProps = ReturnType<typeof mapDispatchToProps>;
+    type HocProps = MapDispatchToProps & MapStateToProps;
+
     class ConnectedModal extends React.Component<HocProps, ConnectModalState> {
       static displayName = `ConnectedSagaModal(${WrappedComponent?.displayName ||
         WrappedComponent.name ||
@@ -67,7 +68,8 @@ export default function<T extends SagaModalInjectedProps>({
       };
 
       componentDidUpdate(prevProps: HocProps) {
-        const { isOpen } = this.props.modal;
+        const { modal } = this.props;
+        const { isOpen } = modal;
         const isToggled = isOpen !== prevProps.modal.isOpen;
 
         if (isToggled) {
@@ -97,11 +99,11 @@ export default function<T extends SagaModalInjectedProps>({
         const { isOpen } = this.state;
         const { modal, ...rest } = this.props;
 
-        if (!isOpen && !keepComponentOnHide) {
+        if (isUndef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
           return null;
         }
 
-        return React.createElement(WrappedComponent, {
+        return React.createElement(ConnectedModal, {
           ...rest,
           ...modal.props,
           modal: {
