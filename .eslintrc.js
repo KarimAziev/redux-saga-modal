@@ -6,6 +6,7 @@ module.exports = {
     node: true,
   },
   extends: [
+    'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
@@ -88,7 +89,7 @@ module.exports = {
           },
         ],
         '@typescript-eslint/no-unused-vars': [
-          'warn',
+          'error',
           {
             args: 'none',
             ignoreRestSiblings: true,
@@ -130,64 +131,4 @@ module.exports = {
       version: 'detect',
     },
   },
-  overrides: [
-    {
-      files: ['createModalPatterns.?(x)'],
-      rules: {
-        'no-unused-vars': 'off',
-      },
-    },
-    {
-      files: ['**/*.ts?(x)'],
-      rules: {
-        '@typescript-eslint/ban-ts-comment': ['warn'],
-        '@typescript-eslint/ban-types': 'off',
-        '@typescript-eslint/explicit-module-boundary-types': 'off',
-        '@typescript-eslint/no-empty-function': 'off',
-        '@typescript-eslint/no-empty-interface': 'off',
-        '@typescript-eslint/no-non-null-assertion': 'off',
-        '@typescript-eslint/no-explicit-any': ['off'],
-        '@typescript-eslint/no-var-requires': 'off',
-        '@typescript-eslint/no-unused-expressions': [
-          'error',
-          {
-            allowShortCircuit: true,
-            allowTaggedTemplates: true,
-            allowTernary: true,
-          },
-        ],
-        '@typescript-eslint/no-unused-vars': [
-          'warn',
-          {
-            args: 'none',
-            ignoreRestSiblings: true,
-          },
-        ],
-        '@typescript-eslint/no-use-before-define': [
-          'warn',
-          {
-            classes: false,
-            functions: false,
-            typedefs: false,
-            variables: false,
-          },
-        ],
-        '@typescript-eslint/no-useless-constructor': 'warn',
-        'default-case': 'off',
-        'no-dupe-class-members': 'off',
-        'no-undef': 'off',
-        'no-unused-expressions': 'off',
-        'no-unused-vars': 'off',
-        'no-useless-constructor': 'off',
-      },
-    },
-    {
-      files: ['*.test.ts', '*test.tsx', '*testUtil.tsx'],
-      rules: {
-        '@typescript-eslint/no-explicit-any': 'off',
-        'react/jsx-uses-react': 'off',
-        'react/react-in-jsx-scope': 'off',
-      },
-    },
-  ],
 };
