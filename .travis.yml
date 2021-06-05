@@ -6,7 +6,7 @@ node_js:
 cache: yarn
 
 script:
-  - yarn test --coverage
+  - yarn test
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
