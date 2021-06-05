@@ -1,3 +1,10 @@
+# redux-saga-modal
+
+[![](https://img.shields.io/npm/v/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
+[![](https://img.shields.io/travis/KarimAziev/redux-saga-modal.svg)](https://travis-ci.org/KarimAziev/redux-saga-modal)
+[![](https://img.shields.io/codecov/c/github/KarimAziev/redux-saga-modal.svg)](https://codecov.io/gh/KarimAziev/redux-saga-modal)
+[![](https://img.shields.io/npm/dt/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
+
 ## Installation
 
 ```bash
