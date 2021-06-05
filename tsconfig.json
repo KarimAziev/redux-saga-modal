@@ -23,5 +23,5 @@
     "skipLibCheck": true
   },
   "include": ["src"],
-  "exclude": ["node_modules", "lib", "wepback.config.js", "__tests__"]
+  "exclude": ["node_modules", "lib", "wepback.config.js"]
 }
