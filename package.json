@@ -13,7 +13,7 @@
     "prebuild": "npm-run-all -s clean",
     "prepublishOnly": "npm-run-all -s build",
     "precommit": "lint-staged",
-    "release": "release-it --preRelease=beta --verbose",
+    "release": "release-it",
     "test": "jest --coverage",
     "test:watch": "jest --watch"
   },
