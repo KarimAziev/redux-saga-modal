@@ -1,9 +1,24 @@
-import { put, select, take } from 'redux-saga/effects';
+import { put, select, take, PutEffect } from 'redux-saga/effects';
 import { Action } from 'redux';
 import { modalSelector, modalsStateSelector } from './selectors';
-import createBoundModalActions from './createModalActions';
+import * as actionsCreators from './actionsCreators';
+import {
+  ICreateModalEffectsParams,
+  TakePatterns,
+  ModalActionCreators,
+  SagaModalAction,
+  SagaModalCommonAction,
+} from './interface';
 import createModalPatterns, { renameActionsMap } from './createModalPatterns';
-import { ICreateModalEffectsParams, TakePatterns } from './interface';
+
+const {
+  showModal,
+  hideModal,
+  clickModal,
+  updateModal,
+  destroyModal,
+  submitModal,
+} = actionsCreators;
 
 export function createTakeEffects(
   modalName: string,
@@ -33,8 +48,33 @@ export function createTakeEffects(
   }, {} as TakePatterns);
 }
 
-export function createPutEffects(modalName: string) {
-  return createBoundModalActions(modalName, put as Function);
+export function bindPutEffect<A extends ModalActionCreators>(
+  actionCreator: A,
+  name: string,
+) {
+  return function<P = {}>(payload: P): PutEffect<SagaModalAction<P>> {
+    return put(actionCreator.apply(undefined, [name, payload]));
+  };
+}
+
+export function bindPutEffectWithoutPayload<A extends ModalActionCreators>(
+  actionCreator: A,
+  name: string,
+) {
+  return function(): PutEffect<SagaModalCommonAction> {
+    return put(actionCreator.apply(undefined, [name]));
+  };
+}
+
+export function createPutEffects(name: string) {
+  return {
+    show: bindPutEffect(showModal, name),
+    update: bindPutEffect(updateModal, name),
+    submit: bindPutEffect(submitModal, name),
+    click: bindPutEffect(clickModal, name),
+    hide: bindPutEffectWithoutPayload(hideModal, name),
+    destroy: bindPutEffectWithoutPayload(destroyModal, name),
+  };
 }
 
 export default function createModalEffects(

@@ -108,11 +108,16 @@ export default function createModalPatterns<
           modalName,
           actionType,
           kTrue,
-          patternOrAction as Action,
+          patternOrAction as ModalAction,
         );
       }
       return (action: Action) =>
-        modalMatcher(modalName, actionType, patternOrAction, action);
+        modalMatcher(
+          modalName,
+          actionType,
+          patternOrAction,
+          action as ModalAction,
+        );
     };
 
     return acc;

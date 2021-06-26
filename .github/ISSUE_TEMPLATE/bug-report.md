@@ -30,5 +30,4 @@ assignees: 'KarimAziev'
 | ---------------- | ------- |
 | redux-saga-modal |         |
 | React            |         |
-| Browser          |         |
-| npm/yarn         |         |
+| redux            |         |

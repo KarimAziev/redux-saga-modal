@@ -16,20 +16,10 @@ import createModalPatterns from './createModalPatterns';
 import createModalEffects, { createTakeEffects } from './createModalEffects';
 import createModal, { createModalHelpers } from './createModal';
 import { modalSelector, modalsStateSelector } from './selectors';
-import {
-  IReduxSagaModalInjectedComponent,
-  TakePatterns,
-  SagaModalInjectedProps,
-  SagaModalConfig,
-  ModalAction,
-} from './interface';
+
+export * from './interface';
 
 export {
-  IReduxSagaModalInjectedComponent,
-  ModalAction,
-  TakePatterns,
-  SagaModalInjectedProps,
-  SagaModalConfig,
   sagaModal,
   reducer,
   sagas,

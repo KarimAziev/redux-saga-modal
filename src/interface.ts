@@ -5,6 +5,7 @@ import { modalsStateSelector, modalSelector } from './selectors';
 import * as actionsCreators from './actionsCreators';
 import { createModalActions } from './createModalActions';
 import createModalPatterns from './createModalPatterns';
+import { ModalActionTypes } from './actionTypes';
 
 export interface ICreateModalParams {
   getModalsState: typeof modalsStateSelector;
@@ -16,31 +17,43 @@ export interface ICreateModalEffectsParams {
   patterns?: ReturnType<typeof createModalPatterns>;
 }
 
-export type Predicate<T> = (arg: T) => boolean;
-export type SubPattern<T> = Predicate<T>;
-export type Pattern<T> = SubPattern<T> | SubPattern<T>[] | SubPattern<string>;
+export interface SagaModalCommonAction extends Action<keyof ModalActionTypes> {
+  type: keyof ModalActionTypes;
+  meta: {
+    name: string;
+  };
+}
+
 export interface ModalAction extends Action {
-  meta?: {
+  meta: {
     name: string;
   };
   payload?: any;
 }
 
-export interface ModalItemState {
-  isOpen: boolean;
-  props: any;
+export type RenameActionsMap = Record<
+  'update' | 'show' | 'hide' | 'destroy' | 'submit' | 'click',
+  (...args: any) => ModalAction
+>;
+
+export interface SagaModalAction<P> extends SagaModalCommonAction {
+  payload: P;
+}
+
+export type ModalItemState<P> = {
+  props: P;
+  isOpen?: boolean;
   isSubmitted?: boolean;
   submitted?: any;
   clicked?: any;
-}
+};
 
 export interface ModalsState {
-  [name: string]: ModalItemState;
+  [name: string]: ModalItemState<any>;
 }
 
 export interface State extends DefaultRootState {
   modals: ModalsState;
-  [key: string]: ModalsState;
 }
 
 export interface SagaModalConfig {
@@ -58,6 +71,7 @@ export interface SagaModalInjectedProps {
   modal: {
     name: string;
   };
+
   show(payload: unknown): void;
   update(payload: unknown): void;
   click(payload?: unknown): void;
@@ -97,13 +111,12 @@ export interface ConnectModalProps {
 }
 
 export type ModalActionCreators = typeof actionsCreators[keyof typeof actionsCreators];
-
 export type ModalPatterns = ReturnType<typeof createModalPatterns>;
 export type ModalPattern = ModalPatterns[keyof ModalPatterns];
 
 export interface ModalHelpers {
   name: string;
-  selector: (state: State) => ModalItemState;
+  selector<P>(s: State): ModalItemState<P>;
   patterns: ReturnType<typeof createModalPatterns>;
   actions: ReturnType<typeof createModalActions>;
 }

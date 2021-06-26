@@ -1,7 +1,7 @@
-import { PutEffect } from 'redux-saga/effects';
+import { PutEffect, put } from 'redux-saga/effects';
 import { Dispatch } from 'redux';
 import * as actionsCreators from './actionsCreators';
-import { ModalActionCreators } from './interface';
+import { ModalActionCreators, SagaModalAction } from './interface';
 
 const {
   showModal,
@@ -12,34 +12,41 @@ const {
   submitModal,
 } = actionsCreators;
 
-export function bindActionEffect<
-  A extends ModalActionCreators,
-  P,
-  E extends Function
->(actionCreator: A, name: string, effect: E) {
-  return function(
-    payload?: P,
-  ): E extends Dispatch<any>
-    ? Dispatch<ReturnType<A>>
-    : E extends Function
-    ? PutEffect<ReturnType<A>>
-    : ReturnType<A> {
-    const action = actionCreator.apply(undefined, [name, payload]);
+export function bindActionEffect<E extends Function>(
+  actionCreator: ModalActionCreators,
+  name: string,
+  effect: E,
+) {
+  return function<P = {}>(payload?: P): Dispatch<SagaModalAction<P>> {
+    const action: SagaModalAction<P> = actionCreator.apply(undefined, [
+      name,
+      payload,
+    ]);
+
     return effect(action);
   };
 }
 
-export default function createModalBoundActions<E extends Function>(
+export function bindPutEffect<A extends ModalActionCreators>(
+  actionCreator: A,
   name: string,
-  effect: E,
+) {
+  return function<P = {}>(payload?: P): PutEffect<SagaModalAction<P>> {
+    return put(actionCreator.apply(undefined, [name, payload]));
+  };
+}
+
+export default function createModalBoundActions(
+  name: string,
+  dispatch: Function,
 ) {
   return {
-    show: bindActionEffect(showModal, name, effect),
-    update: bindActionEffect(updateModal, name, effect),
-    submit: bindActionEffect(submitModal, name, effect),
-    click: bindActionEffect(clickModal, name, effect),
-    hide: bindActionEffect(hideModal, name, effect),
-    destroy: bindActionEffect(destroyModal, name, effect),
+    show: bindActionEffect(showModal, name, dispatch),
+    update: bindActionEffect(updateModal, name, dispatch),
+    submit: bindActionEffect(submitModal, name, dispatch),
+    click: bindActionEffect(clickModal, name, dispatch),
+    hide: bindActionEffect(hideModal, name, dispatch),
+    destroy: bindActionEffect(destroyModal, name, dispatch),
   };
 }
 
