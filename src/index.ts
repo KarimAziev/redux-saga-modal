@@ -16,12 +16,14 @@ import createModalPatterns from './createModalPatterns';
 import createModalEffects, { createTakeEffects } from './createModalEffects';
 import createModal, { createModalHelpers } from './createModal';
 import { modalSelector, modalsStateSelector } from './selectors';
+import { ModalActionTypes } from './actionTypes';
 
 export * from './interface';
 
 export {
   sagaModal,
   reducer,
+  ModalActionTypes,
   sagas,
   createTakeEffects,
   createModalBoundActions,

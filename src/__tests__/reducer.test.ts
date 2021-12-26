@@ -9,7 +9,7 @@ import {
 } from '../actionsCreators';
 
 let MODAL_NAME: string;
-let PAYLOAD: {};
+let PAYLOAD: { message: string };
 
 describe('Saga modals reducer', () => {
   beforeEach(() => {

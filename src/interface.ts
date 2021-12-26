@@ -1,19 +1,25 @@
 import { ActionCreatorsMapObject, Action } from 'redux';
-import { DefaultRootState } from 'react-redux';
+import * as React from 'react';
 import { TakeEffect } from 'redux-saga/effects';
-import { modalsStateSelector, modalSelector } from './selectors';
+import {
+  DefaultRootState,
+  ConnectedComponent,
+  Shared,
+  GetProps,
+} from 'react-redux';
+import { modalsStateSelector } from './selectors';
 import * as actionsCreators from './actionsCreators';
 import { createModalActions } from './createModalActions';
 import createModalPatterns from './createModalPatterns';
 import { ModalActionTypes } from './actionTypes';
 
 export interface ICreateModalParams {
-  getModalsState: typeof modalsStateSelector;
+  getModalsState?: typeof modalsStateSelector;
 }
 
 export interface ICreateModalEffectsParams {
   getModalsState?: ICreateModalParams['getModalsState'];
-  selector: ReturnType<typeof modalSelector>;
+  selector: Function;
   patterns?: ReturnType<typeof createModalPatterns>;
 }
 
@@ -24,24 +30,23 @@ export interface SagaModalCommonAction extends Action<keyof ModalActionTypes> {
   };
 }
 
-export interface ModalAction extends Action {
+/**
+ * A standard flux action with `type`, `payload` and `meta`.
+ * Meta contains `name` of the modal.
+ */
+export interface ModalAction<T> extends Action<string> {
   meta: {
     name: string;
   };
-  payload?: any;
+  payload?: T;
 }
 
-export type RenameActionsMap = Record<
-  'update' | 'show' | 'hide' | 'destroy' | 'submit' | 'click',
-  (...args: any) => ModalAction
->;
-
-export interface SagaModalAction<P> extends SagaModalCommonAction {
-  payload: P;
+export interface SagaModalAction<InitProps> extends SagaModalCommonAction {
+  payload: InitProps;
 }
 
-export type ModalItemState<P> = {
-  props: P;
+export type ModalItemState<InitProps> = {
+  props: InitProps;
   isOpen?: boolean;
   isSubmitted?: boolean;
   submitted?: any;
@@ -49,20 +54,11 @@ export type ModalItemState<P> = {
 };
 
 export interface ModalsState {
-  [name: string]: ModalItemState<any>;
+  [name: string]: ModalItemState<object>;
 }
 
 export interface State extends DefaultRootState {
-  modals: ModalsState;
-}
-
-export interface SagaModalConfig {
-  name: string;
-  getModalsState?: typeof modalsStateSelector;
-  destroyOnHide?: boolean;
-  initProps?: Record<string, unknown>;
-  actions?: ActionCreatorsMapObject;
-  keepComponentOnHide?: boolean;
+  modals: { [name: string]: ModalItemState<unknown> };
 }
 
 export interface SagaModalInjectedProps {
@@ -71,7 +67,6 @@ export interface SagaModalInjectedProps {
   modal: {
     name: string;
   };
-
   show(payload: unknown): void;
   update(payload: unknown): void;
   click(payload?: unknown): void;
@@ -113,20 +108,51 @@ export interface ConnectModalProps {
 export type ModalActionCreators = typeof actionsCreators[keyof typeof actionsCreators];
 export type ModalPatterns = ReturnType<typeof createModalPatterns>;
 export type ModalPattern = ModalPatterns[keyof ModalPatterns];
-
 export interface ModalHelpers {
   name: string;
-  selector<P>(s: State): ModalItemState<P>;
+  selector<InitProps>(s: State): ModalItemState<InitProps>;
   patterns: ReturnType<typeof createModalPatterns>;
   actions: ReturnType<typeof createModalActions>;
 }
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+export type DistributiveOmit<T, K extends keyof T> = T extends unknown
+  ? Omit<T, K>
+  : never;
 export interface IReduxSagaModalInjectedComponent {
-  <P extends SagaModalInjectedProps>(
-    component: React.ComponentType<P> | React.FC<P>,
-  ): React.ComponentClass<P & any>;
+  <C extends React.ComponentType<any>>(component: C): ConnectedComponent<
+    C,
+    Partial<
+      DistributiveOmit<
+        GetProps<C>,
+        keyof Shared<SagaModalInjectedProps, GetProps<C>>
+      >
+    >
+  >;
 }
+/**
+* Params to connect a component to Redux Store with `sagaModal`.
+* @param name - an uniq name of the modal
+* @param getModalsState - An optional custom selector that takes the Redux store
+and returns the slice with all modals
+* @param destroyOnHide - whether to destroy modal on unmount
+* @param keepComponentOnHide - whether to force render child components
+* @param initProps - initial props for child component
+* @param actions - additional actionCreatorsMapObject to pass into child component
+*/
+export interface SagaModalConfig<InitProps> {
+  name: string;
+  getModalsState?: typeof modalsStateSelector;
+  initProps?: InitProps;
+  actions?: ActionCreatorsMapObject;
+  destroyOnHide?: boolean;
+  keepComponentOnHide?: boolean;
+}
+/**
+ * High order `take` effects creators.
+ * The result of every creator is `take` with predicate to match a corresponding modal action.
+ * You can also pass payloadPattern to perfoms addiotonal checks for action's payload,
+ */
 export interface TakePatterns {
   takeShow: (payloadPattern?: any) => TakeEffect;
   takeUpdate: (payloadPattern?: any) => TakeEffect;

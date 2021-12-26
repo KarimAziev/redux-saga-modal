@@ -20,6 +20,11 @@ const {
   submitModal,
 } = actionsCreators;
 
+/**
+ * Creates high order `take` effects creators.
+ * The result of every creator is `take` with predicate to match a corresponding modal action.
+ * You can also pass payloadPattern to perfoms addiotonal checks for action's payload,
+ */
 export function createTakeEffects(
   modalName: string,
   mappedPatterns?: Record<keyof typeof renameActionsMap, (a?: any) => any>,
@@ -65,7 +70,12 @@ export function bindPutEffectWithoutPayload<A extends ModalActionCreators>(
     return put(actionCreator.apply(undefined, [name]));
   };
 }
-
+/**
+ * Creates high order `put` effects creators.
+ * The result of every creator is `put` with one of the modal action.
+ * @param name - name of the modal
+ * @returns an object with properties `show`, `update`, `click`, `submit`, `hide` and `destroy`.
+ */
 export function createPutEffects(name: string) {
   return {
     show: bindPutEffect(showModal, name),
@@ -96,6 +106,6 @@ export default function createModalEffects(
   return {
     ...takeEffects,
     ...createPutEffects(modalName),
-    select: () => select(selector),
+    select: () => select(selector as (state: any) => any),
   };
 }

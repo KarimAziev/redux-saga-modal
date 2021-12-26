@@ -1,5 +1,5 @@
 import { ModalActionTypes as actionTypes } from './actionTypes';
-import { ModalsState, ModalItemState } from './interface';
+import { ModalsState, ModalAction, ModalItemState } from './interface';
 
 const initialState: ModalsState = {};
 
@@ -10,12 +10,9 @@ const initialModalState: ModalItemState<{}> = {
 const pluckModalState = (state: ModalsState, name: string) =>
   state[name] || initialModalState;
 
-export default function reducer<S extends ModalsState>(
-  reducerState?: S,
-  action: any = {},
-): ModalsState {
-  const state = reducerState || initialState;
-  switch (action.type) {
+export default function reducer(state?: ModalsState, action?: ModalAction<{}>) {
+  state = state || initialState;
+  switch (action?.type) {
     case actionTypes.SHOW_MODAL: {
       const { name } = action.meta;
       return {

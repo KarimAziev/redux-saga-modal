@@ -16,7 +16,7 @@
     "prepublishOnly": "npm-run-all -s build",
     "precommit": "lint-staged",
     "release": "release-it",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:watch": "jest --watch"
   },
   "lint-staged": {
@@ -84,13 +84,12 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-typescript": "^0.14.0",
-    "hoist-non-react-statics": "^2.0.0",
     "jest": "^27.0.4",
     "lint-staged": "^7.2.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.16.4",
-    "react": "*",
-    "react-redux": "*",
+    "react": "^17.0.2",
+    "react-redux": "^7.2.6",
     "redux": "*",
     "redux-saga": "*",
     "release-it": "^14.7.0",
@@ -103,8 +102,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "hoist-non-react-statics": "^2.0.0",
-    "prop-types": "^15.7.2",
+    "hoist-non-react-statics": "^3.3.2",
     "webpack-node-externals": "^1.7.2"
   },
   "peerDependencies": {

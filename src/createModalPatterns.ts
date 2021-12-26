@@ -2,6 +2,25 @@ import { Action } from 'redux';
 import * as actionsCreators from './actionsCreators';
 import { ModalAction } from './interface';
 
+export const reduceObjWith = <
+  F extends (...args: any) => any,
+  V extends Record<string, unknown>,
+  K extends keyof V,
+  R extends { [P in K]: ReturnType<F> }
+>(
+  f: F,
+  v: V,
+): R => {
+  const keys = Object.keys(v) as K[];
+  return keys.reduce(
+    (acc: R, k: K) => ({
+      ...acc,
+      [k]: f(v[k]),
+    }),
+    {} as R,
+  );
+};
+
 function isFunc(f: any): f is Function {
   return typeof f === 'function';
 }
@@ -65,12 +84,12 @@ export function payloadMatcher(pattern: any) {
   return matcherCreator(pattern);
 }
 
-export function modalMatcher(
+export function modalMatcher<T>(
   modalName: string,
   actionType: string,
   pattern: any,
-  action: ModalAction,
-) {
+  action: any,
+): action is ModalAction<T> {
   const { type, payload, meta } = action;
 
   const isMatch =
@@ -81,11 +100,7 @@ export function modalMatcher(
   return isMatch;
 }
 
-type RenameActionsMap = Record<
-  'update' | 'show' | 'hide' | 'destroy' | 'submit' | 'click',
-  typeof actionsCreators[keyof typeof actionsCreators]
->;
-export const renameActionsMap: RenameActionsMap = {
+export const renameActionsMap = {
   show: actionsCreators.showModal,
   hide: actionsCreators.hideModal,
   destroy: actionsCreators.destroyModal,
@@ -96,7 +111,8 @@ export const renameActionsMap: RenameActionsMap = {
 
 export default function createModalPatterns<
   K extends keyof typeof renameActionsMap,
-  R extends { [P in K]: (a?: any) => R[P] }
+  R extends { [P in K]: (a?: any) => R[P] },
+  T
 >(modalName: string): R {
   const actionsKeys = Object.keys(renameActionsMap);
   return actionsKeys.reduce((acc: R, patternKey) => {
@@ -108,16 +124,11 @@ export default function createModalPatterns<
           modalName,
           actionType,
           kTrue,
-          patternOrAction as ModalAction,
+          patternOrAction as ModalAction<T>,
         );
       }
       return (action: Action) =>
-        modalMatcher(
-          modalName,
-          actionType,
-          patternOrAction,
-          action as ModalAction,
-        );
+        modalMatcher(modalName, actionType, patternOrAction, action);
     };
 
     return acc;

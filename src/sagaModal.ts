@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { bindActionCreators, Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { modalsStateSelector } from './selectors';
+import { connect, RootStateOrAny } from 'react-redux';
+import { modalSelector } from './selectors';
 import createModalActions from './createModalActions';
 import * as actionsCreators from './actionsCreators';
 import { isUndef } from './createModalPatterns';
@@ -13,21 +13,45 @@ import {
   IReduxSagaModalInjectedComponent,
 } from './interface';
 
-const initialState = {};
 function getDisplayName(WrappedComponent: React.ComponentType<any>) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 const hoistStatics = require('hoist-non-react-statics');
 
-const sagaModal = <T extends ConnectModalProps>({
+/**
+* High order component which connects a component to Redux Store.
+* @param SagaModalConfig - configuration
+* @param SagaModalConfig.name - an uniq name of the modal
+* @param SagaModalConfig.initProps - initial props for child component
+* @param SagaModalConfig.actions - additional actionCreatorsMapObject to pass into child component
+* @param SagaModalConfig.getModalsState - An optional custom selector that takes the Redux store
+and returns the slice with all modals
+* @param SagaModalConfig.destroyOnHide - whether to destroy modal on unmount. Default value is true
+* @param SagaModalConfig.keepComponentOnHide - whether to force render child components. Default value is false
+* @returns a function that accepts react component
+* @example
+```
+export const ConfirmModal = sagaModal({
+  name: 'CONFIRM_MODAL',
+  initProps: {
+    title: 'Some default title',
+},
+  actions: { loadData },
+})(ConfirmDialogComponent);
+```
+*/
+const sagaModal = <InitProps>({
   name,
-  getModalsState = modalsStateSelector,
-  initProps = initialState,
+  getModalsState,
+  initProps,
   actions = {},
   destroyOnHide = true,
   keepComponentOnHide = false,
-}: SagaModalConfig): IReduxSagaModalInjectedComponent => (ModalComponent) => {
-  class ConnectedModal extends Component<T, ConnectModalState> {
+}: SagaModalConfig<InitProps>): IReduxSagaModalInjectedComponent => (
+  ModalComponent,
+) => {
+  const selector = modalSelector(name, getModalsState);
+  class ConnectedModal extends Component<ConnectModalProps, ConnectModalState> {
     static propTypes = {
       modal: PropTypes.object.isRequired,
     };
@@ -83,9 +107,9 @@ const sagaModal = <T extends ConnectModalProps>({
     }
   }
 
-  const mapStateToProps = (state: any) => ({
+  const mapStateToProps = (state: RootStateOrAny) => ({
     ...initProps,
-    modal: getModalsState(state)[name] || initialState,
+    modal: selector(state) || {},
   });
 
   const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -97,7 +121,7 @@ const sagaModal = <T extends ConnectModalProps>({
   return connect(
     mapStateToProps,
     mapDispatchToProps,
-  )(hoistStatics(ConnectedModal, ModalComponent));
+  )(hoistStatics(ConnectedModal, ModalComponent) as any);
 };
 
 export default sagaModal;
