@@ -5,6 +5,8 @@
 [![](https://img.shields.io/codecov/c/github/KarimAziev/redux-saga-modal.svg)](https://codecov.io/gh/KarimAziev/redux-saga-modal)
 [![](https://img.shields.io/npm/dt/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
 
+<a href="https://codesandbox.io/s/reduxsagamodalexample-jzxve?fontsize=14" target="_blank" rel="nofollow" title="Edit on codesandbox">Live Demo</a>
+
 ## Installation
 
 ```bash
