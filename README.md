@@ -262,7 +262,7 @@ Both `patterns` and `actions` includes methods named `show`, `update`, `hide`, `
 
 - **name**(String)(Required) the name of a modal
 - **config**(Object)
-  - **getModalState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default, the reducer is mounted under the `modals` key.
+  - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default, the reducer is mounted under the `modals` key.
 
 ```javascript
 import { createModal } from 'redux-saga-modal';
@@ -301,7 +301,7 @@ Both `patterns` and `actions` have methods named `show`, `update`, `hide`, `subm
 
 - **name**(String)(Required) the name of a modal
 - **config**(Object)
-  - **getModalState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default, the reducer is mounted under the `modals` key.
+  - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default, the reducer is mounted under the `modals` key.
 
 ```javascript
 import { createModalHelpers } from 'redux-saga-modal';
@@ -484,7 +484,7 @@ Connects a component to Redux store and injects next props:
 - **name**(String)(Required) the name of a modal
 - **config**(Object)
   - **name** (String)(Required) the name of a modal
-  - **getModalState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default reducer is mounted under the 'modals' key: `state => state.modals`;
+  - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default reducer is mounted under the 'modals' key: `state => state.modals`;
   - **actions**(Object) Custom actions to bind with redux `dispatch`;
   - **keepComponentOnHide**(Boolean) Whether keep modal component when `isOpen` equals `false`. By default equals `false`;
   - **destroyOnHide**(Boolean) Whether automatically dispatch `destroy` to after `hide`. By default equals `true`.
