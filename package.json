@@ -4,14 +4,12 @@
   "description": "A wrapper to manage modals within redux-saga",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "files": [
-    "lib"
-  ],
+  "files": ["lib"],
   "scripts": {
     "clean": "rimraf lib es",
     "format": "prettier --write \"{src,test}/**/*.{js,ts}\" index.d.ts \"**/*.md\"",
     "build": "webpack --mode production --config webpack.config.js",
-    "release": "release-it --preRelease=beta --verbose",
+    "release": "release-it",
     "lint": "eslint src",
     "prebuild": "npm-run-all -s clean",
     "prepublishOnly": "npm-run-all -s build",
@@ -20,18 +18,10 @@
     "test:watch": "jest --watch"
   },
   "lint-staged": {
-    "*.ts": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.ts": ["prettier --write", "git add"]
   },
   "npmName": "redux-saga-modal",
-  "keywords": [
-    "redux-saga",
-    "modal",
-    "redux",
-    "dialog"
-  ],
+  "keywords": ["redux-saga", "modal", "redux", "dialog"],
   "author": "Karim Aziev <karim.aziev@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/KarimAziev/redux-saga-modal#readme",
@@ -43,9 +33,7 @@
     "url": "https://github.com/KarimAziev/redux-saga-modal/issues"
   },
   "jest": {
-    "roots": [
-      "<rootDir>/src"
-    ],
+    "roots": ["<rootDir>/src"],
     "testMatch": [
       "**/__tests__/**/*.+(ts|tsx|js)",
       "**/?(*.)+(spec|test).+(ts|tsx|js)"
