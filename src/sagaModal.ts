@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import * as PropTypes from 'prop-types';
 import { bindActionCreators, Dispatch } from 'redux';
 import { connect, RootStateOrAny } from 'react-redux';
 import { modalSelector } from './selectors';
@@ -52,9 +51,6 @@ const sagaModal = <InitProps>({
 ) => {
   const selector = modalSelector(name, getModalsState);
   class ConnectedModal extends Component<ConnectModalProps, ConnectModalState> {
-    static propTypes = {
-      modal: PropTypes.object.isRequired,
-    };
     static displayName = `ConnectedModal(${getDisplayName(ModalComponent)})`;
     state = {
       isOpen: this.props.modal.isOpen,
@@ -91,7 +87,6 @@ const sagaModal = <InitProps>({
     render() {
       const { isOpen } = this.state;
       const { modal, ...rest } = this.props;
-
       if (isUndef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
         return null;
       }

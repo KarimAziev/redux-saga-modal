@@ -1,7 +1,7 @@
 import { PutEffect, put } from 'redux-saga/effects';
 import { Dispatch } from 'redux';
 import * as actionsCreators from './actionsCreators';
-import { ModalActionCreators, ModalAction } from './interface';
+import { ModalActionCreators, SagaModalAction } from './interface';
 
 const {
   showModal,
@@ -17,8 +17,8 @@ export function bindActionEffect<E extends Function>(
   name: string,
   effect: E,
 ) {
-  return function<P = {}>(payload?: P): Dispatch<ModalAction<P>> {
-    const action: ModalAction<P> = actionCreator.apply(undefined, [
+  return function<P = {}>(payload?: P): Dispatch<SagaModalAction<P>> {
+    const action: SagaModalAction<P> = actionCreator.apply(undefined, [
       name,
       payload,
     ]);
@@ -31,7 +31,7 @@ export function bindPutEffect<A extends ModalActionCreators>(
   actionCreator: A,
   name: string,
 ) {
-  return function<P = {}>(payload?: P): PutEffect<ModalAction<P>> {
+  return function<P = {}>(payload?: P): PutEffect<SagaModalAction<P>> {
     return put(actionCreator.apply(undefined, [name, payload]));
   };
 }

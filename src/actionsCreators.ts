@@ -1,10 +1,10 @@
 import { ModalActionTypes } from './actionTypes';
-import { ModalAction } from './interface';
+import { SagaModalAction, SagaModalCommonAction } from './interface';
 
 const createModalAction = (type: ModalActionTypes) => <P>(
   name: string,
   payload: P,
-): ModalAction<P> => ({
+): SagaModalAction<P> => ({
   type: type,
   payload,
   meta: { name },
@@ -12,7 +12,7 @@ const createModalAction = (type: ModalActionTypes) => <P>(
 
 const createModalWithoutPayload = (type: ModalActionTypes) => (
   name: string,
-) => ({
+): SagaModalCommonAction => ({
   type: type,
   meta: { name },
 });
@@ -41,14 +41,14 @@ export const destroyModal = createModalWithoutPayload(
   ModalActionTypes.DESTROY_MODAL,
 );
 
-/** An action creator to indicates that something was submitted
+/** An action creator to indicate submitted.
  *  @param name - name of the modal
- *  @param payload - any value
+ *  @param payload - will *not* be stored in modal redux state
  **/
 export const submitModal = createModalAction(ModalActionTypes.SUBMIT_MODAL);
 
-/** An action creator to indicate some users clicks
+/** An action creator to indicate some users clicks.
  *  @param name - name of the modal
- *  @param payload - any value
+ *  @param payload - will *not* be stored in modal redux state
  **/
 export const clickModal = createModalAction(ModalActionTypes.CLICK_MODAL);

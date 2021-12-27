@@ -9,7 +9,7 @@ import {
   SagaModalAction,
   SagaModalCommonAction,
 } from './interface';
-import createModalPatterns, { renameActionsMap } from './createModalPatterns';
+import createModalPatterns from './createModalPatterns';
 
 const {
   showModal,
@@ -27,7 +27,7 @@ const {
  */
 export function createTakeEffects(
   modalName: string,
-  mappedPatterns?: Record<keyof typeof renameActionsMap, (a?: any) => any>,
+  mappedPatterns?: ReturnType<typeof createModalPatterns>,
 ) {
   const patterns = mappedPatterns || createModalPatterns(modalName);
   const takePatterns = {
@@ -38,6 +38,7 @@ export function createTakeEffects(
     takeSubmit: patterns.submit,
     takeHide: patterns.hide,
   };
+
   return Object.keys(takePatterns).reduce((acc, key) => {
     const pattern = takePatterns[key];
     const effect = (payloadPattern?: any) =>
@@ -86,7 +87,12 @@ export function createPutEffects(name: string) {
     destroy: bindPutEffectWithoutPayload(destroyModal, name),
   };
 }
-
+/**
+ *
+ * @param modalName - name of the modal
+ * @param params -   getModalsState?: ICreateModalParams['getModalsState']; selector: Function;
+ * @returns ICreateModalEffectsParams
+ */
 export default function createModalEffects(
   modalName: string,
   params: ICreateModalEffectsParams,
@@ -99,10 +105,7 @@ export default function createModalEffects(
   const selector =
     config.selector || modalSelector(modalName, config.getModalsState);
 
-  const takeEffects = createTakeEffects(
-    modalName,
-    config.patterns as Record<keyof typeof renameActionsMap, (p?: any) => any>,
-  );
+  const takeEffects = createTakeEffects(modalName, config.patterns);
   return {
     ...takeEffects,
     ...createPutEffects(modalName),

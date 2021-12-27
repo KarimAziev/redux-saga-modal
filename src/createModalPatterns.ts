@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import * as actionsCreators from './actionsCreators';
-import { ModalAction } from './interface';
+import { SagaModalAction } from './interface';
 
 export const reduceObjWith = <
   F extends (...args: any) => any,
@@ -36,8 +36,8 @@ function isArray(v: any): v is any[] {
   return Array.isArray(v);
 }
 
-function isObject(obj: any): obj is object {
-  return obj && !isArray(obj) && typeof obj === 'object';
+function isAction(obj: any): obj is Action {
+  return obj && !isArray(obj) && typeof obj === 'object' && obj.type;
 }
 
 export const array = (patterns: any) => (input: any) =>
@@ -84,12 +84,12 @@ export function payloadMatcher(pattern: any) {
   return matcherCreator(pattern);
 }
 
-export function modalMatcher<T>(
+export function modalMatcher<T = any>(
   modalName: string,
   actionType: string,
   pattern: any,
-  action: any,
-): action is ModalAction<T> {
+  action: SagaModalAction<T>,
+) {
   const { type, payload, meta } = action;
 
   const isMatch =
@@ -108,29 +108,34 @@ export const renameActionsMap = {
   click: actionsCreators.clickModal,
   submit: actionsCreators.submitModal,
 };
-
-export default function createModalPatterns<
-  K extends keyof typeof renameActionsMap,
-  R extends { [P in K]: (a?: any) => R[P] },
-  T
->(modalName: string): R {
-  const actionsKeys = Object.keys(renameActionsMap);
-  return actionsKeys.reduce((acc: R, patternKey) => {
-    const actionCreator = renameActionsMap[patternKey];
-    const actionType = actionCreator(modalName, {}).type;
-    acc[patternKey] = (patternOrAction?: any) => {
-      if (isObject(patternOrAction)) {
-        return modalMatcher(
-          modalName,
-          actionType,
-          kTrue,
-          patternOrAction as ModalAction<T>,
-        );
-      }
-      return (action: Action) =>
-        modalMatcher(modalName, actionType, patternOrAction, action);
+export type GetPred<T> = T extends object ? never : T;
+/**
+ * 
+ * @param modalName
+ * @returns an object with methods `show`, `update`, `click`, `submit`, `hide`, `destroy`. bound to the name of modal.
+   Every pattern accepts optional matcher for checking payload.
+*/
+// export function take(pattern?: ActionPattern): TakeEffect
+// export function take<A extends Action>(pattern?: ActionPattern<A>): TakeEffect
+const createModalPatterns = (modalName: string) =>
+  reduceObjWith((actionCreator) => {
+    const actionType = actionCreator(modalName, { b: 3 }).type;
+    return <P = any>(patternOrAction?: any): P => {
+      return isAction(patternOrAction)
+        ? modalMatcher(
+            modalName,
+            actionType,
+            kTrue,
+            patternOrAction as SagaModalAction<P>,
+          )
+        : (action: Action) =>
+            modalMatcher(
+              modalName,
+              actionType,
+              patternOrAction,
+              action as SagaModalAction<P>,
+            );
     };
+  }, renameActionsMap);
 
-    return acc;
-  }, {} as R);
-}
+export default createModalPatterns;
