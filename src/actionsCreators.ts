@@ -17,24 +17,29 @@ const createModalWithoutPayload = (type: ModalActionTypes) => (
   meta: { name },
 });
 
-/** An action creator to show a modal and sets payload as props.
+/**
+ *  An action creator to show a modal and sets payload as props.
  *  @param name - name of the modal
  *  @param payload - object with props which will be passed to connected component.
  **/
 export const showModal = createModalAction(ModalActionTypes.SHOW_MODAL);
 
-/** An action creator to update a modal by merging with current redux props
+/**
+ *  An action creator to update a modal by merging with current redux props
  *  @param name - name of the modal
  *  @param payload - object with props which will be passed to connected component.
  **/
 export const updateModal = createModalAction(ModalActionTypes.UPDATE_MODAL);
 
-/** An action creator to hide a modal by setting `isOpen` to false
+/**
+ * An action creator to hide a modal by setting `isOpen` to false.
+ * Existing props will be preserved
  *  @param name - name of the modal
  **/
 export const hideModal = createModalWithoutPayload(ModalActionTypes.HIDE_MODAL);
 
-/** An action creator to close a modal and clean props from redux-state
+/**
+ * An action creator to close a modal and clean props from redux-state
  *  @param name - name of the modal
  **/
 export const destroyModal = createModalWithoutPayload(

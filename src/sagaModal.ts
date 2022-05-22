@@ -1,52 +1,83 @@
 import React, { Component } from 'react';
+import { ActionCreatorsMapObject } from 'redux';
 import { bindActionCreators, Dispatch } from 'redux';
-import { connect, RootStateOrAny } from 'react-redux';
-import { modalSelector } from './selectors';
+import { connect } from 'react-redux';
+import { modalSelector, modalsStateSelector } from './selectors';
 import createModalActions from './createModalActions';
 import * as actionsCreators from './actionsCreators';
 import { isUndef } from './createModalPatterns';
 import {
-  SagaModalConfig,
   ConnectModalProps,
   ConnectModalState,
-  IReduxSagaModalInjectedComponent,
+  ReduxSagaModalInjectedComponent,
+  RootStateOrAny,
 } from './interface';
 
 function getDisplayName(WrappedComponent: React.ComponentType<any>) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
+
 const hoistStatics = require('hoist-non-react-statics');
 
 /**
-* High order component which connects a component to Redux Store.
-* @param SagaModalConfig - configuration
-* @param SagaModalConfig.name - an uniq name of the modal
-* @param SagaModalConfig.initProps - initial props for child component
-* @param SagaModalConfig.actions - additional actionCreatorsMapObject to pass into child component
-* @param SagaModalConfig.getModalsState - An optional custom selector that takes the Redux store
-and returns the slice with all modals
-* @param SagaModalConfig.destroyOnHide - whether to destroy modal on unmount. Default value is true
-* @param SagaModalConfig.keepComponentOnHide - whether to force render child components. Default value is false
-* @returns a function that accepts react component
-* @example
-```
-export const ConfirmModal = sagaModal({
-  name: 'CONFIRM_MODAL',
-  initProps: {
-    title: 'Some default title',
-},
-  actions: { loadData },
-})(ConfirmDialogComponent);
-```
-*/
+ * Params to connect a component to Redux Store with HOC `sagaModal`.
+ */
+export interface SagaModalConfig<InitProps> {
+  /**
+   * Name of the modal. It should be the as the passed one to the `createModal`.
+   */
+  name: string;
+  /**
+   * Initial props for child component.
+   */
+  initProps?: InitProps;
+  /**
+   * Object whose values are custom action creator functions.
+   */
+  actions?: ActionCreatorsMapObject;
+  /**
+   * Whether to force render child component
+   * @default false
+   */
+  keepComponentOnHide?: boolean;
+  /**
+   * Whether to dispach destroy action after hide. `keepComponentOnHide` should be false.
+   * @default true
+   */
+  destroyOnHide?: boolean;
+  /**
+   * An optional custom selector that takes the Redux store and returns the slice with all modals.
+   * By default, the reducer is mounted under the =modals= key.
+   * @default (state) => state.modals
+   */
+  getModalsState?: typeof modalsStateSelector;
+}
+
+/**
+ * Creates a decorator to connect the modal component to Redux.
+ * @param config - See {@link SagaModalConfig} for details.
+ *
+ * @returns a higher-order component that takes a modal component and returns a connected one with injected props
+ *
+ * @example
+ * const confirmModal = createModal("CONFIRM_MODAL");
+ * export const ConfirmModal = sagaModal({
+ *   name: confirmModal.name,
+ *   initProps: {
+ *     title: 'Some default title',
+ * },
+ *   actions: { loadData },
+ * })(ConfirmDialogComponent);
+
+ */
 const sagaModal = <InitProps>({
   name,
-  getModalsState,
   initProps,
-  actions = {},
   destroyOnHide = true,
   keepComponentOnHide = false,
-}: SagaModalConfig<InitProps>): IReduxSagaModalInjectedComponent => (
+  actions = {},
+  getModalsState,
+}: SagaModalConfig<InitProps>): ReduxSagaModalInjectedComponent => (
   ModalComponent,
 ) => {
   const selector = modalSelector(name, getModalsState);

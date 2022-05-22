@@ -1,12 +1,6 @@
-import { ActionCreatorsMapObject, Action } from 'redux';
+import { Action } from 'redux';
 import * as React from 'react';
-import { TakeEffect } from 'redux-saga/effects';
-import {
-  DefaultRootState,
-  ConnectedComponent,
-  Shared,
-  GetProps,
-} from 'react-redux';
+import { ConnectedComponent, Shared, GetProps } from 'react-redux';
 import { modalsStateSelector } from './selectors';
 import * as actionsCreators from './actionsCreators';
 import createModalBoundActions, {
@@ -15,12 +9,12 @@ import createModalBoundActions, {
 import createModalPatterns from './createModalPatterns';
 import { ModalActionTypes } from './actionTypes';
 
-export interface ICreateModalParams {
+export interface CreateModalParams {
   getModalsState?: typeof modalsStateSelector;
 }
 
-export interface ICreateModalEffectsParams {
-  getModalsState?: ICreateModalParams['getModalsState'];
+export interface CreateModalEffectsParams {
+  getModalsState?: CreateModalParams['getModalsState'];
   selector?: Function;
   patterns?: ReturnType<typeof createModalPatterns>;
 }
@@ -28,28 +22,35 @@ export interface ICreateModalEffectsParams {
 export interface SagaModalCommonAction extends Action<string> {
   type: ModalActionTypes;
   meta: {
+    /**
+     *  Name of the modal.
+     **/
     name: string;
   };
 }
 
 export interface SagaModalAction<InitProps = {}> extends SagaModalCommonAction {
+  /**
+   * Object with props to store in redux store and pass to connected component.
+   **/
   payload?: InitProps;
 }
 
-export type ModalItemState<InitProps> = {
+export interface ModalItemState<InitProps = {}> {
   props: InitProps;
-  isOpen?: boolean;
-  isSubmitted?: boolean;
-  submitted?: any;
-  clicked?: any;
-};
-
-export interface ModalsState {
-  [name: string]: ModalItemState<object>;
+  isOpen: boolean;
 }
 
-export interface State extends DefaultRootState {
-  modals: { [name: string]: ModalItemState<unknown> };
+export interface ModalsState<PayloadProps = {}> {
+  [name: string]: ModalItemState<PayloadProps>;
+}
+
+export interface DefaultRootState {}
+
+export type AnyIfEmpty<T extends object> = keyof T extends never ? any : T;
+export type RootStateOrAny = AnyIfEmpty<DefaultRootState>;
+export interface State extends RootStateOrAny {
+  modals: ModalsState;
 }
 
 type ModalDispatchActions = ReturnType<typeof createModalBoundActions>;
@@ -89,12 +90,16 @@ export interface ModalHelpers {
   actions: ReturnType<typeof createModalActions>;
 }
 
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-export type DistributiveOmit<T, K extends keyof T> = T extends unknown
-  ? Omit<T, K>
-  : never;
+export type Omit<PayloadProps, K extends keyof PayloadProps> = Pick<
+  PayloadProps,
+  Exclude<keyof PayloadProps, K>
+>;
+export type DistributiveOmit<
+  PayloadProps,
+  K extends keyof PayloadProps
+> = PayloadProps extends unknown ? Omit<PayloadProps, K> : never;
 
-export interface IReduxSagaModalInjectedComponent {
+export interface ReduxSagaModalInjectedComponent {
   <C extends React.ComponentType<any>>(component: C): ConnectedComponent<
     C,
     Partial<
@@ -104,35 +109,4 @@ export interface IReduxSagaModalInjectedComponent {
       >
     >
   >;
-}
-/**
-* Params to connect a component to Redux Store with HOC `sagaModal`.
-* @param name - an uniq name of the modal
-* @param getModalsState - An optional custom selector that takes the Redux store
-and returns the slice with all modals
-* @param destroyOnHide - whether to destroy modal on unmount
-* @param keepComponentOnHide - whether to force render child components
-* @param initProps - initial props for child component
-* @param actions - additional actionCreatorsMapObject to pass into child component
-*/
-export interface SagaModalConfig<InitProps> {
-  name: string;
-  getModalsState?: typeof modalsStateSelector;
-  initProps?: InitProps;
-  actions?: ActionCreatorsMapObject;
-  destroyOnHide?: boolean;
-  keepComponentOnHide?: boolean;
-}
-/**
- * High order `take` effects creators.
- * The result of every creator is `take` with predicate to match a corresponding modal action.
- * You can also pass payloadPattern to perfoms addiotonal checks for action's payload,
- */
-export interface TakePatterns {
-  takeShow(payloadPattern?: any): TakeEffect;
-  takeUpdate(payloadPattern?: any): TakeEffect;
-  takeClick(payloadPattern?: any): TakeEffect;
-  takeDestroy(payloadPattern?: any): TakeEffect;
-  takeSubmit(payloadPattern?: any): TakeEffect;
-  takeHide(payloadPattern?: any): TakeEffect;
 }

@@ -108,18 +108,78 @@ export const renameActionsMap = {
   click: actionsCreators.clickModal,
   submit: actionsCreators.submitModal,
 };
-export type GetPred<T> = T extends object ? never : T;
 /**
- * 
- * @param modalName
- * @returns an object with methods `show`, `update`, `click`, `submit`, `hide`, `destroy`. bound to the name of modal.
-   Every pattern accepts optional matcher for checking payload.
-*/
-// export function take(pattern?: ActionPattern): TakeEffect
-// export function take<A extends Action>(pattern?: ActionPattern<A>): TakeEffect
-const createModalPatterns = (modalName: string) =>
+ * An action matchers to use inside redux-saga take effects, such as `take`, `takeLatest`, `takeEvery` etc.
+ *
+ * @example
+ * const statsModal = createModal('statistic');
+ * yield takeLatest(statsModal.patterns.show, statsModalSaga);
+ *
+ * Every pattern accepts optional argument for checking payload.
+ * @example
+ * yield takeLatest(
+ *   statsModal.patterns.update(payload => !!payload.loading),
+ *   statsModalSaga,
+ * );
+ */
+export interface ModalPatterns {
+  /**
+   *  An action matcher for `showModal` with the same name as it's instance has.
+   *  Accepts optional argument for checking payload.
+   */
+
+  show(patternOrAction?: unknown): any;
+  /**
+   *  An action matcher for `updateModal` with the same name as it's instance has.
+   *  Accepts optional argument for checking payload.
+   */
+
+  update(patternOrAction?: unknown): any;
+  /**
+   *  An action matcher for `submitModal` with the same name as it's instance has.
+   *  Accepts optional argument for checking payload.
+   */
+
+  submit(patternOrAction?: unknown): any;
+  /**
+   *  An action matcher for `clickModal` with the same name as it's instance has.
+   *  Accepts optional argument for checking payload.
+   */
+
+  click(patternOrAction?: unknown): any;
+  /**
+   *  An action matcher for `hideModal` with the same name as it's instance has.
+   *  Accepts optional argument for checking payload.
+   */
+
+  hide(patternOrAction?: unknown): any;
+  /**
+   *  An action matcher for `destroyModal` with the same name as it's instance has.
+   *  Accepts optional argument for checking payload.
+   */
+
+  destroy(patternOrAction?: unknown): any;
+}
+
+/**
+ * Create an action matchers.
+ * @param modalName - name of the modal
+
+ * @example
+ * const statsModal = createModal('statistic');
+ * yield takeLatest(statsModal.patterns.show, statsModalSaga);
+ *
+ * Every pattern accepts optional argument for checking payload.
+ * @example
+ * yield takeLatest(
+ *   statsModal.patterns.update(payload => !!payload.loading),
+ *   statsModalSaga,
+ * );
+ */
+
+const createModalPatterns = (modalName: string): ModalPatterns =>
   reduceObjWith((actionCreator) => {
-    const actionType = actionCreator(modalName, { b: 3 }).type;
+    const actionType = actionCreator(modalName, {}).type;
     return <P = any>(patternOrAction?: any): P => {
       return isAction(patternOrAction)
         ? modalMatcher(

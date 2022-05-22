@@ -1,64 +1,57 @@
+import { SelectEffect } from 'redux-saga/effects';
 import { modalSelector, modalsStateSelector } from './selectors';
-import { createModalActions } from './createModalActions';
-import createModalPatterns from './createModalPatterns';
-import createModalEffects from './createModalEffects';
-import { ICreateModalParams, ModalHelpers } from './interface';
+import { createModalActions, ModalActions } from './createModalActions';
+import createModalPatterns, { ModalPatterns } from './createModalPatterns';
+import createModalEffects, {
+  ModalTakeEffects,
+  ModalPutEffects,
+} from './createModalEffects';
+import { CreateModalParams, ModalItemState, State } from './interface';
 
 /**
- * Creates a modal instance.
+ *
+ * A modal instance.
+ * All methods already bounds to the modal's name so you don't need manually pass it.
+ **/
+
+export interface ModalHelpers {
+  /**
+   * Name of the modal.
+   */
+  name: string;
+  /**
+   * Scoped action matchers of the modal.
+   * See {@link ModalPatterns}
+   */
+  patterns: ModalPatterns;
+  /**
+   * Scoped action creators
+   * See {@link ModalActions}
+   */
+  actions: ModalActions;
+  /**
+   * Redux modal selector
+   */
+  selector<InitProps>(s: State): ModalItemState<InitProps>;
+}
+
+/**
+ * Creates a modal instance without redux-saga effects
  *
  * @public
  *
  * @param modalName - name of the modal
- * @param params.getModalsState - a selector that takes the Redux store and
- *    returns the slice which corresponds to where the redux-saga-modal
- *    =reducer= was mounted. By default, the reducer is mounted under the
- *    =modals= key.
+ * @param params - see {@link CreateModalParams}
  *
- * @returns an object with such methods properties:
- *    `name`,
- *    `selector`,
- *    `patterns`,
- *    `actions`,
- *    `show`,
- *    `click`,
- *    `submit`,
- *    `update`,
- *    `hide`,
- *    `destroy`,
- *    `takeShow`,
- *    `takeClick`,
- *    `takeSubmit`,
- *    `takeUpdate`,
- *    `takeHide`,
- *    `takeDestroy`,
- *
- *    Both `patterns` and `actions` includes methods named `show`, `update`, `hide`, `submit`, `click` and `destroy`.
- *    All methods refer to the modal's name so you don't need manually pass it.
- *
- **/
-
-export default function createModal(
-  modalName: string,
-  params?: ICreateModalParams,
-) {
-  const helpers = createModalHelpers(modalName, params);
-
-  return {
-    name: helpers.name,
-    selector: helpers.selector,
-    patterns: helpers.patterns,
-    actions: helpers.actions,
-    ...createModalEffects(modalName, {
-      selector: helpers.selector,
-      patterns: helpers.patterns,
-    }),
-  };
-}
-
+ * @returns see {@link ModalHelpers}
+ * @example
+```ts
+ const confirmModal = createModal("CONFIRM_MODAL");
+```
+ */
 export function createModalHelpers(
   modalName: string,
-  params?: ICreateModalParams,
+  params?: CreateModalParams,
 ): ModalHelpers {
   const config = {
     getModalsState: modalsStateSelector,
@@ -70,5 +63,50 @@ export function createModalHelpers(
     selector: modalSelector(modalName, config.getModalsState),
     patterns: createModalPatterns(modalName),
     actions: createModalActions(modalName),
+  };
+}
+/**
+ *
+ * A modal Select Effects.
+ * All methods already bounds to the modal's name so you don't need manually pass it.
+ **/
+
+export type ModalEffects = ModalPutEffects &
+  ModalTakeEffects & { select(): SelectEffect };
+/**
+ *
+ * A modal instance.
+ * All methods already bounds to the modal's name so you don't need manually pass it.
+ **/
+
+export type SagaModalInstance = ModalHelpers & ModalEffects;
+
+/**
+ * Creates a modal instance.
+ * All methods already bounds to the modal's name so you don't need manually pass it.
+ *
+ * @public
+ *
+ * @param modalName - name of the modal
+ * @param params - see {@link CreateModalParams}
+ *
+ * @returns see {@link ModalHelpers}
+ * @example
+```ts
+ const confirmModal = createModal("CONFIRM_MODAL");
+```
+ */
+export default function createModal(
+  modalName: string,
+  params?: CreateModalParams,
+): SagaModalInstance {
+  const helpers = createModalHelpers(modalName, params);
+
+  return {
+    ...helpers,
+    ...createModalEffects(modalName, {
+      selector: helpers.selector,
+      patterns: helpers.patterns,
+    }),
   };
 }

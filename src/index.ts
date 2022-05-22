@@ -21,6 +21,7 @@ import { ModalActionTypes } from './actionTypes';
 export * from './interface';
 
 export {
+  createModal,
   sagaModal,
   reducer,
   ModalActionTypes,
@@ -31,7 +32,6 @@ export {
   hideModal,
   clickModal,
   updateModal,
-  createModal,
   destroyModal,
   submitModal,
   createModalEffects,

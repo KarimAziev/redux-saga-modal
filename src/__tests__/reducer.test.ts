@@ -17,7 +17,7 @@ describe('Saga modals reducer', () => {
     PAYLOAD = { message: 'Hello world' };
   });
   it('return the initial state', () => {
-    expect(reducer()).toEqual({});
+    expect(reducer(undefined, { type: 'f' })).toEqual({});
   });
 
   it('should handle show action', () => {
@@ -82,25 +82,6 @@ describe('Saga modals reducer', () => {
       },
     });
   });
-  it('should handle click action', () => {
-    const initialState = {
-      [MODAL_NAME]: {
-        isOpen: true,
-        props: PAYLOAD,
-      },
-    };
-
-    const action = clickModal(MODAL_NAME, 'SOME_VALUE');
-
-    expect(reducer(initialState, action)).toEqual({
-      [MODAL_NAME]: {
-        isOpen: true,
-        props: PAYLOAD,
-        clicked: 'SOME_VALUE',
-      },
-    });
-  });
-
   it('should handle destroy action', () => {
     const initialState = {
       [MODAL_NAME]: {
@@ -114,7 +95,20 @@ describe('Saga modals reducer', () => {
     expect(reducer(initialState, action)).toEqual({});
   });
 
-  it('should handle submit action', () => {
+  it("shouldn't handle click action", () => {
+    const initialState = {
+      [MODAL_NAME]: {
+        isOpen: true,
+        props: PAYLOAD,
+      },
+    };
+
+    const action = clickModal(MODAL_NAME, 'SOME_VALUE');
+
+    expect(reducer(initialState, action)).toEqual(initialState);
+  });
+
+  it("shouldn't handle submit action", () => {
     const initialState = {
       [MODAL_NAME]: {
         isOpen: true,
@@ -124,13 +118,6 @@ describe('Saga modals reducer', () => {
 
     const action = submitModal(MODAL_NAME, 'SOME_VALUE');
 
-    expect(reducer(initialState, action)).toEqual({
-      [MODAL_NAME]: {
-        isOpen: true,
-        props: PAYLOAD,
-        isSubmitted: true,
-        submitted: 'SOME_VALUE',
-      },
-    });
+    expect(reducer(initialState, action)).toEqual(initialState);
   });
 });

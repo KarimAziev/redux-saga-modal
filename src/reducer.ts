@@ -1,20 +1,24 @@
+import { Reducer } from 'redux';
 import { ModalActionTypes as actionTypes } from './actionTypes';
-import { ModalsState, SagaModalAction, ModalItemState } from './interface';
+import { ModalsState } from './interface';
 
-const initialState: ModalsState = {};
+const initialState = {};
 
-const initialModalState: ModalItemState<{}> = {
-  props: {},
-};
-
-const pluckModalState = (state: ModalsState, name: string) =>
-  state[name] || initialModalState;
-
-export default function reducer<A extends SagaModalAction>(
-  state?: ModalsState,
-  action?: A,
-) {
-  state = state || initialState;
+/**
+ * The modals reducer. Should be mounted to Redux state at `modals`.
+ *
+ * @param state - see {@link ModalsState}
+ * @param action - any action
+ * @example
+ * import { reducer as modalsReducer } from 'redux-saga-modal';
+ * import { combineReducers } from 'redux';
+ *
+ * export default combineReducers({
+ *  modals: modalsReducer,
+ *  // ...other reducers
+ * });
+ */
+const reducer: Reducer<ModalsState> = function(state = initialState, action) {
   switch (action?.type) {
     case actionTypes.SHOW_MODAL: {
       const { name } = action.meta;
@@ -26,59 +30,27 @@ export default function reducer<A extends SagaModalAction>(
         },
       };
     }
-
-    case actionTypes.CLICK_MODAL: {
+    case actionTypes.UPDATE_MODAL: {
       const { name } = action.meta;
 
       return {
         ...state,
         [name]: {
           ...state[name],
-          clicked: action.payload,
-        },
-      };
-    }
-
-    case actionTypes.UPDATE_MODAL: {
-      const { name } = action.meta;
-      const modalState = pluckModalState(state, name);
-
-      return {
-        ...state,
-        [name]: {
-          ...modalState,
           props: {
-            ...modalState.props,
+            ...state[name].props,
             ...action.payload,
           },
         },
       };
     }
-
-    case actionTypes.SUBMIT_MODAL: {
-      const { name } = action.meta;
-      const modalState = pluckModalState(state, name);
-      return {
-        ...state,
-        [name]: {
-          ...modalState,
-          props: {
-            ...modalState.props,
-          },
-          isSubmitted: true,
-          submitted: action.payload,
-        },
-      };
-    }
-
     case actionTypes.HIDE_MODAL: {
       const { name } = action.meta;
-      const modalState = pluckModalState(state, name);
 
       return {
         ...state,
         [name]: {
-          ...modalState,
+          ...state[name],
           isOpen: false,
         },
       };
@@ -98,4 +70,5 @@ export default function reducer<A extends SagaModalAction>(
     default:
       return state;
   }
-}
+};
+export default reducer;

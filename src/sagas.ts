@@ -1,11 +1,11 @@
 import { fork, all, take, race, call } from 'redux-saga/effects';
 import { Saga } from 'redux-saga';
 import createModal from './createModal';
-import { ICreateModalParams } from './interface';
+import { CreateModalParams } from './interface';
 
 export default function* rootModalSaga(
   config: Record<string, Saga>,
-  params: ICreateModalParams,
+  params: CreateModalParams,
 ) {
   const names = Object.keys(config);
 
