@@ -3,9 +3,7 @@ import * as React from 'react';
 import { ConnectedComponent, Shared, GetProps } from 'react-redux';
 import { modalsStateSelector } from './selectors';
 import * as actionsCreators from './actionsCreators';
-import createModalBoundActions, {
-  createModalActions,
-} from './createModalActions';
+import createModalBoundActions from './createModalActions';
 import createModalPatterns from './createModalPatterns';
 import { ModalActionTypes } from './actionTypes';
 
@@ -83,12 +81,6 @@ export interface ConnectModalProps extends ModalDispatchActions {
 }
 
 export type ModalActionCreators = typeof actionsCreators[keyof typeof actionsCreators];
-export interface ModalHelpers {
-  name: string;
-  selector<InitProps>(s: State): ModalItemState<InitProps>;
-  patterns: ReturnType<typeof createModalPatterns>;
-  actions: ReturnType<typeof createModalActions>;
-}
 
 export type Omit<PayloadProps, K extends keyof PayloadProps> = Pick<
   PayloadProps,

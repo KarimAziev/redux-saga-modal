@@ -23,6 +23,7 @@ import createModal from './createModal';
 import { modalSelector, modalsStateSelector } from './selectors';
 import { ModalActionTypes } from './actionTypes';
 
+export * from './interface';
 export * from './createModal';
 
 export {
