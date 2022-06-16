@@ -1,21 +1,20 @@
 # redux-saga-modal
 
-[![](https://img.shields.io/npm/v/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
-[![](https://img.shields.io/travis/KarimAziev/redux-saga-modal.svg)](https://travis-ci.org/KarimAziev/redux-saga-modal)
+[![](https://img.shields.io/npm/v/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal) [![](https://img.shields.io/travis/KarimAziev/redux-saga-modal.svg)](https://travis-ci.org/KarimAziev/redux-saga-modal)
 [![](https://img.shields.io/codecov/c/github/KarimAziev/redux-saga-modal.svg)](https://codecov.io/gh/KarimAziev/redux-saga-modal)
 [![](https://img.shields.io/npm/dt/redux-saga-modal.svg)](https://www.npmjs.com/package/redux-saga-modal)
 
-<a href="https://codesandbox.io/s/github/KarimAziev/redux-saga-modal-example/tree/master/" target="_blank" rel="nofollow" title="Edit on codesandbox">Live Demo</a>
+## [Live Demo](https://codesandbox.io/s/github/KarimAziev/redux-saga-modal-example/tree/master/)
 
-## Installation
+## Install
 
-```bash
+``` bash
 npm i redux-saga-modal
 ```
 
 Or
 
-```bash
+``` bash
 yarn add redux-saga-modal
 ```
 
@@ -23,7 +22,7 @@ yarn add redux-saga-modal
 
 Pass the `reducer` to your store. It keeps the state of all your modal components, so you only have to pass it once.
 
-```javascript
+``` javascript
 import { createStore, combineReducers } from 'redux';
 import { reducer as modalReducer } from 'redux-saga-modal';
 
@@ -39,7 +38,7 @@ const store = createStore(rootReducer);
 
 Connect a component to Redux Store with `sagaModal`.
 
-```javascript
+``` javascript
 import { sagaModal } from 'redux-saga-modal';
 import ReactModal from 'react-modal';
 
@@ -78,38 +77,54 @@ export default sagaModal({
 
 To create an instance use `createModal` and pass the modal name as the first argument.
 
-```javascript
+``` javascript
 import { createModal } from 'redux-saga-modal';
+const modal = createModal('CONFIRM_MODAL');
+```
 
-const {
-  name,
-  selector,
-  //patterns creators are used for filtering actions inside take effects
-  patterns: { show, click, submit, update, hide, destroy },
-  //action creators
-  actions: { show, click, submit, update, hide, destroy },
-  //put effects (already wrapped in redux-saga put)
-  show,
-  click,
-  submit,
-  update,
-  hide,
-  destroy,
-  //take effects (already wrapped in redux-saga take)
-  takeShow,
-  takeClick,
-  takeSubmit,
-  takeUpdate,
-  takeHide,
-  takeDestroy,
-} = createModal('CONFIRM_MODAL');
+Result
+
+``` javascript
+{
+  name: 'CONFIRM_MODAL',
+  selector: function(r) {},
+  patterns: {
+    show: function(n) {},
+    hide: function(n) {},
+    destroy: function(n) {},
+    update: function(n) {},
+    click: function(n) {},
+    submit: function(n) {},
+  },
+  actions: {
+    show: function(n) {},
+    update: function(n) {},
+    submit: function(n) {},
+    click: function(n) {},
+    hide: function() {},
+    destroy: function() {},
+  },
+  takeShow: function(t) {},
+  takeUpdate: function(t) {},
+  takeClick: function(t) {},
+  takeDestroy: function(t) {},
+  takeSubmit: function(t) {},
+  takeHide: function(t) {},
+  show: function(r) {},
+  update: function(r) {},
+  click: function(r) {},
+  submit: function(r) {},
+  hide: function() {},
+  destroy: function() {},
+  select: function() {},
+};
 ```
 
 All methods already bound to the modal's name so you don't need manually pass it. The instance will receive properties [actions](#actions), [patterns](#patterns), `name`, `selector` and high-level [effects](#effects) `show`, `update`, `hide`, `submit`, `click`, `destroy`, `takeShow`, `takeUpdate`, `takeHide`, `takeSubmit`, `takeClick` and `takeDestroy`.
 
 Both `patterns` and `actions` have methods named `show`, `update`, `hide`, `submit`, `click` and `destroy`.
 
-```javascript
+``` javascript
 import { createModal } from 'redux-saga-modal';
 import { race } from 'redux-saga/effects';
 
@@ -135,7 +150,7 @@ function* confirmModal(initProps) {
 
 Alternatively if you don't need high-level effects you can use [createModalHelpers](#createModalHelpers). The example above can be rewritten like this:
 
-```javascript
+``` javascript
 import { createModalHelpers } from 'redux-saga-modal';
 import { race, take, put } from 'redux-saga/effects';
 
@@ -171,7 +186,7 @@ The context of your task will have properties `actions`, `patterns`, `name`, `se
 
 Both `patterns` and `actions` have methods named `show`, `update`, `hide`, `submit`, `click` and `destroy`.
 
-```javascript
+``` javascript
 import { race, call, fork, all, getContext } from 'redux-saga/effects';
 import { sagas as modalsSaga } from 'redux-saga-modal';
 import { anotherModalSaga } from './sagas';
@@ -212,32 +227,41 @@ export default function* rootSaga() {
 
 ## API
 
-- [Actions Creators](#Actions-Creators)
-- [Instance Creators](#Instance-properties)
-  - [createModal](#createModal)
-  - [createModalHelpers](#createModalHelpers)
-- [Instance properties](#Instance-properties)
-  - [name](#name)
-  - [actions](#actions)
-  - [patterns](#patterns)
-  - [selector](#selector)
-  - [show](#show)
-  - [update](#effects)
-  - [submit](#effects)
-  - [click](#effects)
-  - [hide](#effects)
-  - [destroy](#effects)
-  - [takeShow](#effects)
-  - [takeUpdate](#effects)
-  - [takeSubmit](#effects)
-  - [takeClick](#effects)
-  - [takeHide](#effects)
-  - [takeDestroy](#effects)
-- [sagas](#sagas)
-- [sagaModal](#sagaModal)
-- [reducer](#reducer)
-- [createModalActions](#createModalActions)
-- [createModalEffects](#createModalEffects)
+  - [Actions Creators](#Actions-Creators)
+
+  - [Instance Creators](#Instance-properties)
+    
+      - [createModal](#createModal)
+      - [createModalHelpers](#createModalHelpers)
+
+  - [Instance properties](#Instance-properties)
+    
+      - [name](#name)
+      - [actions](#actions)
+      - [patterns](#patterns)
+      - [selector](#selector)
+      - [show](#show)
+      - [update](#effects)
+      - [submit](#effects)
+      - [click](#effects)
+      - [hide](#effects)
+      - [destroy](#effects)
+      - [takeShow](#effects)
+      - [takeUpdate](#effects)
+      - [takeSubmit](#effects)
+      - [takeClick](#effects)
+      - [takeHide](#effects)
+      - [takeDestroy](#effects)
+
+  - [sagas](#sagas)
+
+  - [sagaModal](#sagaModal)
+
+  - [reducer](#reducer)
+
+  - [createModalActions](#createModalActions)
+
+  - [createModalEffects](#createModalEffects)
 
 ## Actions Creators
 
@@ -262,11 +286,15 @@ Both `patterns` and `actions` includes methods named `show`, `update`, `hide`, `
 
 **Arguments**
 
-- **name**(String)(Required) the name of a modal
-- **config**(Object)
-  - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default, the reducer is mounted under the `modals` key.
+  - \*name\*(String)(Required) the name of a modal
 
-```javascript
+  - \*config\*(Object)
+    
+      - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default, the reducer is mounted under the `modals` key.
+
+<!-- end list -->
+
+``` javascript
 import { createModal } from 'redux-saga-modal';
 
 const {
@@ -301,11 +329,15 @@ Both `patterns` and `actions` have methods named `show`, `update`, `hide`, `subm
 
 **Arguments**
 
-- **name**(String)(Required) the name of a modal
-- **config**(Object)
-  - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default, the reducer is mounted under the `modals` key.
+  - \*name\*(String)(Required) the name of a modal
 
-```javascript
+  - \*config\*(Object)
+    
+      - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default, the reducer is mounted under the `modals` key.
+
+<!-- end list -->
+
+``` javascript
 import { createModalHelpers } from 'redux-saga-modal';
 
 const {
@@ -337,19 +369,18 @@ Same as [basic actions creators](#Actions-Creators) but the first argument is al
 
 **Example**
 
-```javascript
+``` javascript
 import { createModal, createModalActions, showModal } from 'redux-saga-modal';
 
-  const modal = createModal('CONFIRM_MODAL');
-  yield put(modal.actions.show({ title: 'Some title'}));
+const modal = createModal('CONFIRM_MODAL');
+yield put(modal.actions.show({ title: 'Some title' }));
 
-  //or
-  const confirmActions = createModalActions('CONFIRM_MODAL');
-  yield put(confirmActions.show({ title: 'Some title'} );
+//or
+const confirmActions = createModalActions('CONFIRM_MODAL');
+yield put(confirmActions.show({ title: 'Some title' }));
 
-  //or
-  yield put(showModal('CONFIRM_MODAL', { title: 'Some title'} );
-
+//or
+yield put(showModal('CONFIRM_MODAL', { title: 'Some title' }));
 ```
 
 ### patterns
@@ -358,96 +389,84 @@ Matcher methods for filtering modal actions inside `redux-saga` take effects, su
 
 Payload pattern has the [same](https://redux-saga.js.org/docs/api/#takepattern) meaning and rules as in the `redux-saga` but applies not for the whole action but only to its payload.
 
-| Name    | Arguments                                            | Description                                                                                                                                                                   |
-| ------- | ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| show    | payloadPattern?: String \| Function \| Array \| '\*' | An action matcher for `showModal` with the same name as it's instance has. You can additionally pass a matcher for payload. Matcher can be function, array, string or '\*'.   |
-| update  | payloadPattern?: String \| Function \| Array \| '\*' | An action matcher for `updateModal` with the same name as it's instance has. You can additionally pass a matcher for payload. Matcher can be function, array, string or '\*'. |
-| submit  | payloadPattern?: String \| Function \| Array \| '\*' | An action matcher for `submitModal` with the same name as it's instance has. You can additionally pass a matcher for payload. Matcher can be function, array, string or '\*'. |
-| click   | payloadPattern?: String \| Function \| Array \| '\*' | An action matcher for `clickModal` with the same name as it's instance has. You can additionally pass a matcher for payload. Matcher can be function, array, string or '\*'.  |
-| hide    |                                                      | An action matcher for `hideModal` with the same name as it's instance has                                                                                                     |
-| destroy |                                                      | An action matcher for `destroyModal` with the same name as it's instance has                                                                                                  |
+| Name    | Arguments               | Description                                                                  |
+| ------- | ----------------------- | ---------------------------------------------------------------------------- |
+| show    | payloadPattern?: String | Function                                                                     |
+| update  | payloadPattern?: String | Function                                                                     |
+| submit  | payloadPattern?: String | Function                                                                     |
+| click   | payloadPattern?: String | Function                                                                     |
+| hide    |                         | An action matcher for `hideModal` with the same name as it's instance has    |
+| destroy |                         | An action matcher for `destroyModal` with the same name as it's instance has |
 
 **Example**
 
-```javascript
-  import { createModal } from 'redux-saga-modal';
+``` javascript
+import { createModal } from 'redux-saga-modal';
 
-  const {
-     patterns,
-   } = createModal('CONFIRM_MODAL');
+const { patterns } = createModal('CONFIRM_MODAL');
 
+//result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL' && payload === 'value'
+yield take(patterns.click(payload === 'value'));
 
-   //result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL' && payload === 'value'
-   yield take(patterns.click(payload === 'value'));
+//result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL' && payload && payload.text === 'Some text'
 
-  //result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL' && payload && payload.text === 'Some text'
-   yield take(patterns.show((payload => payload && payload.text === 'Some text')));
+yield take(patterns.show((payload) => payload && payload.text === 'Some text'));
 
-  //result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL'
-   yield take(patterns.click);
-  );
+//result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL'
+yield take(patterns.click);
 ```
 
 ### selector
 
-```javascript
-   import { createModal } from 'redux-saga-modal';
+``` javascript
+import { createModal } from 'redux-saga-modal';
 
-   const {
-     selector,
-     ...effects
-   } = createModal('CONFIRM_MODAL');
+const { selector, ...effects } = createModal('CONFIRM_MODAL');
 
-   // the same
-   yield select(selector);
-   yield effects.select();
-
+// the same
+yield select(selector);
+yield effects.select();
 ```
 
 ### effects
 
 Produced with `createModal` or `createModalEffects`. Returns scoped `put`, `select` and `take` effects.
 
-Payload pattern in the `take` effects has the <a href="https://redux-saga.js.org/docs/api/#takepattern" target="_blank" rel="nofollow" title="takepattern">same meaning</a> and rules as in's the `redux-saga`, but applies not for the whole action but only to the payload.
+Payload pattern in the `take` effects has the same meaning and rules as in's the `redux-saga`, but applies not for the whole action but only to the payload.
 
-| Name        | Arguments                                               | Effect |                                                                                                            |
-| ----------- | ------------------------------------------------------- | ------ | ---------------------------------------------------------------------------------------------------------- |
-| show        | (payload: Object)                                       | put    | Triggers to show a modal and sets payload as it's props                                                    |
-| update      | (payload: Object)                                       | put    | Updates the modal by merging payload with it's current props                                               |
-| submit      | (payload: any)                                          | put    | Triggers that a target's button was pressed                                                                |
-| click       | (payload: any)                                          | put    | A trigger for handling any click on modal                                                                  |
-| hide        | (name: String)                                          | put    | Hide modal without destroying it's state in the redux store                                                |
-| destroy     | (name: String)                                          | put    | Close a modal by destroying it's props                                                                     |
-| select      | (name: String)                                          | select | Select a modal state from the Redux Store                                                                  |
-| takeShow    | (payloadPattern?: String \| Function \| Array \| '\*' ) | take   | Returns a `take` effect for an action `showModal` with scoped name. Accepts optional pattern for payload   |
-| takeUpdate  | (payloadPattern?: String \| Function \| Array \| '\*')  | take   | Returns a `take` effect for an action `updateModal` with scoped name. Accepts optional pattern for payload |
-| takeSubmit  | (payloadPattern?: String \| Function \| Array \| '\*')  | take   | Returns a `take` effect for an action `sumitModal` with scoped name. Accepts optional pattern for payload  |
-| takeClick   | (payloadPattern?: String \| Function \| Array \| '\*')  | take   | Returns a `take` effect for an action `clickModal` with scoped name. Accepts optional pattern for payload  |
-| takeHide    |                                                         | take   | Returns a `take` effect for an action `hideModal` with scoped name                                         |
-| takeDestroy |                                                         | take   | Returns a `take` effect for an action `destroyModal` with scoped name                                      |
+| Name        | Arguments                | Effect   |                                                                       |
+| ----------- | ------------------------ | -------- | --------------------------------------------------------------------- |
+| show        | (payload: Object)        | put      | Triggers to show a modal and sets payload as it's props               |
+| update      | (payload: Object)        | put      | Updates the modal by merging payload with it's current props          |
+| submit      | (payload: any)           | put      | Triggers that a target's button was pressed                           |
+| click       | (payload: any)           | put      | A trigger for handling any click on modal                             |
+| hide        | (name: String)           | put      | Hide modal without destroying it's state in the redux store           |
+| destroy     | (name: String)           | put      | Close a modal by destroying it's props                                |
+| select      | (name: String)           | select   | Select a modal state from the Redux Store                             |
+| takeShow    | (payloadPattern?: String | Function | Array                                                                 |
+| takeUpdate  | (payloadPattern?: String | Function | Array                                                                 |
+| takeSubmit  | (payloadPattern?: String | Function | Array                                                                 |
+| takeClick   | (payloadPattern?: String | Function | Array                                                                 |
+| takeHide    |                          | take     | Returns a `take` effect for an action `hideModal` with scoped name    |
+| takeDestroy |                          | take     | Returns a `take` effect for an action `destroyModal` with scoped name |
 
 **Example**
 
-```javascript
-   import { createModal } from 'redux-saga-modal';
+``` javascript
+import { createModal } from 'redux-saga-modal';
 
-  const {
-     name,
-     ...effects
-   } = createModal('CONFIRM_MODAL');
+const { name, ...effects } = createModal('CONFIRM_MODAL');
 
-   //result: put(showModal('CONFIRM_MODAL', ({ text: 'Some text' }))
-   yield effects.show({ text: 'Some text' }});
+//result: put(showModal('CONFIRM_MODAL', ({ text: 'Some text' }))
+yield effects.show({ text: 'Some text' });
 
+//result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL' && payload === 'value'
+yield effects.takeClick('value');
 
-   //result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL' && payload === 'value'
-   yield effects.takeClick('value');
-
-  //result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL' && payload && payload.text === 'Some text'
-   yield effects.takeClick(payload => payload && payload.text === 'Some text');
-  //result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL'
-   yield effects.takeClick();
-  );
+//result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL' && payload && payload.text === 'Some text'
+yield effects.takeClick((payload) => payload && payload.text === 'Some text');
+//result: take(action => action.type === clickModal().type && action.meta.name === 'CONFIRM_MODAL'
+yield effects.takeClick();
 ```
 
 ## sagas
@@ -456,40 +475,43 @@ Invoke your sagas with a `this` context whenever an action `showModal` has been 
 
 **Arguments**
 
-- **config**(Object)(Required)
-  - <[key: ModalName], Saga: Generator>
+  - \*config\*(Object)(Required)
+    
+      - \<\[key: ModalName\], Saga: Generator\>
 
 ## sagaModal
 
 Connects a component to Redux store and injects next props:
 
-- modal: {
-  name
-  };
-- name;
-- isOpen;
-- show;
-- update;
-- destroy;
-- click;
-- submit;
-- hide;
-- showModal;
-- updateModal;
-- submitModal;
-- clickModal;
-- hideModal;
-- destroyModal;
+  - modal: {
+    name
+    };
+  - name;
+  - isOpen;
+  - show;
+  - update;
+  - destroy;
+  - click;
+  - submit;
+  - hide;
+  - showModal;
+  - updateModal;
+  - submitModal;
+  - clickModal;
+  - hideModal;
+  - destroyModal;
 
 **Arguments**
 
-- **name**(String)(Required) the name of a modal
-- **config**(Object)
-  - **name** (String)(Required) the name of a modal
-  - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default reducer is mounted under the 'modals' key: `state => state.modals`;
-  - **actions**(Object) Custom actions to bind with redux `dispatch`;
-  - **keepComponentOnHide**(Boolean) Whether keep modal component when `isOpen` equals `false`. By default equals `false`;
-  - **destroyOnHide**(Boolean) Whether automatically dispatch `destroy` to after `hide`. By default equals `true`.
+  - \*name\*(String)(Required) the name of a modal
+
+  - \*config\*(Object)
+    
+      - **name** (String)(Required) the name of a modal
+      - **getModalsState** (Function) A selector that takes the Redux store and returns the slice which corresponds to where the redux-saga-modal `reducer` was mounted. By default reducer is mounted under the 'modals' key: `state => state.modals`;
+      - \*actions\*(Object) Custom actions to bind with redux `dispatch`;
+      - \*keepComponentOnHide\*(Boolean) Whether keep modal component when `isOpen` equals `false`. By default equals `false`;
+      - \*destroyOnHide\*(Boolean) Whether automatically dispatch `destroy` to after `hide`. By default equals `true`.
 
 ## reducer
 
@@ -499,7 +521,7 @@ The modals reducer keeps state of the all modals. Should be mounted to redux sto
 
 **Arguments**
 
-- **name**(String)(Required) the name of a modal
+  - \*name\*(String)(Required) the name of a modal
 
 Creates [actions creators](#actions) `show`, `update`, `hide`, `submit`, `click` and `destroy` bound to the name of the modal.
 
@@ -507,7 +529,7 @@ Creates [actions creators](#actions) `show`, `update`, `hide`, `submit`, `click`
 
 **Arguments**
 
-- **name**(String)(Required) the name of a modal
+  - \*name\*(String)(Required) the name of a modal
 
 Creates [effects](#effects) `show`, `update`, `hide`, `submit`, `click` and `destroy` bound to the name of the modal.
 
@@ -515,7 +537,7 @@ Creates [effects](#effects) `show`, `update`, `hide`, `submit`, `click` and `des
 
 **Arguments**
 
-- **name**(String)(Required) the name of a modal
+  - \*name\*(String)(Required) the name of a modal
 
 Creates [patterns creators](#patterns) `show`, `update`, `hide`, `submit`, `click` and `destroy` bound to the name of modal. Every pattern accepts optional matcher for checking payload.
 
