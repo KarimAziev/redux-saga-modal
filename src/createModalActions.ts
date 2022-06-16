@@ -31,13 +31,11 @@ export interface ModalActions {
   /**
    *  Partially applied `hideModal' action creator.
    *  Modal reducer handle this action by setting isOpen to false. Existing props will be preserved
-   *  @param _args - ignored
    */
   hide(): SagaModalCommonAction;
   /**
    * Partially applied `destroyModal' action creator.
    * Modal reducer handle this action by clearing all existing modal props
-   *  @param _args - ignored
    */
   destroy(): SagaModalCommonAction;
 
