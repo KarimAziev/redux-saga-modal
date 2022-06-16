@@ -1,15 +1,13 @@
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
   entry: path.resolve(__dirname, 'src/index.ts'),
   output: {
     path: path.resolve(__dirname, 'lib'),
     filename: 'index.js',
-    library: '',
     libraryTarget: 'commonjs',
   },
-  externals: [nodeExternals()],
+  externals: ['react', 'react-redux', 'redux', 'redux-saga'],
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
