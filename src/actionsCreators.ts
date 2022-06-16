@@ -1,6 +1,14 @@
 import { ModalActionTypes } from './actionTypes';
 import { SagaModalAction, SagaModalCommonAction } from './interface';
 
+/**
+ *  Create a modal action creator which accept name and payload.
+ *
+ *  See {@link showModal}, {@link updateModal}, {@link submitModal} and {@link clickModal}
+ *
+ *  @return an action creator which arguments are name and payload,
+ *  and returned value is an action with payload, meta (with property name) and type.
+ **/
 const createModalAction = (type: ModalActionTypes) => <P>(
   name: string,
   payload: P,
@@ -9,7 +17,16 @@ const createModalAction = (type: ModalActionTypes) => <P>(
   payload,
   meta: { name },
 });
-
+/**
+ *  Create a modal action creator which accept only modal name.
+ *
+ * See {@link hideModal} and {@link destroyModal}
+ *
+ *  @return an action creator which arguments are name,
+ *  and returned value is an action with meta (with property name) and type.
+ *
+ *
+ **/
 const createModalWithoutPayload = (type: ModalActionTypes) => (
   name: string,
 ): SagaModalCommonAction => ({
