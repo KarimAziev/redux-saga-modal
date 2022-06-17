@@ -124,7 +124,7 @@ export function bindActionEffect<E extends Function>(
   name: string,
   effect: E,
 ) {
-  return function<P = {}>(payload?: P): Dispatch<SagaModalAction<P>> {
+  return function <P = {}>(payload?: P): Dispatch<SagaModalAction<P>> {
     const action: SagaModalAction<P> = actionCreator.apply(undefined, [
       name,
       payload,

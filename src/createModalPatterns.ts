@@ -6,7 +6,7 @@ export const reduceObjWith = <
   F extends (...args: any) => any,
   V extends Record<string, unknown>,
   K extends keyof V,
-  R extends { [P in K]: ReturnType<F> }
+  R extends { [P in K]: ReturnType<F> },
 >(
   f: F,
   v: V,

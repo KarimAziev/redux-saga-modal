@@ -18,7 +18,7 @@ const initialState = {};
  *  // ...other reducers
  * });
  */
-const reducer: Reducer<ModalsState> = function(state = initialState, action) {
+const reducer: Reducer<ModalsState> = function (state = initialState, action) {
   switch (action?.type) {
     case actionTypes.SHOW_MODAL: {
       const { name } = action.meta;
