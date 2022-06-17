@@ -10,7 +10,7 @@ import { CreateModalParams, ModalItemState, State } from './interface';
 
 /**
  *
- * A modal instance.
+ * A modal instance without high level effects of redux-saga.
  * All methods already bounds to the modal's name so you don't need manually pass it.
  **/
 
@@ -67,7 +67,9 @@ export function createModalHelpers(
 }
 /**
  *
- * A modal Select Effects.
+ * Include put effects (see {@link ModalPutEffects}),
+ * take effects (see {@link ModalTakeEffects}) and select effect.
+ *
  * All methods already bounds to the modal's name so you don't need manually pass it.
  **/
 
