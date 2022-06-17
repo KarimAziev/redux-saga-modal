@@ -46,7 +46,7 @@ export interface ModalActions {
   submit<P>(payload: P): SagaModalAction<P>;
   /**
    * Partially applied `clickModal' action creator.
-   * Dispatching this action will not rerender your component and payload
+   * Dispatching this action will not re-render your component and payload
    *  @param payload - will not be stored in redux store but can be accessed via sagas
    */
   click<P>(payload: P): SagaModalAction<P>;
@@ -124,7 +124,7 @@ export function bindActionEffect<E extends Function>(
   name: string,
   effect: E,
 ) {
-  return function<P = {}>(payload?: P): Dispatch<SagaModalAction<P>> {
+  return function <P = {}>(payload?: P): Dispatch<SagaModalAction<P>> {
     const action: SagaModalAction<P> = actionCreator.apply(undefined, [
       name,
       payload,

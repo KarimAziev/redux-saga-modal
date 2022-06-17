@@ -153,7 +153,7 @@ export function bindPutEffect<A extends ModalActionCreators>(
   actionCreator: A,
   name: string,
 ) {
-  return function<P = {}>(payload: P): PutEffect<SagaModalAction<P>> {
+  return function <P = {}>(payload: P): PutEffect<SagaModalAction<P>> {
     return put(actionCreator.apply(undefined, [name, payload]));
   };
 }
@@ -162,7 +162,7 @@ export function bindPutEffectWithoutPayload<A extends ModalActionCreators>(
   actionCreator: A,
   name: string,
 ) {
-  return function(): PutEffect<SagaModalCommonAction> {
+  return function (): PutEffect<SagaModalCommonAction> {
     return put(actionCreator.apply(undefined, [name]));
   };
 }

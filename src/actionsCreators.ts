@@ -9,14 +9,13 @@ import { SagaModalAction, SagaModalCommonAction } from './interface';
  *  @return an action creator which arguments are name and payload,
  *  and returned value is an action with payload, meta (with property name) and type.
  **/
-const createModalAction = (type: ModalActionTypes) => <P>(
-  name: string,
-  payload: P,
-): SagaModalAction<P> => ({
-  type: type,
-  payload,
-  meta: { name },
-});
+const createModalAction =
+  (type: ModalActionTypes) =>
+  <P>(name: string, payload: P): SagaModalAction<P> => ({
+    type: type,
+    payload,
+    meta: { name },
+  });
 /**
  *  Create a modal action creator which accept only modal name.
  *
@@ -27,12 +26,12 @@ const createModalAction = (type: ModalActionTypes) => <P>(
  *
  *
  **/
-const createModalWithoutPayload = (type: ModalActionTypes) => (
-  name: string,
-): SagaModalCommonAction => ({
-  type: type,
-  meta: { name },
-});
+const createModalWithoutPayload =
+  (type: ModalActionTypes) =>
+  (name: string): SagaModalCommonAction => ({
+    type: type,
+    meta: { name },
+  });
 
 /**
  *  An action creator to show a modal and sets payload as props.

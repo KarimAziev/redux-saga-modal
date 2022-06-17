@@ -1,12 +1,15 @@
 import { Action } from 'redux';
 import * as React from 'react';
-import { ConnectedComponent, Shared, GetProps } from 'react-redux';
+import type { ConnectedComponent, Shared, GetProps } from 'react-redux';
 import { modalsStateSelector } from './selectors';
-import * as actionsCreators from './actionsCreators';
 import createModalBoundActions from './createModalActions';
 import createModalPatterns from './createModalPatterns';
 import { ModalActionTypes } from './actionTypes';
 
+/**
+ * you need to pass this params only if modals reducer mounted
+ * under other key than `modals`
+ */
 export interface CreateModalParams {
   getModalsState?: typeof modalsStateSelector;
 }
@@ -66,28 +69,17 @@ export interface State extends RootStateOrAny {
   modals: ModalsState;
 }
 
-type ModalDispatchActions = ReturnType<typeof createModalBoundActions>;
+export type ModalDispatchActions = ReturnType<typeof createModalBoundActions>;
 
 /**
  * SagaModalCommonAction
  */
-export type ModalActionCreators = typeof actionsCreators[keyof typeof actionsCreators];
-
-export type DistributiveOmit<
-  PayloadProps,
-  K extends keyof PayloadProps
-> = PayloadProps extends unknown ? Omit<PayloadProps, K> : never;
+export type ModalActionCreators =
+  | (<P>(name: string, payload: P) => SagaModalAction<P>)
+  | ((name: string) => SagaModalCommonAction);
 
 /**
- * Non-redux state of modal
- *
- */
-export interface ConnectModalState {
-  isOpen?: boolean;
-}
-
-/**
- * Props passed to modal connector ReduxSagaModalInjectedComponent
+ * Props passed to decorator class
  *
  */
 export interface ConnectModalProps extends ModalDispatchActions {
@@ -121,6 +113,14 @@ export interface SagaModalInjectedProps extends ModalDispatchActions {
   hideModal(name: string): void;
   destroyModal(name: string): void;
 }
+
+/**
+ * A distributive version of Omit
+ */
+export type DistributiveOmit<
+  PayloadProps,
+  K extends keyof PayloadProps,
+> = PayloadProps extends unknown ? Omit<PayloadProps, K> : never;
 
 /**
  * A higher-order component that takes a modal component and returns a connected one with injected props

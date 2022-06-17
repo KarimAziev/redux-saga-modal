@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { ActionCreatorsMapObject } from 'redux';
-import { bindActionCreators, Dispatch } from 'redux';
+import { bindActionCreators } from 'redux';
+import type { ActionCreatorsMapObject, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { modalSelector, modalsStateSelector } from './selectors';
 import createModalActions from './createModalActions';
@@ -8,7 +8,6 @@ import * as actionsCreators from './actionsCreators';
 import { isUndef } from './createModalPatterns';
 import {
   ConnectModalProps,
-  ConnectModalState,
   ReduxSagaModalInjectedComponent,
   RootStateOrAny,
 } from './interface';
@@ -70,84 +69,87 @@ export interface SagaModalConfig<InitProps> {
  * })(ConfirmDialogComponent);
 
  */
-const sagaModal = <InitProps>({
-  name,
-  initProps,
-  destroyOnHide = true,
-  keepComponentOnHide = false,
-  actions = {},
-  getModalsState,
-}: SagaModalConfig<InitProps>): ReduxSagaModalInjectedComponent => (
-  ModalComponent,
-) => {
-  const selector = modalSelector(name, getModalsState);
-  class ConnectedModal extends Component<ConnectModalProps, ConnectModalState> {
-    static displayName = `ConnectedModal(${getDisplayName(ModalComponent)})`;
-    state = {
-      isOpen: this.props.modal.isOpen,
-    };
+const sagaModal =
+  <InitProps>({
+    name,
+    initProps,
+    destroyOnHide = true,
+    keepComponentOnHide = false,
+    actions = {},
+    getModalsState,
+  }: SagaModalConfig<InitProps>): ReduxSagaModalInjectedComponent =>
+  (ModalComponent) => {
+    const selector = modalSelector(name, getModalsState);
+    class ConnectedModal extends Component<
+      ConnectModalProps,
+      { isOpen?: boolean }
+    > {
+      static displayName = `ConnectedModal(${getDisplayName(ModalComponent)})`;
+      state = {
+        isOpen: this.props.modal.isOpen,
+      };
 
-    componentDidUpdate(prevProps: ConnectModalProps) {
-      const { modal } = this.props;
-      const { isOpen } = modal;
-      const isToggled = isOpen !== prevProps.modal.isOpen;
+      componentDidUpdate(prevProps: ConnectModalProps) {
+        const { modal } = this.props;
+        const { isOpen } = modal;
+        const isToggled = isOpen !== prevProps.modal.isOpen;
 
-      if (isToggled) {
-        this.setState({ isOpen });
+        if (isToggled) {
+          this.setState({ isOpen });
+        }
+
+        if (isOpen === false && destroyOnHide && !keepComponentOnHide) {
+          this.props.destroy();
+        }
       }
 
-      if (isOpen === false && destroyOnHide && !keepComponentOnHide) {
-        this.props.destroy();
+      componentWillUnmount() {
+        const {
+          modal: { isOpen },
+        } = this.props;
+
+        if (isOpen) {
+          this.props.hide();
+        }
+
+        if (isOpen && destroyOnHide) {
+          this.props.destroy();
+        }
+      }
+
+      render() {
+        const { isOpen } = this.state;
+        const { modal, ...rest } = this.props;
+        if (isUndef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
+          return null;
+        }
+
+        return React.createElement(ModalComponent, {
+          ...rest,
+          ...modal.props,
+          modal: {
+            name: name,
+          },
+          isOpen: isOpen,
+        });
       }
     }
 
-    componentWillUnmount() {
-      const {
-        modal: { isOpen },
-      } = this.props;
+    const mapStateToProps = (state: RootStateOrAny) => ({
+      ...initProps,
+      modal: selector(state) || {},
+    });
 
-      if (isOpen) {
-        this.props.hide();
-      }
+    const mapDispatchToProps = (dispatch: Dispatch) => ({
+      ...bindActionCreators(actions, dispatch),
+      ...bindActionCreators(actionsCreators, dispatch),
+      ...createModalActions(name, dispatch),
+    });
 
-      if (isOpen && destroyOnHide) {
-        this.props.destroy();
-      }
-    }
-
-    render() {
-      const { isOpen } = this.state;
-      const { modal, ...rest } = this.props;
-      if (isUndef(isOpen) || (isOpen === false && !keepComponentOnHide)) {
-        return null;
-      }
-
-      return React.createElement(ModalComponent, {
-        ...rest,
-        ...modal.props,
-        modal: {
-          name: name,
-        },
-        isOpen: isOpen,
-      });
-    }
-  }
-
-  const mapStateToProps = (state: RootStateOrAny) => ({
-    ...initProps,
-    modal: selector(state) || {},
-  });
-
-  const mapDispatchToProps = (dispatch: Dispatch) => ({
-    ...bindActionCreators(actions, dispatch),
-    ...bindActionCreators(actionsCreators, dispatch),
-    ...createModalActions(name, dispatch),
-  });
-
-  return connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(hoistStatics(ConnectedModal, ModalComponent) as any);
-};
+    return connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    )(hoistStatics(ConnectedModal, ModalComponent) as any);
+  };
 
 export default sagaModal;
