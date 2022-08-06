@@ -1,5 +1,4 @@
 import { fork, all, take, race, call } from 'redux-saga/effects';
-import { Saga } from 'redux-saga';
 import createModal from './createModal';
 import { CreateModalParams } from './interface';
 
@@ -9,45 +8,25 @@ import { CreateModalParams } from './interface';
  * @param params - required only if modals reducer mounted under other key than `modals`
  *
  * @example
- * import { race, call, fork, all, getContext } from 'redux-saga/effects';
- * import { sagas as modalsSaga } from 'redux-saga-modal';
- * import { anotherModalSaga } from './sagas';
+ * import { race, call, fork, all } from 'redux-saga/effects';
+ * import {
+ *   sagas as modalsSaga,
+ *   SagaModalInstance,
+ *   SagaModalAction,
+ * } from 'redux-saga-modal';
+ * import { saveCommentWorker } from './saveComment';
  *
  * const modalsTasks = {
- *   CONFIRM_MODAL: function* confirmModal(payload) {
- *     const { name, patterns, actions, selector, ...effects } = this;
- *
- *     const apiCall = getContext('api');
- *
- *     const winner = yield race({
- *       submit: effects.takeSubmit(),
- *       hide: effects.takeHide(),
- *     });
- *
- *     if (winner.submit) {
- *       yield effects.update({
- *         title: 'Saving',
- *         loading: true,
- *       });
- *       yield call(apiCall);
- *       yield effects.update({
- *         title: 'Changes saved',
- *         loading: false,
- *       });
- *     }
- *
- *     yield effects.destroy();
- *   },
- *   ANOTHER_MODAL: anotherModalSaga,
+ *   saveComment: saveCommentWorker,
  * };
  *
- * function* rootSaga() {
+ * export default function* rootSaga() {
  *   yield all([fork(modalsSaga, modalsTasks)]);
  * }
  */
 export default function* rootModalSaga(
-  config: Record<string, Saga>,
-  params: CreateModalParams,
+  config: Record<string, any>,
+  params?: CreateModalParams,
 ) {
   const names = Object.keys(config);
 
