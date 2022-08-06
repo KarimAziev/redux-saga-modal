@@ -80,7 +80,6 @@
     "react-redux": "*",
     "redux": "*",
     "redux-saga": "*",
-    "release-it": "^14.11.8",
     "rimraf": "^2.6.2",
     "ts-jest": "^28.0.5",
     "ts-loader": "^8.3.0",
