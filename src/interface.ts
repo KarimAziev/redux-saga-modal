@@ -7,19 +7,33 @@ import createModalPatterns from './createModalPatterns';
 import { ModalActionTypes } from './actionTypes';
 
 /**
- * you need to pass this params only if modals reducer mounted
- * under other key than `modals`
+ * Params fro creating modal instance
+ * You need to pass it only if modals reducer mounted under other key than `modals`
+ *
+ * `getModalsState` is a selector which accepts state and should return slice with all modals {@link ModalsState}
  */
 export interface CreateModalParams {
+  /**
+   * a selector which accepts state and should return {@link ModalsState}
+   */
   getModalsState?: typeof modalsStateSelector;
 }
 
+/**
+ * Params for create modal effects.
+ * You need to pass it only if modals reducer mounted under other key than `modals`
+ */
 export interface CreateModalEffectsParams {
+  /* a selector which accepts state and should return slice with all modals {@link ModalsState} */
   getModalsState?: CreateModalParams['getModalsState'];
+  /* a selector which accepts state and should return slice for particular modal  */
   selector?: Function;
+  /* an action matchers to use in `take` effects */
   patterns?: ReturnType<typeof createModalPatterns>;
 }
-
+/* A flux action with meta (with property name) and type.
+ * There are two such modal action creators - {@link hideModal} and {@link destroyModal}
+ */
 export interface SagaModalCommonAction extends Action<string> {
   type: ModalActionTypes;
   meta: {
@@ -30,6 +44,14 @@ export interface SagaModalCommonAction extends Action<string> {
   };
 }
 
+/**
+ * A flux action with payload, meta (with property name) and type.
+ * Payload from actionCreator `showModal` - totally replace stored props of modal if any.
+ * Payload from actionCreator `updateModal` - will totally cleanup modal item state from redux
+ * Payload from actionCreator `clickModal`  - will *not* be stored in redux and passed to the connected component
+ * Payload from actionCreator `submitModal` - will *not* be stored in redux and passed to the connected component
+ **/
+
 export interface SagaModalAction<InitProps = {}> extends SagaModalCommonAction {
   /**
    * Object with props to store in redux store and pass to connected component.
@@ -39,10 +61,10 @@ export interface SagaModalAction<InitProps = {}> extends SagaModalCommonAction {
 
 /**
  * Redux state of single modal item.
- * Action hide toggle isOpen, but keep props.
- * Action show payload replacing stored props of modal if any.
- * Action update merge stored props of modal with payload.
- * Action destroy will totally cleanup of modal item
+ * Action `hideModal` toggle isOpen, but keep props.
+ * Action `showModal` payload replacing stored props of modal if any.
+ * Action `updateModal` merge stored props of modal with payload.
+ * Action `destroyModal` will totally cleanup of modal item
  **/
 export interface ModalItemState<InitProps = {}> {
   props: InitProps;
@@ -56,23 +78,36 @@ export interface ModalsState<PayloadProps = {}> {
   [name: string]: ModalItemState<PayloadProps>;
 }
 
+/**
+ * @ignore
+ **/
 export interface DefaultRootState {}
 
+/**
+ * @ignore
+ **/
 export type AnyIfEmpty<T extends object> = keyof T extends never ? any : T;
 
+/**
+ * @ignore
+ **/
 export type RootStateOrAny = AnyIfEmpty<DefaultRootState>;
 
 /**
+ * @ignore
  * Redux state assumes that default modal reducer is mounted under the 'modals' key
  **/
 export interface State extends RootStateOrAny {
   modals: ModalsState;
 }
-
+/*
+ * An object whose values are partially applied action creators {@link ModalActionCreators}
+ * wrapped into a `dispatch` call so they may be invoked directly.
+ */
 export type ModalDispatchActions = ReturnType<typeof createModalBoundActions>;
 
 /**
- * SagaModalCommonAction
+ * a common type for action creators with payload and without payload (`hide` and `destroy`)
  */
 export type ModalActionCreators =
   | (<P>(name: string, payload: P) => SagaModalAction<P>)
@@ -84,37 +119,52 @@ export type ModalActionCreators =
  */
 export interface ConnectModalProps extends ModalDispatchActions {
   modal: ModalItemState<{}>;
+  /* An action creator to show *other* modal */
   showModal(name: string, payload: any): void;
+  /* An action creator to update *other* modal */
   updateModal(name: string, payload: any): void;
+  /* An action creator to submit *other* modal */
   submitModal(name: string, payload: any): void;
+  /* An action creator to click *other* modal */
   clickModal(name: string, payload: any): void;
+  /* An action creator to hide *other* modal */
   hideModal(name: string): void;
+  /* An action creator to destroy *other* modal */
   destroyModal(name: string): void;
 }
 
 /**
  * Injected props will be passed to decorated component.
  * Methods show, hide, update, destroy, submit, click (See {@link ModalDispatchActions})
- * are already bound to the name, passed to `sagaModal'.
+ * are already bound to the name passed into `sagaModal'.
  **/
 
 export interface SagaModalInjectedProps extends ModalDispatchActions {
+  /* whether component should be shown (derivered from redux-store) */
   isOpen: boolean;
+  /* an object with just one property - the name of the modal */
   modal: {
     /**
-     *  Name of the modal passed to `sagaModal'.
+     *  Name of the modal passed to `sagaModal` and `createModal`
      **/
     name: string;
   };
+  /* Dispatch (See {@link showModal}) */
   showModal(name: string, payload: any): void;
+  /* Dispatch (See {@link updateModal}) */
   updateModal(name: string, payload: any): void;
+  /* Dispatch (See {@link submitModal}) */
   submitModal(name: string, payload: any): void;
+  /* Dispatch (See {@link clickModal}) */
   clickModal(name: string, payload: any): void;
+  /* Dispatch (See {@link hideModal}) */
   hideModal(name: string): void;
+  /* Dispatch (See {@link destroyModal}) */
   destroyModal(name: string): void;
 }
 
 /**
+ * @ignore
  * A distributive version of Omit
  */
 export type DistributiveOmit<

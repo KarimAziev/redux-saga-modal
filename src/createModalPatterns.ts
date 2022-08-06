@@ -2,6 +2,7 @@ import { Action } from 'redux';
 import * as actionsCreators from './actionsCreators';
 import { SagaModalAction } from './interface';
 
+/** @ignore */
 export const reduceObjWith = <
   F extends (...args: any) => any,
   V extends Record<string, unknown>,
@@ -21,25 +22,29 @@ export const reduceObjWith = <
   );
 };
 
+/** @ignore */
 function isFunc(f: any): f is Function {
   return typeof f === 'function';
 }
+/** @ignore */
 export function isUndef(v: any): v is undefined {
   return v === null || v === undefined;
 }
 
+/** @ignore */
 function isString(s: any): s is string {
   return typeof s === 'string';
 }
 
+/** @ignore */
 function isArray(v: any): v is any[] {
   return Array.isArray(v);
 }
-
+/** @ignore */
 function isAction(obj: any): obj is Action {
   return obj && !isArray(obj) && typeof obj === 'object' && obj.type;
 }
-
+/** @ignore */
 export const array = (patterns: any) => (input: any) =>
   patterns.some((p: any) => payloadMatcher(p)(input));
 // eslint-disable-next-line no-shadow
