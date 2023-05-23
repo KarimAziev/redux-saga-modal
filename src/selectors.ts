@@ -18,7 +18,7 @@ export const modalSelector = (
   modalName: string,
   modalsSelector = modalsStateSelector,
 ) => {
-  return <InitProps>(state: RootStateOrAny) => {
+  return <InitProps>(state: RootStateOrAny, ..._rest: any[]) => {
     const modals = modalsSelector(state);
     return modals[modalName] as ModalItemState<InitProps>;
   };
