@@ -104,7 +104,7 @@ const sagaModal =
     const selector = modalSelector(name, getModalsState);
 
     class ConnectedModal extends Component<
-      ConnectModalProps<InitProps>,
+      ConnectModalProps,
       { isOpen?: boolean }
     > {
       static displayName = `ConnectedModal(${getDisplayName(ModalComponent)})`;
@@ -112,7 +112,7 @@ const sagaModal =
         isOpen: this.props.modal.isOpen,
       };
 
-      componentDidUpdate(prevProps: ConnectModalProps<InitProps>) {
+      componentDidUpdate(prevProps: ConnectModalProps) {
         const { modal } = this.props;
         const { isOpen } = modal;
         const isToggled = isOpen !== prevProps.modal.isOpen;

@@ -5,12 +5,11 @@ module.exports = {
     jest: true,
     node: true,
   },
+
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -18,18 +17,10 @@ module.exports = {
       jsx: true,
     },
     ecmaVersion: '2018',
-    project: ['./tsconfig.json'],
-    sourceType: 'module',
+    project: './tsconfig.json',
     tsconfigRootDir: __dirname,
   },
-  plugins: [
-    '@typescript-eslint',
-    'import',
-    'prettier',
-    'react',
-    'typescript',
-    'eslint-plugin-tsdoc',
-  ],
+  plugins: ['@typescript-eslint', 'import', 'react', 'eslint-plugin-tsdoc'],
   rules: {
     'tsdoc/syntax': 'warn',
     'import/default': ['warn'],
@@ -61,12 +52,6 @@ module.exports = {
       },
     ],
     'import/prefer-default-export': 0,
-    'prettier/prettier': [
-      'error',
-      {
-        endOfLine: 'auto',
-      },
-    ],
     'react/prop-types': 'off',
     'react/display-name': 'off',
   },

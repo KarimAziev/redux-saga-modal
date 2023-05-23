@@ -117,8 +117,8 @@ export type ModalActionCreators =
  * Props passed to decorator class
  *
  */
-export interface ConnectModalProps<InitProps> extends ModalDispatchActions {
-  modal: ModalItemState<InitProps>;
+export interface ConnectModalProps extends ModalDispatchActions {
+  modal: ModalItemState;
   /* An action creator to show *other* modal */
   showModal(name: string, payload: any): void;
   /* An action creator to update *other* modal */
@@ -187,10 +187,3 @@ export interface ReduxSagaModalInjectedComponent {
     >
   >;
 }
-
-export type SagaModalGetProps<Comp> = Partial<
-  DistributiveOmit<
-    GetProps<Comp>,
-    keyof Shared<SagaModalInjectedProps, GetProps<Comp>>
-  >
->;
