@@ -1,6 +1,6 @@
 import * as React from 'react';
-import type { Action } from 'redux';
-import type { ConnectedComponent, Shared, GetProps } from 'react-redux';
+import { Action } from 'redux';
+import { ConnectedComponent, Shared, GetProps } from 'react-redux';
 import { modalsStateSelector } from './selectors';
 import createModalBoundActions from './createModalActions';
 import createModalPatterns from './createModalPatterns';
