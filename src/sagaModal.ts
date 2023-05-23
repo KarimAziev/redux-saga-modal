@@ -172,7 +172,7 @@ const sagaModal =
     return connect(
       mapStateToProps,
       mapDispatchToProps,
-    )(hoistStatics(ConnectedModal, ModalComponent));
+    )(hoistStatics(ConnectedModal, ModalComponent) as any);
   };
 
 export default sagaModal;
