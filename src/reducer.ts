@@ -10,6 +10,7 @@ const initialState = {};
  * @param state - see {@link ModalsState}
  * @param action - any action
  * @example
+ * ```ts
  * import { reducer as modalsReducer } from 'redux-saga-modal';
  * import { combineReducers } from 'redux';
  *
@@ -17,7 +18,9 @@ const initialState = {};
  *  modals: modalsReducer,
  *  // ...other reducers
  * });
+ * ```
  */
+
 const reducer: Reducer<ModalsState> = function (state = initialState, action) {
   switch (action?.type) {
     case actionTypes.SHOW_MODAL: {

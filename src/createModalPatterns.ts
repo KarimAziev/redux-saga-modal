@@ -2,12 +2,11 @@ import { Action } from 'redux';
 import * as actionsCreators from './actionsCreators';
 import { SagaModalAction } from './interface';
 
-/** @ignore */
 export const reduceObjWith = <
   F extends (...args: any) => any,
   V extends Record<string, unknown>,
   K extends keyof V,
-  R extends { [P in K]: ReturnType<F> },
+  R extends { [Pattern in K]: ReturnType<F> },
 >(
   f: F,
   v: V,
@@ -22,37 +21,33 @@ export const reduceObjWith = <
   );
 };
 
-/** @ignore */
 function isFunc(f: any): f is Function {
   return typeof f === 'function';
 }
-/** @ignore */
+
 export function isUndef(v: any): v is undefined {
   return v === null || v === undefined;
 }
 
-/** @ignore */
 function isString(s: any): s is string {
   return typeof s === 'string';
 }
 
-/** @ignore */
 function isArray(v: any): v is any[] {
   return Array.isArray(v);
 }
-/** @ignore */
+
 function isAction(obj: any): obj is Action {
   return obj && !isArray(obj) && typeof obj === 'object' && obj.type;
 }
-/** @ignore */
+
 export const array = (patterns: any) => (input: any) =>
   patterns.some((p: any) => payloadMatcher(p)(input));
 // eslint-disable-next-line no-shadow
 export const predicate = (predicate: any) => (input: any) => predicate(input);
 export const string = (pattern: any) => (input: any) =>
   input === String(pattern);
-export const isSstring = (pattern: any) => (input: any) =>
-  input === String(pattern);
+
 export const symbol = (pattern: any) => (input: any) => input === pattern;
 export const konst = (v: any) => () => v;
 export const kTrue = konst(true);
@@ -117,16 +112,22 @@ export const renameActionsMap = {
  * An action matchers to use inside redux-saga take effects, such as `take`, `takeLatest`, `takeEvery` etc.
  *
  * @example
+ * ```ts
  * const statsModal = createModal('statistic');
- * yield takeLatest(statsModal.patterns.show, statsModalSaga);
+ * yield takeLatest(statsModal.patterns.show(), statsModalSaga);
+ * ```
  *
  * Every pattern accepts optional argument for checking payload.
+ /**
  * @example
+ * ```ts
  * yield takeLatest(
- *   statsModal.patterns.update(payload => !!payload.loading),
- *   statsModalSaga,
+ *    statsModal.patterns.update(payload => !!payload.loading),
+ *    statsModalSaga,
  * );
+ * ```
  */
+
 export interface ModalPatterns {
   /**
    *  An action matcher for `showModal` with the same name as it's instance has.
@@ -169,36 +170,38 @@ export interface ModalPatterns {
 /**
  * Create an action matchers.
  * @param modalName - name of the modal
-
+ *
  * @example
+ * ```ts
  * const statsModal = createModal('statistic');
  * yield takeLatest(statsModal.patterns.show, statsModalSaga);
+ * ```
  *
  * Every pattern accepts optional argument for checking payload.
- * @example
+ * ```ts
  * yield takeLatest(
  *   statsModal.patterns.update(payload => !!payload.loading),
  *   statsModalSaga,
  * );
+ * ```
  */
-
 const createModalPatterns = (modalName: string): ModalPatterns =>
   reduceObjWith((actionCreator) => {
     const actionType = actionCreator(modalName, {}).type;
-    return <P = any>(patternOrAction?: any): P => {
+    return <Pattern = any>(patternOrAction?: any): Pattern => {
       return isAction(patternOrAction)
         ? modalMatcher(
             modalName,
             actionType,
             kTrue,
-            patternOrAction as SagaModalAction<P>,
+            patternOrAction as SagaModalAction<Pattern>,
           )
         : (action: Action) =>
             modalMatcher(
               modalName,
               actionType,
               patternOrAction,
-              action as SagaModalAction<P>,
+              action as SagaModalAction<Pattern>,
             );
     };
   }, renameActionsMap);

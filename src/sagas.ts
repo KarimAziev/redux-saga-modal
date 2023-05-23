@@ -5,9 +5,11 @@ import { CreateModalParams } from './interface';
 /**
  * Saga routine for frequently repeated modals
  * @param config -  an object with modals names as keys and tasks as values.
- * @param params - required only if modals reducer mounted under other key than `modals`
+ * @param params - required only if modals reducer mounted under other key than
+   `modals`
  *
  * @example
+ * ```ts
  * import { race, call, fork, all } from 'redux-saga/effects';
  * import {
  *   sagas as modalsSaga,
@@ -23,7 +25,9 @@ import { CreateModalParams } from './interface';
  * export default function* rootSaga() {
  *   yield all([fork(modalsSaga, modalsTasks)]);
  * }
+ * ```
  */
+
 export default function* rootModalSaga(
   config: Record<string, any>,
   params?: CreateModalParams,

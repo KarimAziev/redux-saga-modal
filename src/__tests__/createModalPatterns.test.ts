@@ -7,9 +7,9 @@ let MODAL_NAME_B: string;
 
 let patternsA: ModalPatterns;
 
-let actionA: SagaModalAction;
-let actionB: SagaModalAction;
-let actionOtherA: SagaModalAction;
+let actionA: SagaModalAction<{ id: 193; text: 'ff' } | string>;
+let actionB: SagaModalAction<{ id: 193 }>;
+let actionOtherA: SagaModalAction<{ text: 'ff' }>;
 
 describe('Testing modal show patterns', () => {
   beforeEach(() => {

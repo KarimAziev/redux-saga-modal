@@ -18,38 +18,38 @@ import {
  */
 export interface ModalActions {
   /**
-   *  Partially applied `showModal' action creator.
+   *  Partially applied `showModal` action creator.
    *  @param payload - will be stored in redux and *override* any existing
    */
-  show<P>(payload: P): SagaModalAction<P>;
+  show<Payload>(payload: Payload): SagaModalAction<Payload>;
   /**
-   *  Partially applied `updateModal' action creator.
+   *  Partially applied `updateModal` action creator.
    *  @param payload - will be stored in redux by *merging* with existing
    */
-  update<P>(payload: P): SagaModalAction<P>;
+  update<Payload>(payload: Payload): SagaModalAction<Payload>;
   /**
-   *  Partially applied `hideModal' action creator.
+   *  Partially applied `hideModal` action creator.
    *  Modal reducer handle this action by setting isOpen to false. Existing props will be preserved
    */
   hide(): SagaModalCommonAction;
   /**
-   * Partially applied `destroyModal' action creator.
+   * Partially applied `destroyModal` action creator.
    * Modal reducer handle this action by clearing all existing modal props
    */
   destroy(): SagaModalCommonAction;
 
   /**
-   *  Partially applied `submitModal' action creator.
+   *  Partially applied `submitModal` action creator.
    *  Dispatching this action will not rerender your component
    *  @param payload - will not be stored in redux store but can be accessed via sagas
    */
-  submit<P>(payload: P): SagaModalAction<P>;
+  submit<Payload>(payload: Payload): SagaModalAction<Payload>;
   /**
-   * Partially applied `clickModal' action creator.
+   * Partially applied `clickModal` action creator.
    * Dispatching this action will not re-render your component and payload
    *  @param payload - will not be stored in redux store but can be accessed via sagas
    */
-  click<P>(payload: P): SagaModalAction<P>;
+  click<Payload>(payload: Payload): SagaModalAction<Payload>;
 }
 
 /**
@@ -60,44 +60,44 @@ export interface ModalActions {
 export function createModalActions(name: string): ModalActions {
   return {
     /**
-     *  Partially applied `showModal' action creator.
+     *  Partially applied `showModal` action creator.
      *  @param payload - will be stored in redux and *override* any existing
      */
-    show<P>(payload: P) {
-      return showModal<P>(name, payload);
+    show<Payload>(payload: Payload) {
+      return showModal<Payload>(name, payload);
     },
     /**
-     *  Partially applied `updateModal' action creator.
+     *  Partially applied `updateModal` action creator.
      *  @param payload - will be stored in redux by *merging* with existing
      */
-    update<P>(payload: P) {
-      return updateModal<P>(name, payload);
+    update<Payload>(payload: Payload) {
+      return updateModal<Payload>(name, payload);
     },
     /**
-     * Partially applied `clickModal' action creator.
+     * Partially applied `clickModal` action creator.
      * Dispatching this action will not rerender your component and payload
      *  @param payload - will not be stored in redux store but can be accessed via sagas
      */
-    submit<P>(payload: P) {
-      return submitModal<P>(name, payload);
+    submit<Payload>(payload: Payload) {
+      return submitModal<Payload>(name, payload);
     },
     /**
-     * Partially applied `clickModal' action creator.
+     * Partially applied `clickModal` action creator.
      * Dispatching this action will not rerender your component and payload
      *  @param payload - will not be stored in redux store but can be accessed via sagas
      */
-    click<P>(payload: P) {
-      return clickModal<P>(name, payload);
+    click<Payload>(payload: Payload) {
+      return clickModal<Payload>(name, payload);
     },
     /**
-     *  Partially applied `hideModal' action creator.
+     *  Partially applied `hideModal` action creator.
      *  Modal reducer handle this action by setting isOpen to false. Existing props will be preserved
      */
     hide() {
       return hideModal(name);
     },
     /**
-     * Partially applied `destroyModal' action creator.
+     * Partially applied `destroyModal` action creator.
      * Modal reducer handle this action by clearing all existing modal props
      */
     destroy() {
@@ -113,7 +113,7 @@ export function createModalActions(name: string): ModalActions {
  *
  * @param actionCreator - a modal action creator
  * @param name - the name of the modal to bind modal action creators
- * @param effect. The `dispatch` function available on your Redux store.
+ * @param effect - The `dispatch` function available on your Redux store.
  *
  * @returns a function that accepts payload and then apply actionCreator
  * with name and payload.
@@ -124,8 +124,10 @@ export function bindActionEffect<E extends Function>(
   name: string,
   effect: E,
 ) {
-  return function <P = {}>(payload?: P): Dispatch<SagaModalAction<P>> {
-    const action: SagaModalAction<P> = actionCreator.apply(undefined, [
+  return function <Payload = {}>(
+    payload?: Payload,
+  ): Dispatch<SagaModalAction<Payload>> {
+    const action: SagaModalAction<Payload> = actionCreator.apply(undefined, [
       name,
       payload,
     ]);
@@ -140,7 +142,7 @@ export function bindActionEffect<E extends Function>(
  *
  *
  * @param name - the name of the modal to bind modal action creators
- * @param dispatch The `dispatch` function available on your Redux store.
+ * @param dispatch - The `dispatch` function available on your Redux store.
  *
  * @returns The object with methods show, update, hide, click, update, destroy,
  * wrapped into the `dispatch` call and bound to the name.

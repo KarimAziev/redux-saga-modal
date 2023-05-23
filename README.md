@@ -25,7 +25,7 @@ yarn add redux-saga-modal
 Pass the `reducer` to your store. It keeps the state of all your modal
 components, so you only have to pass it once.
 
-```javascript
+```typescript
 import { createStore, combineReducers } from 'redux';
 import { reducer as modalReducer } from 'redux-saga-modal';
 
@@ -40,7 +40,7 @@ const store = createStore(rootReducer);
 
 Connect a component to Redux Store with `sagaModal`.
 
-```javascript
+```typescript
 import {
   sagaModal,
   createModal,
@@ -90,14 +90,14 @@ export { modal, ConnectedConfirmModal };
 To create an instance use `createModal` and pass the modal name as the
 first argument.
 
-```javascript
+```typescript
 import { createModal } from 'redux-saga-modal';
 const modal = createModal('CONFIRM');
 ```
 
 Result
 
-```javascript
+```typescript
 {
   name: 'CONFIRM',
   selector: function (r) {},
@@ -143,7 +143,7 @@ pass it. The instance will receive properties [actions](#actions),
 Both `patterns` and `actions` have methods named `show`, `update`,
 `hide`, `submit`, `click` and `destroy`.
 
-```javascript
+```typescript
 import { race } from 'redux-saga/effects';
 import { createModal } from 'redux-saga-modal';
 
@@ -167,7 +167,7 @@ Alternatively if you don't need high-level effects you can use
 [createModalHelpers](#createModalHelpers). The example above can be
 rewritten like this:
 
-```javascript
+```typescript
 import { race, put, take } from 'redux-saga/effects';
 import { createModalHelpers } from 'redux-saga-modal';
 import { ConfirmModalOwnProps } from './Modal';
@@ -203,7 +203,7 @@ The context of your task will have properties `actions`, `patterns`,
 Both `patterns` and `actions` have methods named `show`, `update`,
 `hide`, `submit`, `click` and `destroy`.
 
-```javascript
+```typescript
 import { race, call, fork, all } from 'redux-saga/effects';
 import {
   sagas as modalsSaga,
@@ -324,7 +324,7 @@ modal's name so you don't need manually pass it.
 
 <!-- end list -->
 
-```javascript
+```typescript
 import { createModal } from 'redux-saga-modal';
 
 const {
@@ -372,7 +372,7 @@ Both `patterns` and `actions` have methods named `show`, `update`,
 
 <!-- end list -->
 
-```javascript
+```typescript
 import { createModalHelpers } from 'redux-saga-modal';
 
 const {
@@ -406,7 +406,7 @@ argument is already bound to the modal name.
 
 **Example**
 
-```javascript
+```typescript
 import { createModal, createModalActions, showModal } from 'redux-saga-modal';
 
 const modal = createModal('CONFIRM');
@@ -442,7 +442,7 @@ only to its payload.
 
 **Example**
 
-```javascript
+```typescript
 import { createModal } from 'redux-saga-modal';
 
 const { patterns } = createModal('CONFIRM');
@@ -460,7 +460,7 @@ yield take(patterns.click);
 
 ### selector
 
-```javascript
+```typescript
 import { createModal } from 'redux-saga-modal';
 
 const { selector, ...effects } = createModal('CONFIRM');
@@ -497,7 +497,7 @@ the payload.
 
 **Example**
 
-```javascript
+```typescript
 import { createModal } from 'redux-saga-modal';
 
 const { name, ...effects } = createModal('CONFIRM');

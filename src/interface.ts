@@ -1,5 +1,5 @@
-import { Action } from 'redux';
 import * as React from 'react';
+import type { Action } from 'redux';
 import type { ConnectedComponent, Shared, GetProps } from 'react-redux';
 import { modalsStateSelector } from './selectors';
 import createModalBoundActions from './createModalActions';
@@ -64,7 +64,7 @@ export interface SagaModalAction<InitProps = {}> extends SagaModalCommonAction {
  * Action `hideModal` toggle isOpen, but keep props.
  * Action `showModal` payload replacing stored props of modal if any.
  * Action `updateModal` merge stored props of modal with payload.
- * Action `destroyModal` will totally cleanup of modal item
+ * Action `destroyModal` will totally cleanup modal item
  **/
 export interface ModalItemState<InitProps = {}> {
   props: InitProps;
@@ -74,27 +74,27 @@ export interface ModalItemState<InitProps = {}> {
  * Redux state of all non-destroyed modals
  * See {@link ModalItemState}
  **/
-export interface ModalsState<PayloadProps = {}> {
-  [name: string]: ModalItemState<PayloadProps>;
+export interface ModalsState {
+  [name: string]: ModalItemState;
 }
 
 /**
- * @ignore
+ * @privateRemarks
  **/
 export interface DefaultRootState {}
 
 /**
- * @ignore
+ * @privateRemarks
  **/
 export type AnyIfEmpty<T extends object> = keyof T extends never ? any : T;
 
 /**
- * @ignore
+ * @privateRemarks
  **/
 export type RootStateOrAny = AnyIfEmpty<DefaultRootState>;
 
 /**
- * @ignore
+ * @privateRemarks
  * Redux state assumes that default modal reducer is mounted under the 'modals' key
  **/
 export interface State extends RootStateOrAny {
@@ -117,8 +117,8 @@ export type ModalActionCreators =
  * Props passed to decorator class
  *
  */
-export interface ConnectModalProps extends ModalDispatchActions {
-  modal: ModalItemState<{}>;
+export interface ConnectModalProps<InitProps> extends ModalDispatchActions {
+  modal: ModalItemState<InitProps>;
   /* An action creator to show *other* modal */
   showModal(name: string, payload: any): void;
   /* An action creator to update *other* modal */
@@ -136,7 +136,7 @@ export interface ConnectModalProps extends ModalDispatchActions {
 /**
  * Injected props will be passed to decorated component.
  * Methods show, hide, update, destroy, submit, click (See {@link ModalDispatchActions})
- * are already bound to the name passed into `sagaModal'.
+ * are already bound to the name passed into `sagaModal`.
  **/
 
 export interface SagaModalInjectedProps extends ModalDispatchActions {
@@ -164,7 +164,7 @@ export interface SagaModalInjectedProps extends ModalDispatchActions {
 }
 
 /**
- * @ignore
+ * @privateRemarks
  * A distributive version of Omit
  */
 export type DistributiveOmit<
@@ -187,3 +187,10 @@ export interface ReduxSagaModalInjectedComponent {
     >
   >;
 }
+
+export type SagaModalGetProps<Comp> = Partial<
+  DistributiveOmit<
+    GetProps<Comp>,
+    keyof Shared<SagaModalInjectedProps, GetProps<Comp>>
+  >
+>;

@@ -6,12 +6,13 @@ import { SagaModalAction, SagaModalCommonAction } from './interface';
  *
  *  See {@link showModal}, {@link updateModal}, {@link submitModal} and {@link clickModal}
  *
- *  @return an action creator which arguments are name and payload,
+ *  @returns an action creator which arguments are name and payload,
  *  and returned value is an action with payload, meta (with property name) and type.
  **/
+
 const createModalAction =
   (type: ModalActionTypes) =>
-  <P>(name: string, payload: P): SagaModalAction<P> => ({
+  <Payload>(name: string, payload: Payload): SagaModalAction<Payload> => ({
     type: type,
     payload,
     meta: { name },
@@ -21,7 +22,7 @@ const createModalAction =
  *
  * See {@link hideModal} and {@link destroyModal}
  *
- *  @return an action creator which arguments are name,
+ *  @returns an action creator which arguments are name,
  *  and returned value is an action with meta (with property name) and type.
  *
  *

@@ -12,15 +12,23 @@ import {
   RootStateOrAny,
 } from './interface';
 
+const hoistStatics = require('hoist-non-react-statics');
+
 function getDisplayName(WrappedComponent: React.ComponentType<any>) {
   return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 }
 
-const hoistStatics = require('hoist-non-react-statics');
-
 /**
  * Params to connect a component to Redux Store with HOC `sagaModal`.
+ * The only one required prop is `name`
+ * `name` - the name for the modal. It should be the as the passed one to the `createModal`
+ * `initProps` - Initial props to pass in child component.
+ * `keepComponentOnHide` (default: false) -  Whether to force render child component
+ * `destroyOnHide` (default: true) - Whether to dispach destroy action after hide and if `keepComponentOnHide` is nil.
+ * `getModalsState` (default: (state) =\> state.modals) - An optional custom selector that should the slice with *all* modals.
+ * `actions` - Object whose values are custom actions creator functions.
  */
+
 export interface SagaModalConfig<InitProps> {
   /**
    * Name of the modal. It should be the as the passed one to the `createModal`.
@@ -36,39 +44,53 @@ export interface SagaModalConfig<InitProps> {
   actions?: ActionCreatorsMapObject;
   /**
    * Whether to force render child component
-   * @default false
+   * @defaultValue false
    */
   keepComponentOnHide?: boolean;
   /**
    * Whether to dispach destroy action after hide. `keepComponentOnHide` should be false.
-   * @default true
+   * @defaultValue true
    */
   destroyOnHide?: boolean;
   /**
    * An optional custom selector that takes the Redux store and returns the slice with all modals.
    * By default, the reducer is mounted under the =modals= key.
-   * @default (state) => state.modals
+   * @example
+   * ```ts
+   * (state) => state.modals
+   * ```
    */
   getModalsState?: typeof modalsStateSelector;
 }
 
 /**
  * Creates a decorator to connect the modal component to Redux.
- * @param config - See {@link SagaModalConfig} for details.
+ * @param config - Params to connect a component to Redux Store with HOC `sagaModal`.
+ * The only one required prop is `name`
+ * `name` - the name for the modal. It should be the as the passed one to the `createModal`
+ * `initProps` - Initial props to pass in child component.
+ * `keepComponentOnHide` (default: false) -  Whether to force render child component
+ * `destroyOnHide` (default: true) - Whether to auto dispach destroy action after hide if `keepComponentOnHide` is false
+ * `getModalsState` (default: (state) =\> state.modals) - An optional custom selector that should the slice with *all* modals.
+ * `actions` - Object whose values are custom actions creator functions.
  *
- * @returns a higher-order component that takes a modal component and returns a connected one with injected props
+ * @returns A higher-order component that takes a modal component and returns a connected one with injected props
  *
- * @example
+ * @example Connecting a component
+ *
+ * ```ts
  * const confirmModal = createModal("CONFIRM_MODAL");
+ *
  * export const ConfirmModal = sagaModal({
  *   name: confirmModal.name,
  *   initProps: {
  *     title: 'Some default title',
- * },
+ *  },
  *   actions: { loadData },
  * })(ConfirmDialogComponent);
-
+ * ```
  */
+
 const sagaModal =
   <InitProps>({
     name,
@@ -80,8 +102,9 @@ const sagaModal =
   }: SagaModalConfig<InitProps>): ReduxSagaModalInjectedComponent =>
   (ModalComponent) => {
     const selector = modalSelector(name, getModalsState);
+
     class ConnectedModal extends Component<
-      ConnectModalProps,
+      ConnectModalProps<InitProps>,
       { isOpen?: boolean }
     > {
       static displayName = `ConnectedModal(${getDisplayName(ModalComponent)})`;
@@ -89,7 +112,7 @@ const sagaModal =
         isOpen: this.props.modal.isOpen,
       };
 
-      componentDidUpdate(prevProps: ConnectModalProps) {
+      componentDidUpdate(prevProps: ConnectModalProps<InitProps>) {
         const { modal } = this.props;
         const { isOpen } = modal;
         const isToggled = isOpen !== prevProps.modal.isOpen;
@@ -149,7 +172,7 @@ const sagaModal =
     return connect(
       mapStateToProps,
       mapDispatchToProps,
-    )(hoistStatics(ConnectedModal, ModalComponent) as any);
+    )(hoistStatics(ConnectedModal, ModalComponent));
   };
 
 export default sagaModal;

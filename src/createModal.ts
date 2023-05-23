@@ -45,9 +45,22 @@ export interface ModalHelpers {
  *
  * @returns see {@link ModalHelpers}
  * @example
-```ts
- const confirmModal = createModal("CONFIRM_MODAL");
-```
+ * ```ts
+ * const modal = createModalHelpers('confirm');
+ *
+ * const confirmModal = function* (initProps) {
+ *  yield put(modal.actions.show(initProps));
+ *
+ *   const [submit]: boolean[] = yield race([
+ *     take(modal.patterns.submit()),
+ *     take(modal.patterns.hide()),
+ *   ]);
+ *
+ *   yield put(modal.actions.hide());
+ *
+ *   return !!submit;
+ * };
+ * ```
  */
 export function createModalHelpers(
   modalName: string,
@@ -65,6 +78,7 @@ export function createModalHelpers(
     actions: createModalActions(modalName),
   };
 }
+
 /**
  *
  * Include put effects (see {@link ModalPutEffects}),
@@ -94,9 +108,26 @@ export type SagaModalInstance = ModalHelpers & ModalEffects;
  *
  * @returns see {@link ModalHelpers}
  * @example
-```ts
- const confirmModal = createModal("CONFIRM_MODAL");
-```
+ * ```ts
+ * import { race } from 'redux-saga/effects';
+ * import { createModal } from 'redux-saga-modal';
+ *
+ * const modal = createModal('confirm');
+ *
+ * const confirmModal = function* <T>(initProps: T) {
+ *   yield modal.show(initProps);
+ *
+ *   const [submit]: boolean[] = yield race([
+ *     modal.takeSubmit(),
+ *     modal.takeHide(),
+ *   ]);
+ *
+ *   yield modal.hide();
+ *
+ *   return !!submit;
+ *
+ * };
+ * ```
  */
 export default function createModal(
   modalName: string,
